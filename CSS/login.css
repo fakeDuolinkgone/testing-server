@@ -1,0 +1,171 @@
+/* ===========================================================
+   LOGIN - màn hình nhập tên + ô hiển thị tên người chơi
+   Được nạp sau theme.css (xem englishCSS.css).
+   Mọi selector đều nằm trong .login-gate / .player để không
+   đụng tới các rule input / button chung trong base.css.
+   =========================================================== */
+
+/* Ẩn trang phía sau khi màn hình nhập tên đang mở, tránh nháy nội dung */
+html.login-pending { overflow: hidden; }
+html.login-pending body > :not(.login-gate) { visibility: hidden; }
+
+
+/* ================= MÀN HÌNH NHẬP TÊN ================= */
+.login-gate {
+    position: fixed; inset: 0; z-index: 10000;
+    display: grid; place-items: center;
+    padding: 20px;
+    background:
+        radial-gradient(circle at 7% 80%, transparent 0 20px, rgba(255,255,255,.22) 21px 25px, transparent 26px),
+        radial-gradient(circle at 14% 18%, transparent 0 34px, rgba(255,255,255,.18) 35px 40px, transparent 41px),
+        radial-gradient(circle at 52% 86%, transparent 0 14px, rgba(255,255,255,.25) 15px 18px, transparent 19px),
+        radial-gradient(circle at 93% 22%, transparent 0 28px, rgba(255,255,255,.20) 29px 33px, transparent 34px),
+        radial-gradient(circle at 78% 72%, rgba(253,181,21,.38), transparent 34%),
+        linear-gradient(160deg, #35b1d3 0%, var(--sea-deep, #219ebc) 50%, var(--deep, #0E3850) 135%);
+    transition: opacity .25s ease;
+}
+.login-gate.closing { opacity: 0; pointer-events: none; }
+
+.login-card {
+    width: min(440px, 100%);
+    padding: 40px 36px 36px;
+    border-radius: 32px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 12px 0 rgba(14, 56, 80, .25), 0 30px 60px rgba(6, 40, 58, .35);
+}
+@media (prefers-reduced-motion: no-preference) {
+    .login-card { animation: loginPop .45s cubic-bezier(.2, 1.3, .4, 1) both; }
+}
+@keyframes loginPop {
+    from { transform: translateY(24px) scale(.94); opacity: 0; }
+}
+
+.login-card h2 {
+    margin: 0 0 8px;
+    font: 800 clamp(30px, 6vw, 38px)/1.1 var(--display, "Trebuchet MS", Arial, sans-serif);
+    color: var(--deep, #0E3850);
+}
+.login-card p {
+    margin: 0 0 24px;
+    font-size: 17px; line-height: 1.4;
+    color: #4d6b7c;
+}
+
+.login-card .login-input {
+    display: block; width: 100%; margin: 0;
+    padding: 14px 18px;
+    border: 3px solid #cfe5ee; border-radius: 18px;
+    background: #f7fcfe; color: var(--deep, #0E3850);
+    font: 700 24px var(--display, "Trebuchet MS", Arial, sans-serif);
+    text-align: center;
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+.login-card .login-input::placeholder { color: #93b0bf; font-weight: 600; }
+.login-card .login-input:focus { border-color: var(--sun, #ff8b00); background: #fff; }
+.login-card .login-input[aria-invalid="true"] { border-color: #c93636; }
+
+/* luôn giữ chỗ cho dòng lỗi để khung không bị nhảy */
+.login-error {
+    min-height: 22px; margin: 10px 0 14px;
+    font-size: 15px; font-weight: 700; color: #c93636;
+}
+
+.login-card .login-btn {
+    display: block; width: 100%; height: 64px; margin: 0; padding: 0;
+    border: 0; border-radius: 40px;
+    background: var(--sun, #ff8b00); color: #fff;
+    font: 800 26px var(--display, "Trebuchet MS", Arial, sans-serif);
+    box-shadow: 0 7px 0 rgba(14, 56, 80, .28);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+}
+.login-card .login-btn:hover {
+    background: var(--sun, #ff8b00);
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 11px 0 rgba(14, 56, 80, .28);
+}
+.login-card .login-btn:active { transform: translateY(4px); box-shadow: 0 3px 0 rgba(14, 56, 80, .28); }
+.login-card .login-btn:focus-visible { outline: 4px solid var(--deep, #0E3850); outline-offset: 3px; }
+
+.login-card .login-cancel {
+    display: block; margin: 16px auto 0; padding: 8px 14px;
+    border: 0; border-radius: 12px;
+    background: none; box-shadow: none; color: #4d6b7c;
+    font: 600 16px var(--display, "Trebuchet MS", Arial, sans-serif);
+    cursor: pointer;
+}
+.login-card .login-cancel[hidden] { display: none; }
+.login-card .login-cancel:hover { background: #eaf6fb; color: var(--deep, #0E3850); transform: none; }
+.login-card .login-cancel:focus-visible { outline: 3px solid var(--sun, #ff8b00); outline-offset: 2px; }
+
+
+/* ================= Ô TÊN Ở GÓC TRÁI TRÊN ================= */
+.player { position: relative; flex: none; }
+
+.player .player-chip {
+    display: flex; align-items: center; gap: 10px;
+    max-width: 230px; margin: 0; padding: 5px 14px 5px 5px;
+    border: 0; border-radius: 999px;
+    background: rgba(14, 56, 80, .92); color: #fff;
+    font: 700 17px/1 var(--display, "Trebuchet MS", Arial, sans-serif);
+    box-shadow: 0 6px 16px rgba(6, 40, 58, .25);
+    cursor: pointer;
+    transition: transform .2s, background .2s;
+}
+.player .player-chip:hover { background: #0E3850; transform: scale(1.05); }
+.player .player-chip:focus-visible { outline: 3px solid var(--gold, #FDB515); outline-offset: 3px; }
+
+.player-avatar {
+    flex: none; width: 34px; height: 34px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--gold, #FDB515); color: var(--deep, #0E3850);
+    font: 800 19px/1 var(--display, "Trebuchet MS", Arial, sans-serif);
+}
+.player-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-caret { flex: none; font-size: 12px; opacity: .75; }
+
+/* trong thanh navbar (index.html): nằm bên trái logo, nền trong suốt cho hợp thanh mờ */
+.navbar > .player { margin-right: 22px; }
+.navbar .player .player-chip { background: rgba(255, 255, 255, .16); box-shadow: none; }
+.navbar .player .player-chip:hover { background: rgba(255, 255, 255, .26); }
+
+/* trang không có navbar (game.html): nổi ở góc trái trên, ngay bên phải thanh menu */
+.player.floating { position: fixed; top: 14px; left: 116px; z-index: 1; }
+.has-player .game-grid { padding-top: 70px; }
+
+.player-menu {
+    position: absolute; top: calc(100% + 8px); left: 0; z-index: 5;
+    width: max-content; min-width: 100%;
+    padding: 6px; border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(6, 40, 58, .3);
+}
+.player-menu[hidden] { display: none; }
+.player .player-menu-item {
+    display: block; width: 100%; margin: 0; padding: 10px 14px;
+    border: 0; border-radius: 10px;
+    background: none; box-shadow: none; color: var(--deep, #0E3850);
+    font: 700 16px var(--display, "Trebuchet MS", Arial, sans-serif);
+    text-align: left; cursor: pointer;
+    transition: background .15s;
+}
+.player .player-menu-item:hover { background: #eaf6fb; transform: none; }
+.player .player-menu-item:focus-visible { outline: 3px solid var(--sun, #ff8b00); outline-offset: -3px; }
+
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+    .player .player-chip { max-width: 170px; font-size: 15px; }
+    .navbar > .player { margin-right: 12px; }
+}
+@media (max-width: 700px) {
+    /* navbar đã chật: ô tên tụt xuống ngay dưới thanh, vẫn ở góc trái */
+    .navbar > .player { position: absolute; top: calc(100% + 8px); left: 4px; margin: 0; }
+    .navbar .player .player-chip { background: rgba(14, 56, 80, .9); }
+    .player.floating { top: 10px; left: 76px; }
+    .has-player .game-grid { padding-top: 64px; }
+    .login-card { padding: 32px 22px 28px; }
+}

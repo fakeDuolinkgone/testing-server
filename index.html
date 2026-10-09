@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>HOME - normaFix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/englishCSS.css">
+    <script src="JS/common/user.js"></script>
+</head>
+
+
+
+
+<body spellcheck="false">
+    <button id="settingsBtn" class="hidden" onclick="openSettings()">⚙️</button>
+
+
+    <div class="overlay" id="overlay">
+        <div class="popup" id="popup"></div>
+    </div>
+
+
+
+
+
+
+    <header class="navbar">
+        <div class="logo">
+            normaFix
+        </div>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="active">Trang chủ</a>
+            <a href="game.html">Học</a>
+            <a href="room.html">Tạo phòng</a>
+            <a href="document.html">Tài liệu</a>
+        </nav>
+    </header>
+
+
+
+
+
+
+
+    <section class="hero">
+
+        <div class="hero-left">
+            <img class="hero-image" src="pics/bong.png" alt="Hero Image">
+        </div>
+
+        <div class="hero-right">
+            <h1 class="hero-title">
+                normaFix
+            </h1>
+            <p class="hero-subtitle">
+                Learning through<br>games
+            </p>
+        </div>
+
+        <div class="scroll-down">
+            Scroll<br>down
+        </div>
+
+    </section>
+
+
+
+
+
+    <section class="intro-section">
+
+        <div class="intro-left">
+            <p>
+                Build your vocabulary one quick game at a time.
+            </p>
+            <button class="start-btn" onclick="location.href='game.html'">
+                START
+            </button>
+        </div>
+
+        <div class="intro-right">
+            <img src="pics/soc.png" alt="Image 2">
+        </div>
+
+    </section>
+
+
+
+
+
+
+
+
+
+    <section class="room-section">
+
+        <div class="room-left">
+            <img class="room-image" src="pics/phong.jpg" alt="Room">
+        </div>
+
+        <div class="room-right">
+
+            <p class="room-text">
+                Making a room with friends
+                and study together.
+            </p>
+
+            <button class="create-btn" onclick="location.href='room.html'">
+                CREATE
+            </button>
+
+        </div>
+    </section>
+
+
+
+
+
+
+    <section class="document-section">
+
+        <div class="document-box">
+
+            <div class="document-left">
+                <img src="pics/cuc_quan.jpg" alt="">
+            </div>
+
+            <div class="document-right">
+                <p class="document-text">
+                    Word lists and study notes in one place.
+                </p>
+
+                <button class="enter-btn" onclick="location.href='document.html'">
+                    ENTER
+                </button>
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <footer class="footer">
+
+        <h2 class="footer-logo">
+            normaFix
+        </h2>
+
+        <p class="footer-text">
+            Learning through games.
+        </p>
+
+        <p class="footer-copy">
+            © 2026 normaFix. All rights reserved.
+        </p>
+
+    </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <script src="JS/game.js"></script>
+
+    <audio id="sound-correct" src="audio/correct.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="audio/wrong.mp3" preload="auto"></audio>
+    <audio id="sound-finish" src="audio/finish.mp3" preload="auto"></audio>
+
+</body>
+
+</html>

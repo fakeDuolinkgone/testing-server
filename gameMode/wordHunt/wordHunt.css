@@ -1,0 +1,383 @@
+:root {
+    --sea: #31A7C9;
+    --deep: #0E3850;
+    --sun: #ff8b00;
+    --gold: #FDB515;
+    --sky: #9ed8ff;
+    --line: #dcecf3;
+    --bad: #c93636;
+    --display: "Baloo 2", "Trebuchet MS", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--sea);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--deep);
+}
+
+/* ---------- background bubbles (same idea as Word Chain) ---------- */
+.bubbles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bubbles span {
+    position: absolute;
+    bottom: -80px;
+    border: 5px solid rgba(255, 255, 255, .22);
+    border-radius: 50%;
+    animation: rise linear infinite;
+}
+
+@keyframes rise {
+    to {
+        transform: translateY(-120vh);
+    }
+}
+
+/* ---------- layout ---------- */
+.wh {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+
+.wh-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.wh-back {
+    width: 48px;
+    height: 48px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: var(--deep);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.wh-timer {
+    flex: 1;
+    height: 16px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .35);
+    overflow: hidden;
+}
+
+.wh-timer-fill {
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    transition: width .25s linear, background .3s;
+}
+
+.wh-timer-fill.urgent {
+    background: var(--gold);
+}
+
+.wh-seconds {
+    min-width: 52px;
+    text-align: right;
+    font: 800 34px var(--display);
+    color: #fff;
+}
+
+.wh-play {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 20px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 24px;
+}
+
+/* the one loud element: the letter */
+.wh-letter {
+    flex: none;
+    width: 200px;
+    height: 200px;
+    display: grid;
+    place-items: center;
+    background: var(--sun);
+    color: #fff;
+    font: 800 150px/1 var(--display);
+    border-radius: 28px;
+    transform: rotate(-3deg);
+    box-shadow: 0 8px 0 rgba(14, 56, 80, .25);
+}
+
+.wh-side {
+    flex: 1;
+    min-width: 0;
+}
+
+.wh-prompt {
+    margin: 0 0 14px;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.wh-prompt b {
+    color: var(--sun);
+}
+
+.wh-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+#wordInput {
+    flex: 1;
+    min-width: 0;
+    height: 56px;
+    padding: 0 16px;
+    font-size: 22px;
+    color: var(--deep);
+    border: 3px solid var(--sky);
+    border-radius: 16px;
+}
+
+#wordInput:focus {
+    outline: none;
+    border-color: var(--deep);
+}
+
+#wordInput:disabled {
+    background: #f1f6f8;
+}
+
+#wordInput.shake {
+    animation: shake .3s;
+    border-color: var(--bad);
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(-6px);
+    }
+
+    75% {
+        transform: translateX(6px);
+    }
+}
+
+.wh-btn {
+    height: 56px;
+    padding: 0 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--deep);
+    color: #fff;
+    border: 0;
+    border-radius: 16px;
+    font: bold 18px Arial, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .2s;
+}
+
+.wh-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.wh-btn:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.wh-btn:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
+.wh-btn-big {
+    height: 64px;
+    padding: 0 36px;
+    font-size: 22px;
+    border-radius: 40px;
+    background: var(--sun);
+}
+
+.wh-btn-alt {
+    background: var(--deep);
+}
+
+.wh-notice {
+    min-height: 24px;
+    margin: 10px 0;
+    color: var(--bad);
+    font-weight: bold;
+}
+
+.wh-stats {
+    display: flex;
+    gap: 24px;
+    font-size: 18px;
+}
+
+.wh-stats b {
+    font: 800 26px var(--display);
+}
+
+/* ---------- word list ---------- */
+.wh-words {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    text-align: left;
+}
+
+.wh-words li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+}
+
+.wh-words li.pop {
+    animation: pop .25s;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(.92);
+        opacity: 0;
+    }
+}
+
+.wh-words strong {
+    font-size: 20px;
+}
+
+.wh-words span {
+    flex: 1;
+    min-width: 0;
+    color: #4a6572;
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wh-words em {
+    font-style: normal;
+    font-weight: bold;
+    color: var(--sun);
+}
+
+/* ---------- overlays ---------- */
+.wh-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(14, 56, 80, .8);
+}
+
+.wh-overlay.hidden {
+    display: none;
+}
+
+.wh-card {
+    width: 100%;
+    max-width: 60%;
+    max-height: 70%;
+    overflow: auto;
+    padding: 28px;
+    background: #fff;
+    border-radius: 24px;
+    text-align: center;
+}
+
+.wh-card h1 {
+    margin: 0 0 16px;
+    font: 800 36px var(--display);
+}
+
+.wh-card h2 {
+    margin: 24px 0 0;
+    font: 600 20px var(--display);
+    text-align: left;
+}
+
+.wh-card .wh-letter {
+    margin: 0 auto 20px;
+}
+
+.wh-rules {
+    margin: 0 0 20px;
+    line-height: 1.5;
+}
+
+.wh-big-score {
+    margin: 0 0 8px;
+    font: 800 28px var(--display);
+    color: var(--sun);
+}
+
+.wh-big-score span {
+    font-size: 56px;
+}
+
+.wh-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 28px;
+}
+
+@media (max-width: 560px) {
+    .wh-play {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .wh-letter {
+        width: 140px;
+        height: 140px;
+        font-size: 100px;
+    }
+
+    .wh-stats {
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .bubbles span,
+    .wh-words li.pop,
+    #wordInput.shake {
+        animation: none;
+    }
+
+    .wh-timer-fill,
+    .wh-btn {
+        transition: none;
+    }
+}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Chain</title>
+
+    <link rel="stylesheet" href="wordChain.css">
+</head>
+
+
+
+
+
+<body spellcheck="false">
+
+
+    <div class="result-screen" id="resultScreen">
+        <div class="result-box">
+            <h1 id="resultTitle">
+                RESULT
+            </h1>
+            <p id="resultReason"></p>
+            <p id="resultScore"></p>
+            <button onclick="restartGame()" class="restartGame-btn">
+                Chơi lại
+            </button>
+
+            <button class="restartGame-btn" onclick="location.href='../../game.html'">
+                Quay về
+            </button>
+        </div>
+
+        <div class="result-meaning">
+            <h2>Lịch Sử Từ Vựng</h2>
+            <p id="resultWord"></p>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Background Bubble -->
+    <div class="bubble-container">
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+    </div>
+
+
+
+
+
+
+    <div class="game-wrapper">
+        <!-- ================= SETTINGS ================= -->
+        <div class="settings-overlay" id="settingsOverlay">
+
+            <div class="settings-box">
+
+                <h2>CÀI ĐẶT</h2>
+
+                <button class="settings-btn" id="continueBtn">
+                    ▶ Tiếp tục
+                </button>
+
+                <button class="settings-btn" id="restartSettingsBtn">
+                    🔄 Chơi lại
+                </button>
+
+                <button class="settings-btn" id="exitSettingsBtn">
+                    🚪 Thoát
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!--==================THANH STREAK===================-->
+        <div class="streak-box" id="streakBox">
+            <div class="streak-fill" id="streakFill"></div>
+            <div class="streak-text" id="streakText">
+                STREAK x0
+            </div>
+        </div>
+
+
+
+
+
+        <!--=====================GAME===================-->
+        <div class="wc-container">
+
+
+
+
+            <!-- Top Bar -->
+            <div class="wc-top">
+                <div class="player-life">
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Life" width="40" height="40"></span>
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Life" width="40" height="40"></span>
+                </div>
+                <div class="timer-box">
+                    <div class="timer" id="timer">
+                        30s
+                    </div>
+                    <div class="mistake" id="mistake">
+                        ❌ 0/5
+                    </div>
+                </div>
+                <div class="top-icon">
+                    <button id="chatBtn"><img src="../../pics/chatting icon.png" alt="Chat" width="40" height="40" style="margin-right: 10px;"></button>
+                    <button id="settingBtn"><img src="../../pics/setting icon.png" alt="Settings" width="40" height="40"style="margin-right: 10px;"></button>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- Chat Area -->
+            <div class="chat-area" id="chatArea">
+                <!-- Player -->
+                <div class="message left"></div>
+                <!-- AI -->
+                <div class="message right"></div>
+            </div>
+
+
+
+
+
+            <!-- Input -->
+            <div class="input-area">
+                <input id="wordInput" type="text" placeholder="Input here">
+                <button class="submit-button">Submit</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <audio id="sound-correct" src="../../audio/correct.mp3"></audio>
+    <audio id="sound-wrong" src="../../audio/wrong.mp3"></audio>
+    <audio id="sound-finish" src="../../audio/finish.mp3"></audio>
+
+
+    <script src="../../JS/common/audio.js"></script>
+
+    <script src="../../data/wordChainData.js"></script>
+    <script src="wordChain.js"></script>
+</body>
+
+</html>

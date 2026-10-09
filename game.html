@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>GAME - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="CSS/englishCSS.css">
+  <script src="JS/common/user.js"></script>
+</head>
+
+
+
+
+<body spellcheck="false">
+
+
+
+
+
+  <div class="container">
+    <aside class="sidebar">
+      <button class="menu-btn">☰</button>
+      <div class="menu-list">
+        <div class="menu-item">
+          <span class="letter" onclick="location.href='index.html'">B</span>
+          <span class="text">Back</span>
+        </div>
+        <div class="menu-item">
+          <span class="letter">R</span>
+          <span class="text">Room</span>
+        </div>
+        <div class="menu-item">
+          <span class="letter">D</span>
+          <span class="text">Document</span>
+        </div>
+        <div class="menu-item">
+          <span class="letter">S</span>
+          <span class="text">Setting</span>
+        </div>
+      </div>
+    </aside>
+
+
+
+
+
+
+    <div class="game-grid">
+      <div class="game-card learn" onclick="startLearn()">
+        <div class="play-icon">▶</div>
+        <h2>LEARN</h2>
+      </div>
+      <div class="wordhunt game-card" onclick="location.href='gameMode/wordHunt/wordHunt.html'">
+        <h2>WORDHUNT</h2>
+      </div>
+      <div class="hangman game-card">
+        <h2>HANGMAN</h2>
+      </div>
+      <div class="soon game-card">
+        <h2>SOON</h2>
+      </div>
+      <div class="wordchain game-card" onclick="location.href='gameMode/wordChain/wordChain.html'">
+        <h2>WORDCHAIN</h2>
+      </div>
+    </div>
+
+
+
+
+
+    <!--========================CÁI MÀN HÌNH CỦA GAME.HTML NÈ. CHÚ Ý TAO ĐI=======================-->
+    <div id="learnScreen" class="learn-screen">
+      <div class="learn-progress">
+        <div id="progressMessage" class="progress-message">
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+
+
+
+
+
+      <!--LOADING SCEEN-->
+      <div id="loadingScreen" class="loading-screen">
+        <div class="loading-box">
+          <div class="loading-spinner"></div>
+          <h2 id="loadingTitle">Loading...</h2>
+        </div>
+      </div>
+
+
+
+
+      <!--LEARN BOX HERE-->
+      <div class="learn-box">
+        <div class="typing-header">
+          <div id="questionCount">1 / 10</div>
+          <div id="timer">--</div>
+        </div>
+
+
+
+
+        <!-- CHẾ ĐỘ SPEED TYPING -->
+        <div class="typing-word">
+          <span id="typingWord"></span>
+          <span id="typingClass" class="typing-class"></span>
+        </div>
+        <p id="typingMeaning" class="typing-meaning"></p>
+        <input id="typingInput" type="text" autocomplete="off" placeholder="Hãy viết lại từ vựng trên">
+
+
+
+
+
+
+
+        <!--CHẾ ĐỘ TRẮC NGHIỆM-->
+        <div id="choiceBox" class="choice-box">
+          <button class="choice-btn"></button>
+          <button class="choice-btn"></button>
+          <button class="choice-btn"></button>
+          <button class="choice-btn"></button>
+        </div>
+
+
+
+        <!--CHẾ ĐỘ NỐI CỘT-->
+        <div id="matchBox" class="match-box">
+          <div id="matchLeft" class="match-column"></div>
+          <div id="matchRight" class="match-column"></div>
+        </div>
+
+
+
+
+        <!-- CHẾ ĐỘ ĐIỀN VÀO CHỖ TRỐNG -->
+        <div id="sentenceBox" class="sentence-box">
+
+          <div id="sentenceExample" class="sentence-example">
+            Learning English has many ______.
+          </div>
+
+          <div id="sentenceHint" class="sentence-hint">
+            (n) : lợi ích
+          </div>
+
+          <div class="sentence-choice">
+
+            <button id="sentenceBtn1" class="sentence-btn">
+              benefit
+            </button>
+
+            <button id="sentenceBtn2" class="sentence-btn">
+              advantages
+            </button>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="data/englishVocabularys.js"></script>
+
+  <!--=============QUESTION TYPE===============-->
+  <script src="JS/questionType/speedTyping.js"></script>
+  <script src="JS/questionType/choice.js"></script>
+  <script src="JS/questionType/match.js"></script>
+  <script src="JS/questionType/sentenceFill.js"></script>
+
+
+
+
+
+
+
+
+  <script src="JS/games/game.js"></script>
+
+  <script src="JS/common/audio.js"></script>
+
+
+  <audio id="sound-correct" src="audio/correct.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="audio/wrong.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="audio/finish.mp3" preload="auto"></audio>
+
+</body>
+
+</html>

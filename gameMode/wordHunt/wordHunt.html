@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Hunt - normaFix</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wordHunt.css">
+</head>
+
+<body spellcheck="false">
+    <div class="bubbles" id="bubbles"></div>
+
+    <main class="wh">
+        <header class="wh-top">
+            <a class="wh-back" href="../../game.html" aria-label="Quay về">←</a>
+            <div class="wh-timer">
+                <div class="wh-timer-fill" id="timerFill"></div>
+            </div>
+            <div class="wh-seconds" id="seconds">60</div>
+        </header>
+
+        <section class="wh-play">
+            <div class="wh-letter" id="letter">A</div>
+
+            <div class="wh-side">
+                <p class="wh-prompt">Gõ thật nhiều từ bắt đầu bằng chữ <b id="promptLetter">A</b></p>
+                <div class="wh-input-row">
+                    <input id="wordInput" type="text" placeholder="Nhập từ ở đây" maxlength="30" autocomplete="off"
+                        autocapitalize="off" autocorrect="off" disabled>
+                    <button class="wh-btn" id="submitBtn" type="button">Gửi</button>
+                </div>
+                <p class="wh-notice" id="notice" role="status"></p>
+                <div class="wh-stats">
+                    <span>Điểm <b id="score">0</b></span>
+                    <span>Số từ <b id="count">0</b></span>
+                </div>
+            </div>
+        </section>
+
+        <ul class="wh-words" id="wordList"></ul>
+    </main>
+
+    <!-- Màn hình bắt đầu: cho người chơi biết chữ cái -->
+    <div class="wh-overlay" id="readyScreen">
+        <div class="wh-card">
+            <h1>Chữ cái của bạn</h1>
+            <div class="wh-letter" id="readyLetter">A</div>
+            <p class="wh-rules">Bạn có 60 giây. Mỗi từ cần ít nhất 3 chữ cái. Từ càng dài, điểm càng cao.</p>
+            <button class="wh-btn wh-btn-big" id="startBtn" type="button" disabled>Đang tải từ điển…</button>
+        </div>
+    </div>
+
+    <!-- Màn hình kết quả -->
+    <div class="wh-overlay hidden" id="resultScreen">
+        <div class="wh-card">
+            <h1 id="resultTitle">Hết giờ!</h1>
+            <p class="wh-big-score"><span id="resultScore">0</span> điểm</p>
+            <p class="wh-rules" id="resultInfo"></p>
+
+            <h2>Từ bạn đã tìm được</h2>
+            <ul class="wh-words" id="resultFound"></ul>
+
+            <h2>Còn nhiều từ khác nữa, ví dụ</h2>
+            <ul class="wh-words" id="resultMissed"></ul>
+
+            <div class="wh-actions">
+                <button class="wh-btn wh-btn-big" id="restartBtn" type="button">Chơi lại</button>
+                <a class="wh-btn wh-btn-big wh-btn-alt" href="../../game.html">Quay về</a>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sound-correct" src="../../audio/correct.mp3"></audio>
+    <audio id="sound-wrong" src="../../audio/wrong.mp3"></audio>
+    <audio id="sound-finish" src="../../audio/finish.mp3"></audio>
+
+    <script src="../../JS/common/audio.js"></script>
+    <script src="../../data/wordChainData.js"></script>
+    <script src="wordHunt.js"></script>
+</body>
+
+</html>

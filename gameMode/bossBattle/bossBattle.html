@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>BOSS BATTLE - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="bossBattle.css">
+</head>
+
+<body spellcheck="false">
+
+  <!-- ========== MÀN BẮT ĐẦU ========== -->
+  <section id="bbStart" class="bb-screen">
+    <div class="bb-card bb-center">
+      <h1>⚔️ BOSS BATTLE</h1>
+      <p>Cả lớp cùng đánh bại boss bằng điểm từ vựng!</p>
+      <label class="bb-label">Số người chơi (giả lập)
+        <input id="bbN" type="number" min="1" max="40" value="6">
+      </label>
+      <p id="bbInfo" class="bb-info"></p>
+      <button id="bbGo" class="bb-btn primary">▶ Bắt đầu</button>
+      <button id="bbBack" class="bb-btn">🏠 Về trang chủ</button>
+    </div>
+  </section>
+
+  <!-- ========== MÀN ĐÁNH BOSS ========== -->
+  <main id="bbBattle" class="bb-screen bb-battle" hidden>
+    <aside class="bb-card bb-boss">
+      <div id="bbBossArt" class="bb-boss-art"></div>
+      <h2 id="bbBossName"></h2>
+      <div class="bb-hp"><div id="bbHpFill"></div><span id="bbHpText"></span></div>
+      <p id="bbMyDmg" class="bb-dmg">Sát thương của bạn: 0</p>
+      <p id="bbTeam" class="bb-team"></p>
+    </aside>
+
+    <section class="bb-card bb-stage">
+      <header class="bb-stage-head">
+        <span id="bbStageName"></span>
+        <b id="bbTime"></b>
+      </header>
+      <div class="bb-timebar"><div id="bbTimeFill"></div></div>
+      <div id="bbArena" class="bb-arena"></div>
+    </section>
+
+    <div id="bbIntro" class="bb-intro" hidden></div>
+  </main>
+
+  <!-- ========== MÀN KẾT QUẢ ========== -->
+  <section id="bbResult" class="bb-screen" hidden>
+    <div class="bb-card bb-center bb-wide">
+      <h1 id="bbBanner"></h1>
+      <p id="bbBannerSub" class="bb-info"></p>
+      <ul id="bbRank" class="bb-rank"></ul>
+      <div class="bb-actions">
+        <button id="bbAgain" class="bb-btn primary">🔄 Chơi lại</button>
+        <button id="bbHome" class="bb-btn">🏠 Về trang chủ</button>
+      </div>
+    </div>
+  </section>
+
+  <audio id="sound-correct" src="../../audio/correct.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="../../audio/wrong.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="../../audio/finish.mp3" preload="auto"></audio>
+
+  <script src="../../data/englishVocabularys.js"></script>
+  <script src="../../JS/common/audio.js"></script>
+  <script src="bossCore.js"></script>
+  <script src="bossGames.js"></script>
+  <script src="bossBattle.js"></script>
+</body>
+
+</html>

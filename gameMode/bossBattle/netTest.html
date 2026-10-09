@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BossBattle - thử kết nối</title>
+    <style>
+        body { margin: 0; padding: 20px; font: 16px/1.45 Arial, sans-serif; background: #eaf6fb; color: #0E3850; }
+        main { max-width: 760px; margin: 0 auto; }
+        h1 { margin: 0 0 4px; font-size: 26px; }
+        .hint { margin: 0 0 16px; color: #4d6b7c; }
+        .box { margin-bottom: 14px; padding: 14px 16px; border-radius: 14px; background: #fff; box-shadow: 0 3px 10px rgba(14, 56, 80, .1); }
+        #phase { font-weight: 700; font-size: 18px; }
+        .hp { position: relative; height: 30px; border-radius: 15px; background: #d9e6ec; overflow: hidden; }
+        #hpFill { height: 100%; width: 100%; background: #d64545; transition: width .4s; }
+        #hpText { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        button { padding: 10px 18px; border: 0; border-radius: 10px; background: #ff8b00; color: #fff; font-weight: 700; font-size: 16px; cursor: pointer; }
+        button:disabled { background: #b8c9d2; cursor: not-allowed; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 6px 8px; text-align: left; border-bottom: 1px solid #e3eef3; }
+        .left { opacity: .5; text-decoration: line-through; }
+        #log { margin: 0; max-height: 220px; overflow: auto; font: 13px/1.5 Consolas, monospace; white-space: pre-wrap; }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>BossBattle - thử kết nối</h1>
+        <p class="hint">Trang thử, không phải game thật: bấm "+1 điểm" thay cho việc trả lời đúng một câu.
+            Mở bằng <b>?solo=1</b> để chơi với bot (không cần Firebase), thêm <b>&amp;fast=1</b> để rút ngắn thời gian.
+            Hoặc vào từ room.html để thử nhiều người.</p>
+
+        <div class="box">
+            <div id="phase">Đang kết nối…</div>
+            <div id="stageInfo"></div>
+        </div>
+        <div class="box">
+            <div class="hp"><div id="hpFill"></div><div id="hpText"></div></div>
+        </div>
+        <div class="box row">
+            <button id="startBtn" type="button" hidden>Bắt đầu ván</button>
+            <button id="scoreBtn" type="button" disabled>+1 điểm</button>
+            <button id="doneBtn" type="button" disabled>Xong giai đoạn</button>
+        </div>
+        <div class="box"><table id="board"></table></div>
+        <div class="box"><pre id="log"></pre></div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="../../JS/net/firebase-config.js"></script>
+    <script src="../../data/englishVocabularys.js"></script>
+    <script src="../../JS/net/boss-rules.js"></script>
+    <script src="../../JS/net/boss-net.js"></script>
+    <script>
+        (function () {
+            var $ = function (id) { return document.getElementById(id); };
+            var q = new URLSearchParams(location.search);
+            var net, stage = null, myScore = 0;
+
+            if (q.get("fast")) {      // rút ngắn thời gian để thử cho nhanh
+                BossRules.FIRST_STAGE_DELAY_MS = 1500; BossRules.BREAK_MS = 1500;
+                BossRules.MIN_SECONDS = 8; BossRules.MAX_SECONDS = 12; BossRules.SECONDS_STEP = 1;
+            }
+
+            function log(t) { var l = $("log"); l.textContent += new Date().toLocaleTimeString() + "  " + t + "\n"; l.scrollTop = l.scrollHeight; }
+
+            function renderScores(s) {
+                var pct = s.effectiveMaxHp > 0 ? Math.max(0, s.hp / s.effectiveMaxHp * 100) : 0;
+                $("hpFill").style.width = pct + "%";
+                $("hpText").textContent = "Boss " + s.hp + " / " + s.effectiveMaxHp + " máu";
+
+                var board = $("board");
+                board.textContent = "";
+                var head = board.insertRow();
+                ["#", "Người chơi", "Sát thương"].forEach(function (t) { var th = document.createElement("th"); th.textContent = t; head.appendChild(th); });
+                s.ranking.forEach(function (e) {
+                    var tr = board.insertRow();
+                    if (e.left) tr.className = "left";
+                    // textContent: tên người dùng nhập vào không bao giờ thành HTML
+                    [e.rank, e.name + (e.id === net.id ? " (bạn)" : ""), e.total].forEach(function (v) { tr.insertCell().textContent = v; });
+                });
+            }
+
+            function tickUI() {
+                if (!net || !stage) return;
+                var now = net.serverNow(), s = stage;
+                var playing = now >= s.startAt && now < s.endsAt;
+                if (now < s.startAt) $("phase").textContent = "Giai đoạn " + s.stage + " bắt đầu sau " + Math.ceil((s.startAt - now) / 1000) + "s";
+                else if (playing) $("phase").textContent = "Giai đoạn " + s.stage + "/" + s.stageCount + " - còn " + Math.ceil((s.endsAt - now) / 1000) + "s";
+                else $("phase").textContent = "Giai đoạn " + s.stage + " đã hết giờ, đang chốt…";
+                $("scoreBtn").disabled = !playing || myScore >= s.questions;
+                $("doneBtn").disabled = !playing;
+            }
+
+            function wire() {
+                net.onPlayersChange(function (ps) {
+                    $("startBtn").hidden = !(net.isHost() && net.room.state === "lobby");
+                    log("Trong phòng " + net.code + ": " + ps.map(function (p) { return p.name + (p.isHost ? "*" : ""); }).join(", "));
+                });
+                net.onGameStart(function (g) { log("Ván bắt đầu: boss #" + g.boss + ", " + g.stageCount + " giai đoạn, " + g.maxHp + " máu"); $("startBtn").hidden = true; });
+                net.onStageStart(function (st) {
+                    stage = st; myScore = 0;
+                    $("stageInfo").textContent = st.words.length + " từ dùng chung, " + st.durationSec + " giây. Thứ tự riêng của bạn: " +
+                        BossRules.shuffleFor(net.id, "q:" + st.stage, st.words.map(function (w) { return w.word; })).slice(0, 3).join(", ") + "…";
+                    log("Giai đoạn " + st.stage + "/" + st.stageCount + " bắt đầu sau " + Math.round(st.msUntilStart / 1000) + "s");
+                });
+                net.onScoresUpdate(renderScores);
+                net.onStageEnd(function (e) { log("Hết giai đoạn " + e.stage + ": gây " + e.damage + " sát thương, boss còn " + e.hp); });
+                net.onPlayerLeave(function (p) { log(p.name + " đã rời ván, boss bớt " + p.reduction + " máu"); });
+                net.onGameEnd(function (e) {
+                    $("phase").textContent = e.outcome === "win" ? "THẮNG! Boss đã gục." : "THUA. Boss còn " + e.hp + " máu.";
+                    $("scoreBtn").disabled = $("doneBtn").disabled = true;
+                    log("MVP: " + e.mvp.name + " (" + e.mvp.total + " sát thương)");
+                    stage = null;
+                });
+                net.onRemoved(function () { log("Bạn bị mất kết nối với phòng."); });
+
+                $("startBtn").onclick = function () { net.startGame().catch(function (e) { log("Không bắt đầu được: " + e.message); }); };
+                $("scoreBtn").onclick = function () { myScore++; net.sendScore(stage.stage, myScore); tickUI(); };
+                $("doneBtn").onclick = function () { net.sendDone(stage.stage); $("doneBtn").disabled = true; };
+                setInterval(tickUI, 250);
+            }
+
+            async function boot() {
+                try {
+                    if (q.get("solo")) {
+                        net = await BossNet.createSolo({ playerName: "Bạn", bots: +q.get("bots") || 3 });
+                        log("Chế độ solo: bạn là chủ phòng, có " + net.bots.length + " bot.");
+                        wire();
+                        return;
+                    }
+                    net = BossNet.create();
+                    var back = await net.resume();
+                    if (!back) { $("phase").textContent = "Chưa ở trong phòng nào. Hãy tạo hoặc vào phòng ở room.html."; return; }
+                    wire();
+                } catch (e) { $("phase").textContent = "Không kết nối được: " + e.message; }
+            }
+            boot();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,857 @@
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+
+
+
+
+
+/* ================= Sidebar ================= */
+.sidebar {
+  width: 100px;
+  background: #222;
+  color: white;
+  overflow: hidden;
+  transition: .3s;
+}
+
+
+
+
+
+.sidebar.open {
+  width: 240px;
+}
+
+
+
+
+
+.menu-btn {
+  width: 80%;
+  height: 80px;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+
+
+
+
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0px;
+}
+
+
+
+
+
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  padding-left: 30%;
+  cursor: pointer;
+}
+
+
+
+
+
+.menu-item:hover {
+  background: #2f2f2f;
+}
+
+
+
+
+
+.letter {
+  width: 35px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #ff9800;
+  flex-shrink: 0;
+}
+
+
+
+
+
+.text {
+  margin-left: 18px;
+  font-size: 22px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: .3s;
+}
+
+
+
+
+.sidebar.open .text {
+  opacity: 1;
+}
+
+
+
+
+
+
+
+/* ================= Main ================= */
+.game-grid {
+  width: calc(100vw - 70px);
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.7fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 30px;
+  padding: 35px;
+  box-sizing: border-box;
+  padding: 40px;
+}
+
+
+
+
+.game-card {
+  border-radius: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .25s;
+}
+
+
+
+.game-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, .18);
+}
+
+
+
+
+
+.learn.game-card {
+  background: #ffb400;
+  grid-row: 1 / span 2;
+  flex-direction: column;
+}
+
+
+.play-icon {
+  font-size: 120px;
+  color: white;
+}
+
+.learn h2 {
+  color: white;
+  font-size: 82px;
+  margin-top: 20px;
+
+}
+
+
+
+
+
+
+
+
+.wordhunt.game-card {
+  background: #9ed8ff;
+  grid-column: 2;
+  grid-row: 1;
+
+
+  align-items: center;
+}
+
+.wordhunt h2 {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+}
+
+
+
+
+
+
+
+.hangman.game-card {
+  background: #9ed8ff;
+  grid-row: 2;
+  grid-row-end: 3;
+
+
+  align-items: center;
+}
+
+.hangman h2 {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+.wordchain {
+  background: #9ed8ff;
+  grid-column: 2;
+
+
+}
+
+.wordchain h2 {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+.soon {
+  background: #9ed8ff;
+  grid-column: 1;
+
+
+}
+
+
+.soon h2 {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*=================LEARN SCREEN==============*/
+.learn-screen{
+    display:none;
+    flex:1;
+    width:100%;
+    height:100vh;
+    position:relative;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    background:#f7f7f7;
+}
+
+
+
+
+.learn-box {
+  width: 850px;
+  background: white;
+  border-radius: 30px;
+  padding: 45px;
+  box-sizing: border-box;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, .15);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*LOADING PAGE*/
+.loading-screen {
+  background-color: white;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease;
+  z-index: 999;
+}
+
+.loading-screen.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+
+}
+
+
+
+
+
+
+.loading-spinner {
+  width: 70px;
+  height: 70px;
+  border: 8px solid #ddd;
+  border-top: 8px solid #ffb400;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+
+
+
+.loading-box h2 {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+.loading-success{
+
+    font-size:34px;
+    font-weight:bold;
+    color:#32b24a;
+
+}
+
+.loading-subtitle{
+
+    margin-top:15px;
+    font-size:24px;
+    color:#666;
+
+}
+
+
+
+
+
+
+/*===============THANH TIẾN TRÌNH=============*/
+.learn-progress {
+  width: 700px;
+
+}
+
+
+
+.progress-message {
+  height: 28px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #666;
+  transition: .35s;
+}
+
+
+
+.progress-bar {
+  border: 2px solid  white;
+  width: 100%;
+  height: 12px;
+  background: #e7e7e7;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #ffb400;
+  transition: .35s;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*===============*SPEED TYPING*==============*/
+.typing-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+
+
+
+
+.typing-word {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+
+
+
+
+#typingWord {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+
+
+
+.typing-class {
+  font-size: 28px;
+  color: #666;
+  font-style: italic;
+}
+
+
+
+
+#typingInput {
+  width: 100%;
+  height: 70px;
+  border-radius: 18px;
+  border: 3px solid #dddddd;
+  font-size: 34px;
+  text-align: center;
+  outline: none;
+}
+
+
+
+
+#typingInput:focus {
+  border-color: #ffb400;
+}
+
+
+
+
+
+.typing-meaning {
+  text-align: center;
+  font-size: 28px;
+  color: #666;
+  margin-top: -10px;
+  margin-bottom: 45px;
+  font-style: italic;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*======================CHOICES=====================*/
+.choice-box {
+  display: none;
+  width: 100%;
+  margin-top: 35px;
+
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+
+
+
+.choice-btn {
+
+  height: 130px;
+  border: none;
+  border-radius: 18px;
+  background: #ececec;
+  color: #222;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+
+
+.choice-btn:hover {
+  background: #ffb400;
+  color: white;
+}
+
+
+
+.correct {
+  background: #4caf50 !important;
+  color: white;
+}
+
+
+
+.wrong {
+  background: #f44336 !important;
+  color: white;
+}
+
+
+
+
+
+
+
+
+/* ================= MATCH ================= */
+.match-box{
+    display:none;
+    width:100%;
+    margin-top:35px;
+
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+
+
+
+.match-column{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+
+
+
+
+.match-item{
+    height:70px;
+    background:#ececec;
+    border-radius:18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.25s;
+    user-select:none;
+}
+
+
+
+
+
+.match-item.selected{
+    background:#FDB515;
+    color:white;
+}
+
+
+
+
+.match-item.correct{
+    background:#4CAF50;
+    color:white;
+}
+
+.match-item.wrong{
+    background:#F44336;
+    color:white;
+}
+
+
+
+.match-item.fade{
+    opacity:0;
+    transform:scale(.8);
+    pointer-events:none;
+}
+
+
+
+
+
+
+
+
+
+
+/*================= SENTENCE FILL =================*/
+
+.sentence-box{
+
+    display:none;
+
+    width:100%;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+
+
+
+
+
+.sentence-example{
+
+    width:100%;
+
+    min-height:120px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    line-height:1.5;
+
+    margin-bottom:25px;
+
+}
+
+
+
+
+
+
+.sentence-hint{
+
+    font-size:28px;
+
+    color:#666;
+
+    margin-bottom:45px;
+
+}
+
+
+
+
+
+
+.sentence-choice{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+
+
+
+
+
+.sentence-btn{
+
+    height:120px;
+
+    border:none;
+
+    border-radius:22px;
+
+    background:#efefef;
+    color: black;
+    font-size:34px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+
+
+
+
+.sentence-btn:hover{
+
+    background:#ffb400;
+
+    color:white;
+
+}
+
+
+
+
+
+
+.sentence-btn.correct{
+
+    background:#4CAF50;
+
+    color:white;
+
+}
+
+
+
+
+
+
+.sentence-btn.wrong{
+
+    background:#F44336;
+
+    color:white;
+
+}
+/* ================= Game hover introductions ================= */
+.game-card {
+  position: relative;
+}
+
+.game-card::after {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: min(86%, 520px);
+  padding: 12px 18px;
+  box-sizing: border-box;
+  transform: translate(-50%, 12px);
+  border-radius: 16px;
+  background: rgba(34, 34, 34, .92);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease, visibility .22s ease;
+  z-index: 5;
+}
+
+.learn.game-card::after {
+  content: "Học từ vựng tiếng Anh qua các câu hỏi và nhiều chế độ luyện tập khác nhau.";
+}
+
+.wordhunt.game-card::after {
+  content: "Tìm và ghép các từ tiếng Anh để kiểm tra khả năng ghi nhớ từ vựng.";
+}
+
+.hangman.game-card::after {
+  content: "Đoán từ bí mật bằng cách chọn các chữ cái đúng trước khi hết lượt.";
+}
+
+.wordchain.game-card::after {
+  content: "Nối các từ với nhau để tạo thành chuỗi và rèn luyện vốn từ tiếng Anh.";
+}
+
+.soon.game-card::after {
+  content: "Chế độ game mới đang được phát triển. Hãy chờ những cập nhật tiếp theo!";
+}
+
+.game-card:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 700px) {
+  .game-card::after {
+    bottom: 14px;
+    width: 90%;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+}

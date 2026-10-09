@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng chơi - normaFix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/englishCSS.css">
+    <script src="JS/common/user.js"></script>
+</head>
+
+<body spellcheck="false" class="room-page">
+    <main class="room-wrap">
+        <a class="room-home" href="index.html">← Trang chủ</a>
+
+        <!-- Chưa vào phòng: tạo phòng hoặc nhập mã -->
+        <section id="viewEntry" class="room-card">
+            <h1>Phòng chơi</h1>
+            <p class="room-lead">Chơi BossBattle cùng bạn bè: một người tạo phòng, những người còn lại nhập mã để vào.</p>
+
+            <div id="setupNotice" class="room-notice" hidden></div>
+
+            <div class="room-choices">
+                <div class="room-choice room-choice-create">
+                    <h2>Tạo phòng</h2>
+                    <p>Bạn là chủ phòng và bấm bắt đầu khi mọi người đã vào đủ.</p>
+                    <button id="createBtn" class="room-btn" type="button">Tạo phòng mới</button>
+                </div>
+                <form id="joinForm" class="room-choice room-choice-join">
+                    <h2>Vào phòng</h2>
+                    <p>Nhập mã 6 ký tự do chủ phòng gửi.</p>
+                    <input id="codeInput" class="room-input" maxlength="6" placeholder="MÃ PHÒNG" autocomplete="off"
+                        aria-label="Mã phòng">
+                    <button class="room-btn room-btn-alt" type="submit">Vào phòng</button>
+                </form>
+            </div>
+            <div id="entryError" class="room-error" aria-live="polite"></div>
+        </section>
+
+        <!-- Đã vào phòng: sảnh chờ -->
+        <section id="viewLobby" class="room-card" hidden>
+            <p class="room-label">Mã phòng</p>
+            <div class="room-code-row">
+                <span id="roomCode" class="room-code"></span>
+                <button id="copyBtn" class="room-chip" type="button">Sao chép</button>
+            </div>
+
+            <ul id="playerList" class="room-players"></ul>
+            <p id="roomInfo" class="room-info"></p>
+
+            <div class="room-actions">
+                <button id="startBtn" class="room-btn" type="button" hidden>Bắt đầu</button>
+                <p id="waitText" class="room-wait" hidden>Đang chờ chủ phòng bắt đầu…</p>
+                <button id="leaveBtn" class="room-link" type="button">Rời phòng</button>
+            </div>
+            <div id="lobbyError" class="room-error" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <!-- Firebase (bản compat, chạy được cả khi mở bằng file://) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="JS/net/firebase-config.js"></script>
+    <script src="data/englishVocabularys.js"></script>
+    <script src="JS/net/boss-rules.js"></script>
+    <script src="JS/net/boss-net.js"></script>
+    <script src="JS/games/room.js"></script>
+</body>
+
+</html>

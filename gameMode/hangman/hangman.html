@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HANGMAN - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="hangman.css">
+</head>
+
+<body spellcheck="false">
+
+  <main class="hm">
+
+    <!-- ========== BÊN TRÁI: STICKMAN (11 nét) ========== -->
+    <section class="hm-panel hm-left">
+      <svg id="hmMan" viewBox="0 0 400 460" role="img" aria-label="Hình người treo cổ">
+        <path pathLength="1" d="M30 425H230" />
+        <path pathLength="1" d="M80 425V240" />
+        <path pathLength="1" d="M80 240V45" />
+        <path pathLength="1" d="M80 45H290" />
+        <path pathLength="1" d="M290 45V110" />
+        <circle pathLength="1" cx="290" cy="145" r="35" />
+        <path pathLength="1" d="M290 180V300" />
+        <path pathLength="1" d="M290 205L245 265" />
+        <path pathLength="1" d="M290 205L335 265" />
+        <path pathLength="1" d="M290 300L255 380" />
+        <path pathLength="1" d="M290 300L325 380" />
+      </svg>
+    </section>
+
+    <!-- ========== BÊN PHẢI: GAME + BẢNG KẾT QUẢ ========== -->
+    <section class="hm-panel hm-right">
+
+      <div id="hmPlay" class="hm-play">
+        <header class="hm-top">
+          <span id="hmStatus">0/10 - 60s</span>
+          <span id="hmWrong" class="hm-wrong">✖ 0/6</span>
+          <button id="hmGear" class="hm-gear" aria-label="Cài đặt"><img src="../../pics/setting icon.png" alt="Cài đặt" width="40" height="40"></button>
+        </header>
+
+        <div class="hm-hint">
+          <span id="hmClass"></span>
+          <p id="hmMeaning">Đang tải từ vựng...</p>
+        </div>
+
+        <div id="hmSlots" class="hm-slots"></div>
+        <div id="hmKeys" class="hm-keys"></div>
+      </div>
+
+      <div id="hmResult" class="hm-result" hidden>
+        <h2>Kết quả</h2>
+        <div class="hm-ring">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="trk" cx="100" cy="100" r="82" pathLength="100" />
+            <circle id="hmRing" class="fil" cx="100" cy="100" r="82" pathLength="100" />
+          </svg>
+          <div class="hm-ring-text">
+            <b id="hmPct">0%</b>
+            <small id="hmScore">0 / 10 từ</small>
+          </div>
+        </div>
+        <p id="hmRank" class="hm-rank"></p>
+        <ul id="hmList" class="hm-list"></ul>
+        <div class="hm-actions">
+          <button id="hmAgain" class="hm-btn primary">🔄 Chơi lại</button>
+          <button id="hmHome" class="hm-btn">🏠 Về trang chủ</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ========== SETTINGS ========== -->
+  <div id="hmOverlay" class="hm-overlay">
+    <div class="hm-box">
+      <h2>CÀI ĐẶT</h2>
+      <button id="hmContinue" class="hm-btn" style="background:#84C7EC">▶ Tiếp tục</button>
+      <button id="hmRestart" class="hm-btn" style="background:#FFD25C">🔄 Chơi lại</button>
+      <button id="hmExit" class="hm-btn" style="background:#ff8c8c">🚪 Thoát</button>
+    </div>
+  </div>
+
+  <audio id="sound-correct" src="../../audio/correct.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="../../audio/wrong.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="../../audio/finish.mp3" preload="auto"></audio>
+
+  <!-- Dữ liệu từ vựng: file .js dùng được cả khi mở bằng file:// -->
+  <script src="../../data/normaFixWords.js"></script>
+  <!-- Dự phòng nếu không có normaFixWords.js -->
+  <script src="../../data/englishVocabularys.js"></script>
+  <script src="../../JS/common/audio.js"></script>
+  <script src="hangman.js"></script>
+</body>
+
+</html>

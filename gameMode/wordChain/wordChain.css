@@ -1,0 +1,1211 @@
+#typingBox {
+    display: none;
+}
+
+
+
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #31A7C9;
+}
+
+
+
+
+
+
+/* ================= BACKGROUND ================= */
+.bubble-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bubble {
+    position: absolute;
+    bottom: -120px;
+    width: 28px;
+    height: 28px;
+    border: 6px solid rgba(255, 255, 255, .23);
+    border-radius: 50%;
+    animation: float 16s linear infinite;
+}
+
+.bubble:nth-child(1) {
+    left: 2%;
+    animation-duration: 12s;
+}
+
+.bubble:nth-child(2) {
+    left: 8%;
+    animation-duration: 17s;
+}
+
+.bubble:nth-child(3) {
+    left: 14%;
+    animation-duration: 15s;
+}
+
+.bubble:nth-child(4) {
+    left: 20%;
+    animation-duration: 13s;
+}
+
+.bubble:nth-child(5) {
+    left: 26%;
+    animation-duration: 18s;
+}
+
+.bubble:nth-child(6) {
+    left: 32%;
+    animation-duration: 14s;
+}
+
+.bubble:nth-child(7) {
+    left: 38%;
+    animation-duration: 16s;
+}
+
+.bubble:nth-child(8) {
+    left: 44%;
+    animation-duration: 12s;
+}
+
+.bubble:nth-child(9) {
+    left: 50%;
+    animation-duration: 15s;
+}
+
+.bubble:nth-child(10) {
+    left: 56%;
+    animation-duration: 17s;
+}
+
+.bubble:nth-child(11) {
+    left: 62%;
+    animation-duration: 13s;
+}
+
+.bubble:nth-child(12) {
+    left: 68%;
+    animation-duration: 18s;
+}
+
+.bubble:nth-child(13) {
+    left: 74%;
+    animation-duration: 15s;
+}
+
+.bubble:nth-child(14) {
+    left: 80%;
+    animation-duration: 16s;
+}
+
+.bubble:nth-child(15) {
+    left: 86%;
+    animation-duration: 12s;
+}
+
+.bubble:nth-child(16) {
+    left: 92%;
+    animation-duration: 17s;
+}
+
+.bubble:nth-child(17) {
+    left: 5%;
+    animation-duration: 19s;
+}
+
+.bubble:nth-child(18) {
+    left: 30%;
+    animation-duration: 20s;
+}
+
+.bubble:nth-child(19) {
+    left: 58%;
+    animation-duration: 14s;
+}
+
+.bubble:nth-child(20) {
+    left: 78%;
+    animation-duration: 19s;
+}
+
+
+@keyframes float {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+
+        transform: translateY(-120vh);
+    }
+}
+
+
+
+
+
+
+
+/* ================= CONTAINER ================= */
+.wc-container {
+    width: 1120px;
+    height: 670px;
+    background: white;
+    border-radius: 35px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+
+
+
+
+/* ================= TOP ================= */
+.wc-top {
+    height: 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.player-life {
+    display: flex;
+    gap: 18px;
+}
+
+.life {
+    font-size: 52px;
+}
+
+.timer {
+
+    font-size: 40px;
+
+    font-weight: bold;
+
+}
+
+
+.top-icon button {
+    background: none;
+    border: none;
+    font-size: 42px;
+    cursor: pointer;
+}
+
+
+.timer-box {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+.mistake {
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    margin-top: -8px;
+
+}
+
+
+
+
+
+/* ================= CHAT ================= */
+.chat-area {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 110px;
+    overflow-y: auto;
+    padding: 25px 35px;
+    top: 120px;
+}
+
+.chat-area::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+    background: #9c9c9c;
+    border-radius: 20px;
+}
+
+
+.message {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+
+.left {
+    justify-content: flex-start;
+}
+
+.right {
+
+    justify-content: flex-end;
+}
+
+
+
+
+
+
+
+/* ================= AVATAR ================= */
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.player-avatar {
+    background: #FFD25C;
+    margin-right: 18px;
+}
+
+
+.ai-avatar {
+    background: #84C7EC;
+    margin-left: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+/* ================= CHAT BOX ================= */
+.bubble-chat {
+    min-width: 280px;
+    max-width: 500px;
+    padding: 18px 24px;
+    border-radius: 26px;
+    background: #FFD25C;
+    font-size: 22px;
+    font-weight: bold;
+    animation: bounce .3s;
+}
+
+
+@keyframes bounce {
+    0% {
+        transform: scale(.8);
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+
+
+}
+
+.ai {
+    background: #84C7EC;
+}
+
+.word {
+    font-size: 22px;
+}
+
+
+
+.meaning {
+    margin-top: 6px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+
+.typing {
+    animation: typing .8s infinite alternate;
+    width: 220px;
+    text-align: center;
+    font-size: 22px;
+}
+
+
+
+
+.notice {
+    position: fixed;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff6b6b;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 30px;
+    font-size: 22px;
+    font-weight: bold;
+    z-index: 999;
+    animation: noticeShow .25s;
+}
+
+
+@keyframes noticeShow {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+
+
+
+
+
+
+/* ================= INPUT AND SUBMIT BTN================= */
+.input-area {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 110px;
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 12px;
+    align-items: center;
+    padding: 0 25px;
+}
+
+
+#wordInput {
+    width: 100%;
+    height: 62px;
+    border-radius: 35px;
+    border: 3px solid #777;
+    outline: none;
+    font-size: 26px;
+    padding: 0 25px;
+    font-weight: bold;
+}
+
+#wordInput::placeholder {
+    color: #777;
+}
+
+
+
+
+.submit-button {
+    width: 100%;
+    height: 62px;
+    border-radius: 35px;
+    border: 3px solid #777;
+    outline: none;
+    font-size: 26px;
+    padding: 0 25px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #84C7EC;
+    transition: .2s;
+}
+
+
+.submit-button:hover {
+    transform: scale(1.05);
+}
+
+
+.submit-button:active {
+    transform: scale(.95);
+}
+
+
+
+
+
+
+
+
+
+
+/* ================= EFFECT ================= */
+
+.message {
+    animation: appear .25s;
+}
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+@keyframes typing {
+    from {
+        opacity: .4;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+.correct-input {
+    animation: correctFlash .4s;
+}
+
+
+.wrong-input {
+    animation: shake .4s;
+}
+
+
+@keyframes correctFlash {
+    0% {
+        border-color: #777;
+    }
+
+    50% {
+        border-color: #35d07f;
+        box-shadow:
+            0 0 20px #35d07f;
+    }
+
+    100% {
+        border-color: #777;
+    }
+}
+
+
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-12px);
+    }
+
+    40% {
+        transform: translateX(12px);
+    }
+
+    60% {
+        transform: translateX(-8px);
+    }
+
+    80% {
+        transform: translateX(8px);
+    }
+}
+
+
+
+
+
+
+
+/*===================BẢNG KẾT QUẢ====================*/
+.result-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+}
+
+
+
+.result-box {
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    min-width: 40%;
+    min-height: 80%;
+    margin-left: 20px;
+
+}
+
+
+
+.result-box h1 {
+    font-size: 48px;
+}
+
+
+
+.result-box button {
+    margin-top: 20px;
+    padding: 15px 40px;
+    border-radius: 30px;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+
+
+
+.restartGame-btn {
+    color: rgb(35, 29, 29);
+    background-color: #FFD25C;
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+
+.restartGame-btn:hover {
+    background-color: #e6c14a;
+    transform: scale(1.05);
+}
+
+.type {
+    font-size: 16px;
+    margin-left: 8px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .35);
+    font-weight: bold;
+    opacity: 0.85;
+}
+
+
+
+#resultTitle {
+
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 25px;
+
+}
+
+#resultScore {
+
+    font-size: 24px;
+    text-align: left;
+    margin-left: 20px;
+    line-height: 1.8;
+
+}
+
+
+.result-meaning {
+    margin: 25px;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #555;
+
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    min-width: 50%;
+    min-height: 80%;
+}
+
+
+.result-meaning h2 {
+    color: black;
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*==========THANH STREAK==========*/
+.streak-box {
+    margin-bottom: 14px;
+    width: 88%;
+    height: 18px;
+    margin: 8px auto;
+    border-radius: 50px;
+    background: #ddd;
+    overflow: hidden;
+    position: relative;
+    display: none;
+}
+
+
+
+.streak-fill {
+    width: 0%;
+    height: 100%;
+    background: #ff4040;
+    transition: .35s;
+}
+
+
+
+.streak-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 4px black;
+    pointer-events: none;
+}
+
+
+
+.rainbow {
+    background: linear-gradient(90deg,
+            red,
+            orange,
+            yellow,
+            lime,
+            cyan,
+            blue,
+            violet,
+            red);
+
+    background-size: 300% 100%;
+    animation: rainbowMove 2s linear infinite;
+}
+
+@keyframes rainbowMove {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 300% 0;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+css
+/* ==============================
+   MEANING
+   ============================== */
+
+.meaning-preview {
+    margin-top: 4px;
+    color: #555;
+
+}
+
+
+/* ==============================
+   NÚT [V]
+   ============================== */
+
+
+
+
+/* ==============================
+   ANIMATION
+   ============================== */
+
+@keyframes meaningOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+
+
+
+
+/* =========================================
+   MEANING PREVIEW
+   ========================================= */
+
+.meaning-preview {
+    margin-top: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* =========================================
+   NÚT [V]
+   ========================================= */
+
+.meaning-toggle {
+    display: block;
+
+    margin-top: 8px;
+    padding: 4px 8px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.35);
+    opacity: 0.81;
+
+    color: inherit;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+.meaning-toggle:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.meaning-toggle:active {
+    transform: scale(0.95);
+}
+
+
+/* =========================================
+   DANH SÁCH NGHĨA
+   ========================================= */
+
+.meaning-list {
+    display: none;
+
+    margin-top: 8px;
+    padding-top: 8px;
+
+    border-top: 2px solid rgba(255, 255, 255, 0.35);
+
+    animation: meaningOpen 0.2s ease;
+}
+
+.meaning-list.show {
+    display: block;
+}
+
+
+/* =========================================
+   TỪNG NGHĨA
+   ========================================= */
+
+.meaning-item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    margin-bottom: 6px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    line-height: 1.45;
+}
+
+.meaning-bullet {
+    flex-shrink: 0;
+
+    font-size: 15px;
+    line-height: 1.55;
+
+    opacity: 0.65;
+}
+
+.meaning-text {
+    flex: 1;
+}
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes meaningOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+
+
+/* ===============================
+   LỊCH SỬ TỪ VỰNG
+   =============================== */
+
+#resultWord {
+    margin-top: 20px;
+
+    height: 500px;
+
+    overflow-y: auto;
+
+    padding-right: 10px;
+
+    text-align: left;
+}
+
+
+#resultWord::-webkit-scrollbar {
+    width: 8px;
+}
+
+#resultWord::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 20px;
+}
+
+
+/* ===============================
+   HISTORY ITEM
+   =============================== */
+
+.history-item {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 12px 15px;
+
+    margin-bottom: 8px;
+
+    border-radius: 14px;
+
+    background: #f5f5f5;
+
+    border-left: 5px solid #84C7EC;
+}
+
+.history-item.player {
+    border-left-color: #FFD25C;
+}
+
+
+/* ===============================
+   SỐ THỨ TỰ
+   =============================== */
+
+.history-number {
+    width: 27px;
+    height: 27px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: #e5e5e5;
+
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+/* ===============================
+   CONTENT
+   =============================== */
+
+.history-content {
+    flex: 1;
+    min-width: 0;
+}
+
+
+.history-word {
+    font-size: 20px;
+    color: black;
+    line-height: 1.3;
+    transition: all 0.2s ease;
+}
+
+.history-word:hover {
+    color: #644e19ab;
+}
+
+
+.history-type {
+    display: inline-block;
+
+    margin-left: 7px;
+
+    padding: 2px 8px;
+
+    border-radius: 12px;
+
+    background: #e8e8e8;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+
+.history-meaning {
+    margin-top: 3px;
+
+    color: #555;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+}
+
+
+
+
+
+
+
+
+
+/* =========================================
+   SETTINGS
+   ========================================= */
+
+.settings-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    z-index: 100;
+
+}
+
+
+.settings-overlay.show {
+    display: flex;
+}
+
+
+/* =========================================
+   SETTINGS BOX
+   ========================================= */
+
+.settings-box {
+
+    width: 380px;
+
+    padding: 35px 30px;
+
+    background: white;
+
+    border-radius: 28px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.2);
+
+    animation: settingsOpen 0.2s ease;
+}
+
+
+.settings-box h2 {
+
+    margin-bottom: 25px;
+
+    font-size: 32px;
+}
+
+
+/* =========================================
+   SETTINGS BUTTON
+   ========================================= */
+
+.settings-btn {
+
+    width: 100%;
+
+    height: 58px;
+
+    margin-top: 12px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    font-family: inherit;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        filter 0.15s ease;
+}
+
+
+.settings-btn:hover {
+
+    transform: scale(1.03);
+
+    filter: brightness(1.04);
+}
+
+
+.settings-btn:active {
+
+    transform: scale(0.97);
+}
+
+
+#continueBtn {
+    background: #84C7EC;
+}
+
+
+/* Chơi lại */
+
+#restartSettingsBtn {
+    background: #FFD25C;
+}
+
+
+/* Thoát */
+
+#exitSettingsBtn {
+    background: #ff8c8c;
+}
+
+/* Continue */
+
+
+
+/* Exit */
+
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes settingsOpen {
+
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}

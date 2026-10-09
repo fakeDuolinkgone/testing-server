@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "rooms": {
+      "$code": {
+        ".read": true,
+        ".write": true,
+        ".validate": "$code.matches(/^[A-Z0-9]{6}$/)",
+        "players": {
+          "$pid": {
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" }
+          }
+        },
+        "scores": {
+          "$pid": {
+            "$stage": {
+              "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,198 @@
+#gameContent {
+  width: 100%;
+  max-width: 700px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 20px;
+
+  margin: auto; /* 🔥 căn giữa trong box */
+}
+
+
+
+
+#menuBox {
+  width: min(600px, 90%);
+  min-height: 550px;
+  height: auto;
+  padding-top: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 50px;
+}
+
+
+
+#menuBox h1 {
+  font-size: 45px;
+  color: white;
+  margin-bottom: 20px;
+  margin-top: 70px;
+
+}
+
+
+
+#menuBox button {
+  width: 260px;
+  height: 60px;
+  font-size: 25px;
+}
+
+
+
+
+.box {
+  width: min(900px, 95%);
+  padding: 80px 60px;
+  border-radius: 22px; 
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+
+  min-height: 500px;
+
+  display: flex;                /* 🔥 THÊM */
+  flex-direction: column;       /* 🔥 THÊM */
+  justify-content: center;      /* 🔥 CĂN GIỮA DỌC */
+  align-items: center;          /* 🔥 CĂN GIỮA NGANG */
+
+  text-align: center;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.hidden {
+  display: none;
+}
+
+#levelButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 🔥 thêm cái này */
+  height: 100%;
+}
+
+
+
+#levelButtons button {
+  width: 100%;
+  max-width: 400px; /* 🔥 tăng lên */
+  font-size: 25px;  /* chữ to hơn */
+  padding: 25px;    /* nút cao hơn */
+  text-align: center;
+  margin: 30px 5px;
+  height: auto;
+}
+
+
+
+.grade-buttons {
+  display: flex;              /* 🔥 QUAN TRỌNG NHẤT */
+  justify-content: center;
+  gap: 20px;
+
+  max-width: 500px;           /* tăng cho rộng hơn */
+  margin: 20px auto;
+}
+
+.grade-buttons button {
+  flex: 1;                    /* chia đều chiều ngang */
+  padding: 20px;
+  font-size: 20px;
+}
+
+
+
+.result-container {
+  position: relative;
+  width: 300px;
+  overflow: hidden;
+}
+
+
+
+.result-wrapper {
+  display: flex;
+  align-items: stretch; /* 🔥 2 bảng cao bằng nhau */
+
+  gap: 40px;
+
+  width: 100%;
+  max-width: 1300px;
+
+  margin: auto;
+  justify-content: center; /* đã có rồi nhưng giữ chắc */
+}
+
+
+
+
+/* 👉 bảng kết quả */
+.result-main {
+  flex: 1;
+  min-width: 400px;
+
+  background: white;
+  border-radius: 10px;
+  padding: 35px;
+  margin-left: -40px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+
+
+/* 👉 bảng sai */
+.result-detail {
+  flex: 1;
+  min-width: 500px;
+  max-height: 600px;
+
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+
+
+  overflow-y: auto;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+  .result-main h2 {
+  font-size: 50px;
+}
+
+  .result-main p {
+  font-size: 30px;
+  text-align: left;
+  padding: 10px;
+  margin: 10px;
+}
+
+
+.result-detail h3 {
+  font-size: 27px;
+}
+
+
