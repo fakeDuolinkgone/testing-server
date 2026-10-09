@@ -11,8 +11,8 @@
   <meta http-equiv="Expires" content="0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="CSS/englishCSS.css">
   <script src="JS/common/user.js"></script>
 </head>
@@ -62,7 +62,7 @@
       <div class="wordhunt game-card" onclick="location.href='gameMode/wordHunt/wordHunt.html'">
         <h2>WORDHUNT</h2>
       </div>
-      <div class="hangman game-card">
+      <div class="hangman game-card" onclick="location.href='gameMode/hangman/hangman.html'">
         <h2>HANGMAN</h2>
       </div>
       <div class="soon game-card">
@@ -191,6 +191,34 @@
       </div>
     </div>
 
+    <div id="resultScreen" class="result-screen" style="display:none" role="dialog" aria-labelledby="resultTitle">
+      <div class="result-card">
+
+        <h2 id="resultTitle" class="result-title">Kết quả</h2>
+
+        <div class="result-ring">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="ring-track" cx="100" cy="100" r="82" pathLength="100"></circle>
+            <circle id="resultRingFill" class="ring-fill" cx="100" cy="100" r="82" pathLength="100"></circle>
+          </svg>
+          <div class="ring-text">
+            <div id="resultPercent" class="ring-percent">0%</div>
+            <div id="resultTotal" class="ring-total">0 / 0 câu</div>
+          </div>
+        </div>
+
+        <p id="resultRank" class="result-rank"></p>
+        <p id="resultMessage" class="result-message"></p>
+
+        <ul id="resultList" class="result-list"></ul>
+
+        <div class="result-actions">
+          <button id="resultRestartBtn" class="result-btn primary">🔄 Chơi lại</button>
+          <button id="resultHomeBtn" class="result-btn">🏠 Về trang chủ</button>
+        </div>
+
+      </div>
+    </div>
 
 
   </div>
