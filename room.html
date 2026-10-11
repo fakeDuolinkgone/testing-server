@@ -19,14 +19,15 @@
         <!-- Chưa vào phòng: tạo phòng hoặc nhập mã -->
         <section id="viewEntry" class="room-card">
             <h1>Phòng chơi</h1>
-            <p class="room-lead">Chơi BossBattle cùng bạn bè: một người tạo phòng, những người còn lại nhập mã để vào.</p>
+            <p class="room-lead">Chơi cùng bạn bè: một người tạo phòng, những người còn lại nhập mã để vào.
+                Chủ phòng sẽ chọn chế độ chơi sau khi tạo phòng.</p>
 
             <div id="setupNotice" class="room-notice" hidden></div>
 
             <div class="room-choices">
                 <div class="room-choice room-choice-create">
                     <h2>Tạo phòng</h2>
-                    <p>Bạn là chủ phòng và bấm bắt đầu khi mọi người đã vào đủ.</p>
+                    <p>Bạn là chủ phòng: chọn chế độ chơi và bấm bắt đầu khi mọi người đã vào đủ.</p>
                     <button id="createBtn" class="room-btn" type="button">Tạo phòng mới</button>
                 </div>
                 <form id="joinForm" class="room-choice room-choice-join">
@@ -49,6 +50,12 @@
             </div>
 
             <ul id="playerList" class="room-players"></ul>
+
+            <!-- Chọn chế độ chơi: chủ phòng bấm chọn, mọi người đều thấy chế độ đang chọn -->
+            <h2 class="room-subtitle">Chế độ chơi</h2>
+            <div id="modeGrid" class="room-modes" role="radiogroup" aria-label="Chế độ chơi"></div>
+            <p id="modeHint" class="room-hint"></p>
+
             <p id="roomInfo" class="room-info"></p>
 
             <div class="room-actions">
@@ -66,7 +73,10 @@
     <script src="JS/net/firebase-config.js"></script>
     <script src="data/englishVocabularys.js"></script>
     <script src="JS/net/boss-rules.js"></script>
+    <!-- bossCore.js: host dùng để chọn từ + mini game cho giai đoạn 1 khi bấm Bắt đầu (BossNet tự dùng nếu có) -->
+    <script src="gameMode/bossBattle/bossCore.js"></script>
     <script src="JS/net/boss-net.js"></script>
+    <script src="JS/games/gameModes.js"></script>
     <script src="JS/games/room.js"></script>
 </body>
 

@@ -20,7 +20,7 @@
     return out;
   };
   const byWord = x => x.word;
-  const blank = w => w.example.replace(new RegExp(`\\b${w.word}(s|es|ed|ing)?\\b`, "i"), "______");
+  const blank = w => (w.example || "______").replace(new RegExp(`\\b${w.word}(s|es|ed|ing)?\\b`, "i"), "______");
 
   // Mỗi game: (từ, kho từ) → { prompt, sub, answer, options? | type? }
   const GAMES = {
@@ -75,11 +75,18 @@
     function draw() {
       const part = items.slice(round * 5, round * 5 + 5);
       matched = 0; sel = {}; busy = false;
+      // .q-card = khối câu hỏi, .q-panel = khối đáp án (bossBattle.css đặt hai khối này vào đúng chỗ trên màn hình)
       ctx.el.innerHTML = `
-        <div class="q-count">Vòng ${round + 1} / 2</div>
-        <div class="mt-grid">
-          <div class="mt-col">${shuffle(part).map(w => btn(w, "L", w.word)).join("")}</div>
-          <div class="mt-col">${shuffle(part).map(w => btn(w, "R", M(w))).join("")}</div>
+        <div class="q-card">
+          <div class="q-count">Vòng ${round + 1} / 2</div>
+          <div class="q-prompt q-prompt-sm">Nối mỗi từ với nghĩa đúng</div>
+          <div class="q-prog"><i style="width:${score / 10 * 100}%"></i></div>
+        </div>
+        <div class="q-panel">
+          <div class="mt-grid">
+            <div class="mt-col">${shuffle(part).map(w => btn(w, "L", w.word)).join("")}</div>
+            <div class="mt-col">${shuffle(part).map(w => btn(w, "R", M(w))).join("")}</div>
+          </div>
         </div>`;
       ctx.el.querySelectorAll(".mt-item").forEach(b => (b.onclick = () => pick(b)));
     }
@@ -98,6 +105,8 @@
       if (same) {
         pair.forEach(x => { x.classList.remove("sel"); x.classList.add("good", "done"); });
         score++; ctx.onScore(score); sfx("playCorrect");
+        const bar = ctx.el.querySelector(".q-prog i");
+        if (bar) bar.style.width = `${score / 10 * 100}%`;
         if (++matched === 5) {
           busy = true;
           setTimeout(() => {
@@ -144,10 +153,15 @@
       let wrong = 0;
 
       ctx.el.innerHTML = `
-        <div class="q-count">${i + 1} / ${items.length} <span class="hg-lives">${"❤️".repeat(HG_LIVES)}</span></div>
-        <div class="q-sub">${esc(cls(w) + " " + M(w))}</div>
-        <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>
-        <div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>`;
+        <div class="q-card">
+          <div class="q-count">${i + 1} / ${items.length} <span class="hg-lives">${"❤️".repeat(HG_LIVES)}</span></div>
+          <div class="q-sub">${esc(cls(w) + " " + M(w))}</div>
+          <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>
+          <div class="q-prog"><i style="width:${(i + 1) / items.length * 100}%"></i></div>
+        </div>
+        <div class="q-panel">
+          <div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>
+        </div>`;
 
       const slots = ctx.el.querySelectorAll(".hg-slot");
       ctx.el.querySelectorAll(".hg-keys .q-opt").forEach(b => (b.onclick = () => {
@@ -204,12 +218,15 @@
       locked = false;
       const q = qs[i];
       ctx.el.innerHTML = `
-        <div class="q-count">${i + 1} / ${qs.length}</div>
-        <div class="q-prompt">${esc(q.prompt)}</div>
-        <div class="q-sub">${esc(q.sub || "")}</div>
-        ${q.options
+        <div class="q-card">
+          <div class="q-count">${i + 1} / ${qs.length}</div>
+          <div class="q-prompt">${esc(q.prompt)}</div>
+          <div class="q-sub">${esc(q.sub || "")}</div>
+          <div class="q-prog"><i style="width:${(i + 1) / qs.length * 100}%"></i></div>
+        </div>
+        <div class="q-panel">${q.options
           ? `<div class="q-opts ${q.options.length === 2 ? "two" : ""}">${q.options.map(o => `<button class="q-opt">${esc(o)}</button>`).join("")}</div>`
-          : `<input class="q-input" autocomplete="off" placeholder="${esc(q.ph)}"><button class="q-skip">Bỏ qua →</button>`}`;
+          : `<input class="q-input" autocomplete="off" placeholder="${esc(q.ph)}"><button class="q-skip">Bỏ qua →</button>`}</div>`;
 
       if (q.options) {
         const btns = [...ctx.el.querySelectorAll(".q-opt")];

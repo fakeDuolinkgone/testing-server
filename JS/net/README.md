@@ -9,9 +9,11 @@ Phần **game** (các mini game, giao diện boss) gọi vào qua đối tượn
 | `JS/net/boss-net.js` | Kết nối Firebase + bản bot giả lập + toàn bộ logic phòng |
 | `JS/net/firebase-config.js` | **Bạn dán cấu hình Firebase vào đây** |
 | `firebase-rules.json` | Luật bảo mật dán vào Firebase |
-| `room.html`, `JS/games/room.js`, `CSS/room.css` | Sảnh chờ: tạo phòng, nhập mã, danh sách người chơi, nút Bắt đầu |
+| `room.html`, `JS/games/room.js`, `CSS/room.css` | Sảnh chờ: tạo phòng, nhập mã, danh sách người chơi, **chọn chế độ chơi**, nút Bắt đầu |
+| `JS/games/gameModes.js` | Danh sách chế độ chơi (BossBattle chạy được, các chế độ khác ghi "Sắp ra mắt") |
 | `JS/net/engine.test.js` | Bộ test logic, chạy bằng `node JS/net/engine.test.js` (sau khi chỉnh luật nên chạy lại) |
-| `gameMode/bossBattle/netTest.html` | Trang "game giả" để thử mạng khi trang game thật chưa xong |
+| `gameMode/bossBattle/bossBattle.html` | Trang game thật (host chọn từ + mini game cho từng giai đoạn bằng `BossCore.pickStage`) |
+| `gameMode/bossBattle/netTest.html` | Trang "game giả" chỉ để thử riêng lớp mạng |
 
 ---
 
@@ -30,13 +32,29 @@ Phần **game** (các mini game, giao diện boss) gọi vào qua đối tượn
 
 ## 2. Thử nhanh không cần Firebase
 
-Mở `gameMode/bossBattle/netTest.html?solo=1&fast=1` → bạn là chủ phòng, 3 bot ngồi chơi cùng, thời gian rút ngắn.
+Mở `gameMode/bossBattle/bossBattle.html?solo=1&fast=1` → bạn là chủ phòng, 3 bot ngồi chơi cùng, thời gian rút ngắn
+(`&bots=5` để đổi số bot). Muốn thử riêng lớp mạng thì dùng `netTest.html?solo=1&fast=1`.
 Bấm **Bắt đầu ván**, rồi **+1 điểm** thay cho việc trả lời đúng. Đổi số bot bằng `&bots=5`.
+
+## 2b. Phòng và chế độ chơi (tách riêng)
+
+Luồng: **tạo / vào phòng → sảnh chờ → chủ phòng chọn chế độ → Bắt đầu → cả phòng sang trang game của chế độ đó.**
+Sảnh chờ không chứa luật BossBattle; nó chỉ đọc `JS/games/gameModes.js`.
+
+| Hàm | Ý nghĩa |
+|---|---|
+| `setMode(id)` | Chủ phòng chọn chế độ (chỉ khi còn ở sảnh chờ). Lưu ở `rooms/<mã>/mode` |
+| `getMode()` / `onModeChange(cb)` | Mọi người xem chế độ đang chọn; `null` nếu chưa chọn |
+| `startGame()` | Bắt đầu chế độ đã chọn. Chế độ chưa có → lỗi `MODE_UNAVAILABLE`. Phòng không chọn gì thì mặc định BossBattle (để `netTest.html` và `?solo=1` vẫn chạy) |
+| `onGameStart(cb)` | Payload có thêm `mode` |
+
+Thêm chế độ mới: tạo trang trong `gameMode/<tên>/`, sửa mục tương ứng trong `gameModes.js` (`available: true`, `page`, `summary`,
+`minPlayers`, `maxPlayers`), và dạy `BossNet.startGame` khởi tạo ván cho chế độ đó.
 
 ## 3. Cách gắn vào trang game thật
 
 Sảnh chờ (`room.html`) chuyển cả phòng sang `GAME_PAGE` khi chủ phòng bấm Bắt đầu (đặt ở đầu `JS/games/room.js`,
-hiện đang trỏ tới `netTest.html`, đổi thành `gameMode/bossBattle/bossBattle.html` khi trang game xong).
+hiện trỏ tới `gameMode/bossBattle/bossBattle.html`).
 
 Trang game cần nạp các script theo thứ tự này (chỉnh lại đường dẫn cho đúng thư mục):
 

@@ -7,8 +7,13 @@
   --trk: #D6EEF5;
 }
 
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
 
 body {
   margin: 0;
@@ -29,15 +34,42 @@ body::before {
   pointer-events: none;
 }
 
-@keyframes drift { to { transform: translate(44px, -44px); } }
-@keyframes in { from { opacity: 0; transform: translateY(14px); } }
-@keyframes pop { 50% { transform: scale(1.12); } }
-@keyframes hit {
-  20% { transform: translateX(-14px) rotate(-4deg); filter: brightness(2) saturate(.3); }
-  60% { transform: translateX(14px) rotate(4deg); }
+@keyframes drift {
+  to {
+    transform: translate(44px, -44px);
+  }
 }
 
-.bb-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+@keyframes in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes hit {
+  20% {
+    transform: translateX(-14px) rotate(-4deg);
+    filter: brightness(2) saturate(.3);
+  }
+
+  60% {
+    transform: translateX(14px) rotate(4deg);
+  }
+}
+
+.bb-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
 
 .bb-card {
   padding: 24px;
@@ -48,13 +80,39 @@ body::before {
   animation: in .4s ease both;
 }
 
-.bb-center { width: min(460px, 100%); text-align: center; }
-.bb-wide { width: min(640px, 100%); }
-h1 { margin: 0 0 4px; font-size: 38px; font-weight: 800; }
-h2 { margin: 0; font-size: 26px; font-weight: 800; }
-.bb-info { margin: 6px 0 14px; font-weight: 600; opacity: .8; }
+.bb-center {
+  width: min(460px, 100%);
+  text-align: center;
+}
 
-.bb-label { display: block; margin: 12px 0 4px; font-weight: 800; }
+.bb-wide {
+  width: min(640px, 100%);
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 38px;
+  font-weight: 800;
+}
+
+h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.bb-info {
+  margin: 6px 0 14px;
+  font-weight: 600;
+  opacity: .8;
+}
+
+.bb-label {
+  display: block;
+  margin: 12px 0 4px;
+  font-weight: 800;
+}
+
 .bb-label input {
   display: block;
   width: 120px;
@@ -85,148 +143,516 @@ h2 { margin: 0; font-size: 26px; font-weight: 800; }
   cursor: pointer;
   transition: transform .1s, box-shadow .1s;
 }
-.bb-btn.primary { background: var(--sun); }
-.bb-btn:hover { transform: translateY(-1px); }
-.bb-btn:active { transform: translateY(4px); box-shadow: none; }
-.bb-actions { display: flex; gap: 12px; }
 
-/* ---------- Màn đánh boss ---------- */
-.bb-battle {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 28px;
-  align-content: center;
-  place-items: stretch;
-  width: min(1200px, 100%);
-  margin: 0 auto;
+.bb-btn.primary {
+  background: var(--sun);
 }
 
-.bb-boss { text-align: center; }
-.bb-boss-art { font-size: 150px; line-height: 1.1; }
-.bb-boss-art.hit { animation: hit .6s; }
+.bb-btn:hover {
+  transform: translateY(-1px);
+}
 
-.bb-hp {
+.bb-btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.bb-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ---------- Màn đánh boss ----------
+   Bố cục (máy tính):            hud   |  boss
+                                  q     |  boss
+                                  opts  |  side (bảng boss + nút)
+   .q-card / .q-panel do bossGames.js vẽ vào #bbArena; #bbArena dùng display:contents
+   nên hai khối đó nằm thẳng trong lưới này. */
+.bb-battle {
+  --rim: #e2e2e2;
+  /* viền xám của thẻ */
+  --shade: #231f20;
+  /* bóng đổ đậm */
+  --maroon: #7d1f1f;
+  /* máu boss */
+  --gold: #dfbe5d;
+
   position: relative;
-  height: 36px;
-  margin: 12px 0;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: clamp(10px, 2vw, 28px);
+  gap: clamp(10px, 1.6vw, 22px) clamp(16px, 2.6vw, 44px);
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "hud  boss"
+    "q    boss"
+    "opts side";
+  place-items: stretch;
+  align-content: stretch;
+}
+
+/* ===== Phông cảnh ===== */
+.bb-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   overflow: hidden;
-  background: var(--trk);
+  pointer-events: none;
+  background: linear-gradient(#7cc3ea 0%, #a4daf3 36%, #bde6f7 46%);
+}
+
+.bb-sun {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: clamp(70px, 8vw, 120px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fffbd0, #ffe066 55%, #ffc93c);
+  box-shadow: 0 0 0 14px rgba(255, 244, 160, .35), 0 0 70px 24px rgba(255, 240, 150, .55);
+  animation: sunpulse 5s ease-in-out infinite;
+}
+
+.bb-cloud {
+  position: absolute;
+  left: 0;
+  width: clamp(110px, 14vw, 210px);
+  height: clamp(28px, 3.8vw, 54px);
+  border-radius: 999px;
+  background: #fff;
+  opacity: .96;
+  animation: cloud linear infinite;
+}
+
+.bb-cloud::before,
+.bb-cloud::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.bb-cloud::before {
+  left: 16%;
+  bottom: 30%;
+  width: 42%;
+  height: 150%;
+}
+
+.bb-cloud::after {
+  right: 14%;
+  bottom: 30%;
+  width: 32%;
+  height: 120%;
+}
+
+.bb-cloud.c1 {
+  top: 8%;
+  animation-duration: 95s;
+  animation-delay: -40s;
+}
+
+.bb-cloud.c2 {
+  top: 20%;
+  animation-duration: 130s;
+  animation-delay: -95s;
+  transform: scale(.75);
+  opacity: .85;
+}
+
+.bb-cloud.c3 {
+  top: 5%;
+  animation-duration: 110s;
+  animation-delay: -10s;
+  transform: scale(1.2);
+  opacity: .9;
+}
+
+.bb-cloud.c4 {
+  top: 29%;
+  animation-duration: 150s;
+  animation-delay: -60s;
+  transform: scale(.6);
+  opacity: .7;
+}
+
+.bb-hills {
+  position: absolute;
+  z-index: 2;
+  left: -6%;
+  right: -6%;
+  top: calc(46% - 74px);
+  height: 150px;
+  background:
+    radial-gradient(ellipse 36% 100% at 14% 100%, #55c276 0 98%, transparent 100%),
+    radial-gradient(ellipse 30% 82% at 58% 100%, #4db36c 0 98%, transparent 100%),
+    radial-gradient(ellipse 26% 70% at 90% 100%, #5ccc7d 0 98%, transparent 100%);
+}
+
+.bb-ground {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 46%;
+  bottom: 0;
+  background:
+    radial-gradient(rgba(255, 255, 255, .13) 2px, transparent 3px) 0 0 / 52px 52px,
+    radial-gradient(rgba(0, 80, 40, .08) 3px, transparent 4px) 26px 26px / 52px 52px,
+    linear-gradient(#66d985, #5fd080 55%, #55c677);
+}
+
+.bb-flower {
+  position: absolute;
+  z-index: 3;
+  left: var(--x);
+  top: var(--y);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffc83d;
+  box-shadow: 0 -11px 0 -2px var(--c), 0 11px 0 -2px var(--c), 11px 0 0 -2px var(--c), -11px 0 0 -2px var(--c);
+}
+
+/* ===== Thanh trên: loại mini game + đồng hồ ===== */
+.bb-hud {
+  grid-area: hud;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 14px;
+  min-width: 0;
+}
+
+.bb-chip {
+  justify-self: start;
+  max-width: 100%;
+  padding: 5px 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(14px, 1.3vw, 19px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.bb-clock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 16px 2px 12px;
+  font-size: clamp(18px, 1.8vw, 26px);
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+#bbTime {
+  min-width: 2.2ch;
+  text-align: right;
+  font-size: clamp(22px, 2.2vw, 32px);
+  line-height: 1.2;
+}
+
+#bbTime.warn {
+  color: var(--red);
+  animation: pop 1s infinite;
+}
+
+.bb-timebar {
+  grid-column: 1 / -1;
+  height: 14px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .85);
   border: 3px solid var(--ink);
   border-radius: 999px;
 }
-#bbHpFill {
+
+#bbTimeFill {
+  width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #ff8a5c, var(--red));
-  transition: width 1s ease-out;
-}
-#bbHpText {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  text-shadow: 0 0 4px #fff, 0 0 4px #fff;
-}
-.bb-dmg { margin: 8px 0 0; font-size: 20px; font-weight: 800; }
-.bb-team { margin: 4px 0 0; font-weight: 600; opacity: .75; }
-
-.bb-stage { display: flex; flex-direction: column; min-height: 520px; }
-.bb-stage-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 22px;
-  font-weight: 800;
-}
-#bbTime { font-size: 30px; }
-#bbTime.warn { color: var(--red); animation: pop 1s infinite; }
-
-.bb-timebar {
-  height: 10px;
-  margin: 10px 0 8px;
-  overflow: hidden;
-  background: var(--trk);
+  background: linear-gradient(90deg, var(--sun), var(--org));
   border-radius: 999px;
+  transition: width .2s linear;
 }
-#bbTimeFill { width: 100%; height: 100%; background: var(--org); transition: width .2s linear; }
 
+/* ===== Khối câu hỏi (trái trên) ===== */
 .bb-arena {
-  flex: 1;
+  display: contents;
+}
+
+.q-card,
+.bb-arena>.wait {
+  grid-area: q;
+  position: relative;
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  min-height: 160px;
+  padding: clamp(26px, 3vw, 44px) clamp(18px, 2.6vw, 40px) clamp(30px, 3vw, 42px);
   text-align: center;
+  background: #fff;
+  border: clamp(10px, 1.2vw, 18px) solid var(--rim);
+  border-radius: clamp(30px, 4vw, 56px);
+  box-shadow: -6px 9px 0 var(--shade);
+  animation: in .35s ease both;
 }
-.bb-arena .wait { font-size: 28px; font-weight: 800; }
 
-.q-count { font-size: 20px; font-weight: 800; opacity: .6; text-align: left; }
-.q-prompt {
-  margin: 8px 0 4px;
-  font-size: clamp(30px, 4.4vw, 52px);
+.bb-arena>.wait {
+  align-items: center;
+  margin: 0;
+  font-size: clamp(24px, 2.6vw, 38px);
   font-weight: 800;
-  line-height: 1.2;
+}
+
+.q-count {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: clamp(14px, 1.2vw, 18px);
+  font-weight: 800;
+  opacity: .55;
+}
+
+.q-prompt {
+  margin: 0;
+  font-size: clamp(28px, 3.6vw, 56px);
+  font-weight: 800;
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
-.q-sub { min-height: 32px; margin-bottom: 22px; font-size: 24px; font-style: italic; color: #5b7a88; }
 
-.q-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.q-prompt-sm {
+  font-size: clamp(22px, 2.4vw, 36px);
+}
+
+.q-sub {
+  min-height: 1.4em;
+  margin: 6px 0 0;
+  font-size: clamp(18px, 1.9vw, 30px);
+  font-style: italic;
+  color: #5b7a88;
+}
+
+.q-prog {
+  position: absolute;
+  left: clamp(24px, 3vw, 48px);
+  right: clamp(24px, 3vw, 48px);
+  bottom: 12px;
+  height: 8px;
+  overflow: hidden;
+  background: #ececec;
+  border-radius: 999px;
+}
+
+.q-prog i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sun), var(--org));
+  border-radius: 999px;
+  transition: width .35s ease;
+}
+
+/* ===== Khối đáp án (trái dưới) ===== */
+.q-panel {
+  grid-area: opts;
+  align-self: stretch;
+  /* cao bằng cột bên phải, đáp án nằm giữa */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(12px, 1.6vw, 22px);
+  background: var(--rim);
+  border-radius: clamp(24px, 2.6vw, 36px);
+  box-shadow: 0 9px 0 var(--shade);
+  animation: in .35s ease both;
+}
+
+.q-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(8px, 1vw, 14px);
+}
+
 .q-opt {
-  min-height: 84px;
-  padding: 8px 12px;
+  position: relative;
+  min-height: clamp(58px, 8vh, 88px);
+  padding: 8px 14px;
   font: inherit;
-  font-size: 22px;
+  font-size: clamp(18px, 1.8vw, 28px);
   font-weight: 800;
+  line-height: 1.15;
   color: var(--ink);
   background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 18px;
-  box-shadow: 0 5px 0 var(--ink);
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, .16);
   cursor: pointer;
-  transition: transform .12s, background .12s;
+  transition: transform .12s, background .12s, box-shadow .12s;
 }
-.q-opt:hover:not(:disabled) { transform: translateY(-3px); background: var(--sun); }
-.q-opt:disabled { cursor: default; }
-.q-opt.good { background: var(--green); color: #fff; }
-.q-opt.bad { background: var(--red); color: #fff; }
+
+.q-opt:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: #fff1bd;
+  box-shadow: 0 7px 0 rgba(0, 0, 0, .16);
+}
+
+.q-opt:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.q-opt:focus-visible {
+  outline: 4px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.q-opt:disabled {
+  cursor: default;
+}
+
+.q-opt.good {
+  background: var(--green);
+  color: #fff;
+}
+
+.q-opt.bad {
+  background: var(--red);
+  color: #fff;
+}
+
+/* Nhãn A B C D cho câu trắc nghiệm 3-4 đáp án */
+.q-opts:not(.hg-keys):not(.two) {
+  counter-reset: opt;
+}
+
+.q-opts:not(.hg-keys):not(.two) .q-opt {
+  counter-increment: opt;
+  padding-left: 58px;
+}
+
+.q-opts:not(.hg-keys):not(.two) .q-opt::before {
+  content: counter(opt, upper-alpha);
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  font-size: 18px;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 50%;
+}
+
+.q-opts.two .q-opt {
+  min-height: clamp(70px, 11vh, 110px);
+  font-size: clamp(22px, 2.2vw, 32px);
+}
 
 /* Nối cột */
-.mt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
-.mt-col { display: flex; flex-direction: column; gap: 10px; }
-.mt-item { min-height: 60px; font-size: 20px; }
-.q-opt.sel { background: var(--sun); }
-.q-opt.done { opacity: .45; pointer-events: none; }
+.mt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.4vw, 20px);
+}
+
+.mt-col {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mt-item {
+  min-height: clamp(38px, 5.2vh, 58px);
+  padding: 4px 10px;
+  font-size: clamp(15px, 1.4vw, 21px);
+}
+
+.q-opt.sel {
+  background: var(--sun);
+}
+
+.q-opt.done {
+  opacity: .45;
+  pointer-events: none;
+}
 
 /* Hangman rút gọn */
-.hg-lives { margin-left: 10px; letter-spacing: 2px; }
-.hg-word { display: flex; justify-content: center; gap: 8px; margin: 6px 0 26px; }
+.hg-lives {
+  margin-left: 10px;
+  letter-spacing: 2px;
+}
+
+.hg-word {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+
 .hg-slot {
-  width: clamp(34px, 6vw, 54px);
-  height: clamp(46px, 7vw, 66px);
+  width: clamp(30px, 4.4vw, 54px);
+  height: clamp(42px, 6vw, 66px);
   display: grid;
   place-items: end center;
   border-bottom: 6px solid var(--ink);
-  font-size: clamp(28px, 4.5vw, 44px);
+  font-size: clamp(26px, 3.6vw, 44px);
   font-weight: 800;
 }
-.hg-slot.miss { color: var(--red); }
-.q-opts.hg-keys { grid-template-columns: repeat(4, 1fr); }
-.q-opts.hg-keys .q-opt { min-height: 70px; font-size: 28px; }
+
+.hg-slot.miss {
+  color: var(--red);
+}
+
+.q-opts.hg-keys {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.q-opts.hg-keys .q-opt {
+  min-height: clamp(48px, 7vh, 70px);
+  padding: 6px;
+  font-size: clamp(22px, 2.4vw, 30px);
+}
 
 .q-input {
   width: 100%;
-  height: 64px;
+  height: clamp(54px, 8vh, 70px);
   font: inherit;
-  font-size: 30px;
+  font-size: clamp(24px, 2.4vw, 32px);
   font-weight: 800;
   text-align: center;
   color: var(--ink);
-  border: 3px solid var(--ink);
-  border-radius: 16px;
+  background: #fff;
+  border: 4px solid transparent;
+  border-radius: 20px;
   outline: none;
 }
-.q-input:focus { border-color: var(--org); }
+
+.q-input:focus {
+  border-color: var(--org);
+}
+
 .q-skip {
-  margin-top: 14px;
+  display: block;
+  margin: 10px auto 0;
   font: inherit;
   font-size: 18px;
   font-weight: 800;
@@ -236,7 +662,390 @@ h2 { margin: 0; font-size: 26px; font-weight: 800; }
   cursor: pointer;
   opacity: .6;
 }
-.q-skip:hover { opacity: 1; }
+
+.q-skip:hover {
+  opacity: 1;
+}
+
+/* ===== Boss trên bục (phải trên) ===== */
+.bb-boss {
+  grid-area: boss;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.bb-field {
+  position: relative;
+  width: min(100%, 780px, 64vh);
+  /* không cao quá để mini game nhiều hàng vẫn vừa màn hình */
+  aspect-ratio: 1.3;
+}
+
+.bb-platform {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: 2%;
+  height: 50%;
+  border: clamp(8px, 1.1vw, 16px) solid var(--gold);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #63d283 0 40%, #4cb86c 41% 100%);
+  box-shadow: 0 clamp(8px, 1.1vw, 16px) 0 #c3a145, 0 34px 40px rgba(0, 60, 30, .22);
+}
+
+.bb-platform::after {
+  /* viền sáng bên trong bục */
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border: 3px solid rgba(255, 255, 255, .22);
+  border-radius: 50%;
+}
+
+.bb-boss-shadow {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  bottom: 21%;
+  height: 7%;
+  background: rgba(0, 50, 30, .3);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: shadowbob 2.6s ease-in-out infinite;
+}
+
+.bb-boss-art {
+  position: absolute;
+  left: 17%;
+  width: 66%;
+  /* chân boss (phần ảnh có màu) đứng giữa bục, trên bóng; --foot = phần trống dưới chân ảnh (bossBattle.js đặt) */
+  bottom: calc(24.7% - 85.8% * var(--foot, .1));
+  line-height: 0;
+}
+
+.bb-boss-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  /* ảnh pixel art: phóng to vẫn nét */
+  filter: drop-shadow(0 5px 0 rgba(0, 0, 0, .12));
+  animation: bob 2.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.bb-boss-art.hit {
+  animation: hit .6s;
+}
+
+.bb-boss-art.evolve {
+  animation: evolve .9s ease-out;
+}
+
+.bb-battle.low .bb-boss-img {
+  animation-duration: 1.2s;
+}
+
+/* boss sắp gục: thở gấp hơn */
+
+.bb-pops {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bb-pop {
+  position: absolute;
+  top: 30%;
+  left: calc(50% + var(--dx, 0px));
+  font-size: clamp(30px, 3.4vw, 54px);
+  font-weight: 800;
+  color: #fff;
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+  animation: popup 1s ease-out forwards;
+}
+
+.bb-pop.team {
+  font-size: clamp(36px, 4.4vw, 68px);
+  color: var(--sun);
+}
+
+/* ===== Bảng boss + nút (phải dưới) ===== */
+.bb-side {
+  grid-area: side;
+  align-self: end;
+  display: grid;
+  gap: clamp(10px, 1.4vw, 18px);
+  min-width: 0;
+}
+
+.bb-boss-info {
+  padding: clamp(12px, 1.4vw, 20px) clamp(16px, 1.8vw, 26px) clamp(12px, 1.4vw, 20px);
+  background: var(--rim);
+  border-radius: clamp(24px, 2.6vw, 34px);
+  box-shadow: 0 8px 0 var(--shade);
+  animation: in .4s ease both;
+}
+
+.bb-info-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bb-boss-info h2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(22px, 2.5vw, 38px);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.bb-stage-no {
+  flex: none;
+  font-size: clamp(13px, 1.15vw, 18px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.bb-hp {
+  position: relative;
+  height: clamp(34px, 3.6vw, 46px);
+  margin: 8px 0 6px;
+  overflow: hidden;
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, .12);
+}
+
+#bbHpFill {
+  position: relative;
+  height: 100%;
+  background: linear-gradient(180deg, #a42b2b, var(--maroon));
+  border-radius: 999px;
+  transition: width 1s ease-out;
+}
+
+#bbHpFill::after {
+  /* vệt bóng trên thanh máu */
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 17%;
+  height: 22%;
+  background: rgba(255, 255, 255, .22);
+  border-radius: 999px;
+}
+
+.bb-hp.low #bbHpFill {
+  animation: lowpulse .8s ease-in-out infinite alternate;
+}
+
+#bbHpText {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(15px, 1.5vw, 22px);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 0 #3b0c0c, 0 -1px 0 #3b0c0c, 1px 0 0 #3b0c0c, -1px 0 0 #3b0c0c, 0 2px 3px rgba(0, 0, 0, .35);
+}
+
+.bb-info-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bb-pips {
+  display: flex;
+  gap: 6px;
+}
+
+.bb-pips i {
+  width: clamp(20px, 2vw, 30px);
+  height: 10px;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, .14);
+}
+
+.bb-pips i.done {
+  background: var(--green);
+}
+
+.bb-pips i.now {
+  background: var(--org);
+  animation: pop 1.4s infinite;
+}
+
+.bb-dmg {
+  margin: 0;
+  font-size: clamp(14px, 1.3vw, 19px);
+  font-weight: 800;
+  text-align: right;
+}
+
+.bb-team {
+  margin: 2px 0 0;
+  font-size: clamp(12px, 1.05vw, 15px);
+  font-weight: 600;
+  opacity: .7;
+}
+
+/* ===== Nút công cụ ===== */
+.bb-tools {
+  position: relative;
+  justify-self: end;
+  display: flex;
+  gap: 12px;
+  padding: 9px 16px;
+  background: var(--rim);
+  border-radius: 999px;
+  box-shadow: 0 6px 0 var(--shade);
+}
+
+.bb-tool {
+  display: grid;
+  place-items: center;
+  width: clamp(44px, 4vw, 58px);
+  aspect-ratio: 1;
+  padding: 0;
+  color: #fff;
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .12s;
+}
+
+.bb-tool svg {
+  width: 56%;
+  height: 56%;
+}
+
+.bb-tool.run {
+  background: #2a8f95;
+}
+
+.bb-tool.exit {
+  background: #e8212b;
+}
+
+.bb-tool.set {
+  color: var(--ink);
+  background: #fff;
+}
+
+.bb-tool:hover {
+  transform: translateY(-3px) scale(1.06);
+}
+
+.bb-tool:active {
+  transform: translateY(1px);
+}
+
+.bb-tool:focus-visible {
+  outline: 4px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.bb-tool.set[aria-expanded="true"] svg {
+  animation: spin 1.2s linear;
+}
+
+.bb-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 14px);
+  z-index: 20;
+  width: max-content;
+  min-width: 270px;
+  padding: 8px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  box-shadow: 0 6px 0 var(--ink);
+  animation: in .2s ease both;
+}
+
+.bb-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 14px;
+  white-space: nowrap;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.bb-menu-item:hover {
+  background: #fff1bd;
+}
+
+.bb-menu-item b {
+  padding: 2px 12px;
+  font-size: 14px;
+  color: #fff;
+  background: var(--green);
+  border-radius: 999px;
+}
+
+.bb-menu-item[aria-checked="false"] b {
+  background: #9aa9b1;
+}
+
+/* Hộp xác nhận */
+.bb-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(2, 48, 71, .72);
+  animation: in .2s ease both;
+}
+
+.bb-dialog {
+  width: min(430px, 100%);
+  padding: 24px;
+  text-align: center;
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: 0 8px 0 var(--ink);
+}
+
+.bb-dialog h3 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.bb-dialog p {
+  margin: 0 0 8px;
+  font-weight: 600;
+  opacity: .8;
+}
 
 .bb-intro {
   position: fixed;
@@ -252,8 +1061,29 @@ h2 { margin: 0; font-size: 26px; font-weight: 800; }
   background: rgba(2, 48, 71, .88);
   animation: in .3s ease both;
 }
-.bb-intro b { font-size: 64px; }
-.bb-intro span { font-size: 28px; font-weight: 600; }
+
+.bb-intro b {
+  font-size: 64px;
+}
+
+.bb-intro span {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.bb-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  z-index: 60;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 999px;
+  animation: in .3s ease both;
+}
 
 /* ---------- Kết quả ---------- */
 .bb-rank {
@@ -264,6 +1094,7 @@ h2 { margin: 0; font-size: 26px; font-weight: 800; }
   list-style: none;
   text-align: left;
 }
+
 .bb-rank li {
   display: grid;
   grid-template-columns: 44px 1fr auto auto;
@@ -274,18 +1105,160 @@ h2 { margin: 0; font-size: 26px; font-weight: 800; }
   border-bottom: 2px dashed var(--trk);
   border-radius: 10px;
 }
-.bb-rank li.me { background: #FFF3C4; }
-.bb-rank li:first-child { font-size: 22px; font-weight: 800; }
-.bb-rank b { font-weight: 800; }
-.bb-rank small { opacity: .65; }
 
+.bb-rank li.me {
+  background: #FFF3C4;
+}
+
+.bb-rank li:first-child {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.bb-rank b {
+  font-weight: 800;
+}
+
+.bb-rank small {
+  opacity: .65;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(-3.5%);
+  }
+}
+
+@keyframes shadowbob {
+  50% {
+    transform: scaleX(.88);
+    opacity: .75;
+  }
+}
+
+@keyframes cloud {
+  from {
+    translate: -25vw 0;
+  }
+
+  to {
+    translate: 125vw 0;
+  }
+}
+
+@keyframes sunpulse {
+  50% {
+    box-shadow: 0 0 0 20px rgba(255, 244, 160, .3), 0 0 90px 34px rgba(255, 240, 150, .5);
+  }
+}
+
+@keyframes popup {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(.7);
+  }
+
+  20% {
+    transform: translateY(-14px) scale(1.15);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-90px) scale(1);
+  }
+}
+
+@keyframes evolve {
+  0% {
+    transform: scale(.8);
+    filter: brightness(3) saturate(0);
+  }
+
+  50% {
+    transform: scale(1.12);
+    filter: brightness(1.6);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: none;
+  }
+}
+
+@keyframes lowpulse {
+  to {
+    filter: brightness(1.35);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+/* Màn hẹp / điện thoại: xếp dọc, boss nhỏ gọn ở trên */
 @media (max-width: 860px) {
-  .bb-battle { grid-template-columns: 1fr; }
-  .bb-boss-art { font-size: 90px; }
-  .q-opts { grid-template-columns: 1fr; }
-  .q-opts.two { grid-template-columns: 1fr 1fr; }
+  .bb-battle {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      "hud"
+      "boss"
+      "side"
+      "q"
+      "opts";
+    align-content: start;
+  }
+
+  .bb-field {
+    width: min(100%, 360px);
+    aspect-ratio: 1.45;
+  }
+
+  .q-card,
+  .bb-arena>.wait {
+    min-height: 130px;
+  }
+
+  .q-opts {
+    grid-template-columns: 1fr;
+  }
+
+  .q-opts.two {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .q-opts.hg-keys {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .bb-tools {
+    justify-self: center;
+  }
+
+  .bb-boss-info h2 {
+    white-space: normal;
+    font-size: 22px;
+  }
+
+  .bb-info-top {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+
+  .bb-menu {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, body::before { animation: none !important; transition: none !important; }
+
+  *,
+  body::before {
+    animation: none !important;
+    transition: none !important;
+  }
 }

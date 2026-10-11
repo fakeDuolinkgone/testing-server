@@ -114,9 +114,42 @@
 }
 .room-page .room-link:hover { background: #eaf6fb; color: var(--deep); transform: none; }
 
+/* ----- chọn chế độ chơi ----- */
+.room-subtitle { margin: 22px 0 12px; text-align: center; font: 800 24px/1.1 var(--display); }
+.room-modes { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.room-page .room-mode {
+    position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    width: auto; min-height: 0; margin: 0; padding: 16px 16px 18px; text-align: left;
+    border: 3px solid transparent; border-radius: 22px; background: #f1f9fc; color: var(--deep);
+    box-shadow: 0 5px 0 rgba(14, 56, 80, .12); cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s, background .2s;
+}
+.room-page .room-mode:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 0 rgba(14, 56, 80, .16); background: #e6f5fb; }
+.room-page .room-mode:focus-visible { outline: 4px solid var(--deep); outline-offset: 3px; }
+.room-page .room-mode.is-selected { border-color: var(--sun, #ff8b00); background: #fff4d6; box-shadow: 0 6px 0 rgba(255, 139, 0, .35); }
+.room-page .room-mode.is-selected::after {
+    content: "✓"; position: absolute; top: 10px; right: 12px; width: 26px; height: 26px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--sun, #ff8b00); color: #fff; font: 800 16px/1 var(--display);
+}
+.room-page .room-mode:disabled { cursor: default; }
+.room-page .room-mode.is-soon { opacity: .55; filter: grayscale(.4); box-shadow: none; }
+.room-mode-icon { font-size: 34px; line-height: 1; }
+.room-mode-img { display: block; width: 100%; height: auto; margin-bottom: 6px; border-radius: 14px; }
+.room-mode-name { font: 800 20px/1.15 var(--display); }
+.room-mode-desc { font-size: 14px; line-height: 1.35; color: #4d6b7c; }
+.room-mode-tag {
+    margin-top: 6px; padding: 3px 10px; border-radius: 999px;
+    background: var(--deep); color: #fff; font: 700 12px var(--display);
+}
+.room-hint { margin: 12px 0 14px; text-align: center; font-size: 15px; color: #6b8797; }
+.room-hint:empty { display: none; }
+
 @media (max-width: 700px) {
     .room-page { padding-top: 84px; }
     .room-card { padding: 28px 18px; }
     .room-choices { grid-template-columns: 1fr; }
     .room-code { letter-spacing: 5px; }
+    .room-modes { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .room-page .room-mode { padding: 14px 12px 16px; }
+    .room-mode-name { font-size: 18px; }
 }

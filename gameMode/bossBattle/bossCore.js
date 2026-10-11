@@ -24,15 +24,15 @@
     new RegExp(`\\b${w.word}(s|es|ed|ing)?\\b`, "i").test(w.example);
 
   const GAMES = [
-    { id: "choiceEnVi",     tier: "easy",   ok: hasMeaning },
-    { id: "trueFalse",      tier: "easy",   ok: hasMeaning },
-    { id: "speedTyping",    tier: "easy",   ok: w => isAlpha(w) && w.word.length <= 8 },
-    { id: "match",          tier: "medium", ok: hasMeaning },
-    { id: "choiceViEn",     tier: "medium", ok: hasMeaning },
-    { id: "unscramble",     tier: "hard"  , ok: w => isAlpha(w) && w.word.length >= 4 && w.word.length <= 9 },
-    { id: "sentenceFill",   tier: "hard",   ok: hasExample },
-    { id: "hangman",        tier: "hard",   ok: w => isAlpha(w) && w.word.length <= 7 },
-    { id: "missingLetters", tier: "medium",   ok: w => isAlpha(w) && w.word.length >= 4 }
+    { id: "choiceEnVi", tier: "easy", ok: hasMeaning },
+    { id: "trueFalse", tier: "easy", ok: hasMeaning },
+    { id: "speedTyping", tier: "easy", ok: w => isAlpha(w) && w.word.length <= 8 },
+    { id: "match", tier: "medium", ok: hasMeaning },
+    { id: "choiceViEn", tier: "medium", ok: hasMeaning },
+    { id: "unscramble", tier: "hard", ok: w => isAlpha(w) && w.word.length >= 4 && w.word.length <= 9 },
+    { id: "sentenceFill", tier: "hard", ok: hasExample },
+    { id: "hangman", tier: "hard", ok: w => isAlpha(w) && w.word.length <= 7 },
+    { id: "missingLetters", tier: "medium", ok: w => isAlpha(w) && w.word.length >= 4 }
   ];
 
   // Bộ random có seed (mulberry32): cùng seed → cùng dãy số trên mọi máy
@@ -115,7 +115,34 @@
     }));
   }
 
-  const api = { CFG, GAMES, rng, shuffle, stageCount, hpFor, hpLossOnLeave, isBossDead, buildPlan, rank };
+  // Dùng khi nối với boss-net.js: host gọi cho TỪNG giai đoạn.
+  // usedWords: { từ: true } các từ đã dùng; usedGames: id các mini game đã dùng ở giai đoạn trước.
+  // Trả về { game, words } — words rút gọn còn 4 trường để ghi lên Firebase cho nhẹ.
+  function pickStage(vocab, n, stageCount, usedWords, usedGames) {
+    const tier = CFG.TIER_PLAN[stageCount][Math.min(n, stageCount) - 1];
+    usedWords = usedWords || {};
+    usedGames = usedGames || [];
+    let options = GAMES.filter(g => g.tier === tier && !usedGames.includes(g.id));
+    if (!options.length) options = GAMES.filter(g => g.tier === tier);
+    const game = options[Math.floor(Math.random() * options.length)];
+
+    const fresh = vocab.filter(w => w && w.word && hasMeaning(w) && !usedWords[w.word]);
+    const Q = CFG.QUESTIONS_PER_STAGE;
+    let words = shuffle(fresh.filter(game.ok)).slice(0, Q);
+    if (words.length < Q) words = words.concat(shuffle(fresh.filter(w => !words.includes(w))).slice(0, Q - words.length));
+
+    return {
+      game: game.id,
+      words: words.map(w => ({
+        word: w.word,
+        classword: w.classword || "",
+        meaning: Array.isArray(w.meaning) ? w.meaning : [w.meaning],
+        example: w.example || ""
+      }))
+    };
+  }
+
+  const api = { CFG, GAMES, rng, shuffle, stageCount, hpFor, hpLossOnLeave, isBossDead, buildPlan, pickStage, rank };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.BossCore = api;
 

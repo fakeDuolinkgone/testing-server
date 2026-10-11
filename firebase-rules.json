@@ -5,6 +5,7 @@
         ".read": true,
         ".write": true,
         ".validate": "$code.matches(/^[A-Z0-9]{6}$/)",
+        "mode": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_]{1,20}$/)" },
         "players": {
           "$pid": {
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" }

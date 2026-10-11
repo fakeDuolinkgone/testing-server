@@ -8,5 +8,8 @@ window.FIREBASE_CONFIG = {
     authDomain: "normafix.firebaseapp.com",
     databaseURL: "https://normafix-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "normafix",
-    appId: "1:802943523784:web:effde50e629d42e94cfefd"
+    storageBucket: "normafix.firebasestorage.app",
+    messagingSenderId: "802943523784",
+    appId: "1:802943523784:web:effde50e629d42e94cfefd",
+    measurementId: "G-W2BRZMJFEM"
 };

@@ -25,6 +25,7 @@
 
     var PID_KEY = "normafix.boss.pid";
     var SESSION_KEY = "normafix.boss.session";
+    var DEFAULT_MODE = "bossBattle";   // phòng không chọn chế độ (test, bản thử một mình) thì chơi BossBattle
     var CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";   // bỏ chữ dễ nhầm: I, O, 0, 1
 
 
@@ -224,6 +225,7 @@
             o[k] = r[k] && typeof r[k] === "object" ? r[k] : {};
         });
         o.state = r.state || "lobby";
+        o.mode = typeof r.mode === "string" && r.mode ? r.mode : null;      // chế độ chơi chủ phòng đã chọn
         o.current = r.current || 0;
         o.stageCount = r.stageCount || 0;
         o.maxHp = r.maxHp || 0;
@@ -285,8 +287,14 @@
         };
     }
 
-    function defaultPick(n, count, used) {
+    /* Chọn từ (và mini game) cho một giai đoạn. Có BossCore thì dùng bộ chọn theo mức độ,
+       không thì chọn ngẫu nhiên như cũ. */
+    function defaultPick(n, count, used, stageCount, room) {
         var pool = typeof vocabData !== "undefined" ? vocabData : [];
+        if (root.BossCore && pool.length) {
+            var games = Object.keys((room && room.stages) || {}).map(function (k) { return room.stages[k].game; }).filter(Boolean);
+            return root.BossCore.pickStage(pool, n, stageCount, used, games);
+        }
         var fresh = pool.filter(function (w) { return w && w.word && !used[w.word]; });
         return R.shuffle(fresh.length >= count ? fresh : pool).slice(0, count);
     }
@@ -313,6 +321,7 @@
         this._sticky = {};
         this._waiters = [];
         this._playersJson = null;
+        this._modeSeen = undefined;
         this._scoresJson = null;
         this._startedEmitted = false;
         this._endedEmitted = false;
@@ -344,7 +353,8 @@
     [
         ["onPlayersChange", "players"], ["onGameStart", "gameStart"], ["onStageStart", "stageStart"],
         ["onScoresUpdate", "scores"], ["onPlayerLeave", "playerLeave"], ["onStageEnd", "stageEnd"],
-        ["onGameEnd", "gameEnd"], ["onRoomClosed", "roomClosed"], ["onRemoved", "removed"]
+        ["onGameEnd", "gameEnd"], ["onRoomClosed", "roomClosed"], ["onRemoved", "removed"],
+        ["onModeChange", "modeChange"]
     ].forEach(function (x) { P[x[0]] = function (cb) { return this.on(x[1], cb); }; });
 
     /* ----- thông tin nhanh ----- */
@@ -491,10 +501,12 @@
         var list = listPlayers(room, this.id), pj = JSON.stringify(list);
         if (pj !== this._playersJson) { this._playersJson = pj; this._emit("players", list, true); }
 
+        if (room.mode !== this._modeSeen) { this._modeSeen = room.mode; this._emit("modeChange", room.mode, true); }
+
         if (room.state !== "lobby") {
             if (!this._startedEmitted) {
                 this._startedEmitted = true;
-                this._emit("gameStart", { code: this.code, boss: room.boss, stageCount: room.stageCount, maxHp: room.maxHp }, true);
+                this._emit("gameStart", { code: this.code, mode: room.mode || DEFAULT_MODE, boss: room.boss, stageCount: room.stageCount, maxHp: room.maxHp }, true);
             }
 
             var sum = summarize(room);
@@ -538,6 +550,7 @@
         var st = room.stages["s" + n], words = [], self = this;
         try { words = JSON.parse(st.wordsJson || "[]"); } catch (e) { /* để trống */ }
         return {
+            game: st.game || null,                         // mini game của giai đoạn này (do host chọn)
             stage: n,
             stageCount: room.stageCount,
             boss: room.boss,
@@ -572,12 +585,27 @@
     };
 
 
+    /* ----- chế độ chơi: chủ phòng chọn ở sảnh chờ, cả phòng thấy qua onModeChange ----- */
+    P.getMode = function () { return this.room ? this.room.mode : null; };
+
+    P.setMode = async function (mode) {
+        await this._ready();
+        var r = this.room;
+        if (r.hostId !== this.id) throw fail("NOT_HOST", "Chỉ chủ phòng mới chọn được chế độ.");
+        if (r.state !== "lobby") throw fail("ALREADY_STARTED");
+        if (!/^[A-Za-z0-9_]{1,20}$/.test(String(mode))) throw fail("BAD_MODE", "Tên chế độ không hợp lệ.");
+        await this.db.update(this._p(), { mode: String(mode) });
+    };
+
     /* ----- host: bắt đầu ván ----- */
     P.startGame = async function () {
         await this._ready();
         var r = this.room;
         if (r.hostId !== this.id) throw fail("NOT_HOST", "Chỉ chủ phòng mới bắt đầu được.");
         if (r.state !== "lobby") throw fail("ALREADY_STARTED");
+
+        var mode = r.mode || DEFAULT_MODE;
+        if (mode !== "bossBattle") throw fail("MODE_UNAVAILABLE", "Chế độ này chưa có, hãy chọn BossBattle.");
 
         var all = listPlayers(r, this.id), live = all.filter(function (p) { return p.online; });
         var min = this.opts.minPlayers != null ? this.opts.minPlayers : R.MIN_PLAYERS;
@@ -586,6 +614,7 @@
         var stages = R.stageCount(live.length);
         var up = {
             state: "playing",
+            mode: mode,
             boss: Math.floor(Math.random() * R.BOSS_COUNT),
             stageCount: stages,
             maxHp: R.maxHp(live.length, stages),
@@ -602,13 +631,19 @@
         Object.keys(r.stages).forEach(function (k) {
             try { JSON.parse(r.stages[k].wordsJson).forEach(function (w) { used[w.word || w] = true; }); } catch (e) { /* bỏ qua */ }
         });
-        var words = [];
-        try { words = (this.opts.pickWords || defaultPick)(n, R.QUESTIONS_PER_STAGE, used) || []; }
-        catch (e) { console.error("[BossNet] pickWords lỗi:", e); }
+
+        // pickWords/defaultPick trả về mảng từ, hoặc { game, words } khi có chọn mini game
+        var picked = null, words = [];
+        try {
+            picked = (this.opts.pickWords || defaultPick)(n, R.QUESTIONS_PER_STAGE, used, stageCount, r);
+            words = (picked && picked.words) || picked || [];
+        } catch (e) { console.error("[BossNet] pickWords lỗi:", e); }
+
         return {
             startAt: this.db.serverNow() + (n === 1 ? R.FIRST_STAGE_DELAY_MS : R.BREAK_MS),
             durationSec: R.stageSeconds(n, stageCount),
             questions: R.QUESTIONS_PER_STAGE,
+            game: (picked && picked.game) || null,
             wordsJson: JSON.stringify(words)
         };
     };

@@ -47,13 +47,29 @@ const results = []; const ok = n => { results.push(n); console.log('  ✓', n); 
   const code = await host.createRoom('An');
   assert.match(code, /^[A-HJ-NP-Z2-9]{6}$/);
   await assert.rejects(() => bob.joinRoom('ZZZZZZ', 'Bob'), e => e.code === 'ROOM_NOT_FOUND');
+  await sleep(5);                                          // cách nhau vài ms để thứ tự vào phòng cố định
   await bob.joinRoom(code.toLowerCase(), 'Bob');
+  await sleep(5);
   await cara.joinRoom(code, 'an');                        // trùng tên với chủ phòng
   await until(() => host.getPlayers().length === 3, 2000, 'lobby 3 người');
   const names = host.getPlayers().map(p => p.name);
   assert.deepStrictEqual(names, ['An', 'Bob', 'an (2)']);
   assert.ok(host.isHost() && !bob.isHost());
   ok('tạo phòng, vào bằng mã (không phân biệt hoa thường), tên trùng được đánh số');
+
+  /* ---------- chọn chế độ chơi ở sảnh chờ ---------- */
+  const modeSeen = []; bob.onModeChange(m => modeSeen.push(m));
+  await until(() => modeSeen.length === 1, 2000, 'bob nhận trạng thái chế độ ban đầu');
+  assert.strictEqual(modeSeen[0], null);                   // chưa chọn gì
+  await assert.rejects(() => bob.setMode('bossBattle'), e => e.code === 'NOT_HOST');
+  await assert.rejects(() => host.setMode('boss battle!'), e => e.code === 'BAD_MODE');
+  await host.setMode('race');
+  await until(() => bob.getMode() === 'race', 2000, 'bob thấy chế độ race');
+  assert.strictEqual(modeSeen[modeSeen.length - 1], 'race');
+  await assert.rejects(() => host.startGame(), e => e.code === 'MODE_UNAVAILABLE');   // chế độ chưa có thì không bắt đầu được
+  await host.setMode('bossBattle');
+  await until(() => modeSeen[modeSeen.length - 1] === 'bossBattle', 2000, 'bob thấy bossBattle');
+  ok('chủ phòng chọn chế độ, cả phòng thấy; chế độ chưa có không bắt đầu được; người thường không chọn được');
 
   await assert.rejects(() => bob.startGame(), e => e.code === 'NOT_HOST');
   ok('người không phải host không được bắt đầu');
@@ -69,7 +85,7 @@ const results = []; const ok = n => { results.push(n); console.log('  ✓', n); 
   assert.strictEqual(s1.stageCount, 3); assert.strictEqual(s1.maxHp, 3 * 3 * 7); assert.strictEqual(s1.questions, 10);
   assert.strictEqual(s1.words.length, 10); assert.ok(s1.msUntilStart > 0 && s1.msUntilStart <= R.FIRST_STAGE_DELAY_MS);
   assert.deepStrictEqual(bobStages[0].words, s1.words);   // cả phòng cùng một bộ từ
-  assert.ok([0, 1, 2].includes(s1.boss));
+  assert.ok([0, 1, 2, 3, 4].includes(s1.boss));
   ok('bắt đầu ván: 3 người -> 3 giai đoạn, HP 63, 10 từ dùng chung');
 
   const late = new Engine(mkClient(), { storage: memoryStore() });

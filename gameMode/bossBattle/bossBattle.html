@@ -18,35 +18,115 @@
     <div class="bb-card bb-center">
       <h1>⚔️ BOSS BATTLE</h1>
       <p>Cả lớp cùng đánh bại boss bằng điểm từ vựng!</p>
-      <label class="bb-label">Số người chơi (giả lập)
-        <input id="bbN" type="number" min="1" max="40" value="6">
-      </label>
-      <p id="bbInfo" class="bb-info"></p>
-      <button id="bbGo" class="bb-btn primary">▶ Bắt đầu</button>
-      <button id="bbBack" class="bb-btn">🏠 Về trang chủ</button>
+      <p id="bbInfo" class="bb-info">⏳ Đang kết nối phòng...</p>
+      <button id="bbBack" class="bb-btn">🏠 Về sảnh chờ</button>
     </div>
   </section>
 
   <!-- ========== MÀN ĐÁNH BOSS ========== -->
+  <!-- Bố cục: câu hỏi (trái trên) · đáp án (trái dưới) · boss trên bục (phải trên) · bảng boss + nút (phải dưới) -->
   <main id="bbBattle" class="bb-screen bb-battle" hidden>
-    <aside class="bb-card bb-boss">
-      <div id="bbBossArt" class="bb-boss-art"></div>
-      <h2 id="bbBossName"></h2>
-      <div class="bb-hp"><div id="bbHpFill"></div><span id="bbHpText"></span></div>
-      <p id="bbMyDmg" class="bb-dmg">Sát thương của bạn: 0</p>
-      <p id="bbTeam" class="bb-team"></p>
-    </aside>
 
-    <section class="bb-card bb-stage">
-      <header class="bb-stage-head">
-        <span id="bbStageName"></span>
-        <b id="bbTime"></b>
-      </header>
-      <div class="bb-timebar"><div id="bbTimeFill"></div></div>
-      <div id="bbArena" class="bb-arena"></div>
+    <!-- Phông cảnh: trời, mây, đồi, cỏ (chỉ để trang trí) -->
+    <div class="bb-scene" aria-hidden="true">
+      <img src="../../pics/background_bossBattle.gif" width="100%" height="100%" alt="">
+    </div>
+
+    <!-- Thanh trên cùng: loại mini game + đồng hồ -->
+    <header class="bb-hud">
+      <span id="bbStageName" class="bb-chip"></span>
+      <div class="bb-clock"><span aria-hidden="true">⏱</span><b id="bbTime"></b></div>
+      <div class="bb-timebar">
+        <div id="bbTimeFill"></div>
+      </div>
+    </header>
+
+    <!-- Mini game tự vẽ vào đây: .q-card (câu hỏi) và .q-panel (đáp án) -->
+    <section id="bbArena" class="bb-arena" aria-live="polite"></section>
+
+    <!-- Boss đứng trên bục -->
+    <section class="bb-boss">
+      <div class="bb-field">
+        <div class="bb-platform"></div>
+        <div class="bb-boss-shadow"></div>
+        <div id="bbBossArt" class="bb-boss-art"><img id="bbBossImg" class="bb-boss-img" alt=""></div>
+        <div id="bbPops" class="bb-pops" aria-hidden="true"></div>
+      </div>
     </section>
 
+    <!-- Bảng thông tin boss + nút công cụ -->
+    <div class="bb-side">
+      <section class="bb-boss-info">
+        <div class="bb-info-top">
+          <h2 id="bbBossName"></h2>
+          <span id="bbStageNo" class="bb-stage-no"></span>
+        </div>
+        <div class="bb-hp" role="progressbar" aria-label="Máu boss">
+          <div id="bbHpFill"></div><span id="bbHpText"></span>
+        </div>
+        <div class="bb-info-meta">
+          <div id="bbPips" class="bb-pips" aria-hidden="true"></div>
+          <p id="bbMyDmg" class="bb-dmg"></p>
+        </div>
+        <p id="bbTeam" class="bb-team"></p>
+      </section>
+
+      <nav class="bb-tools" aria-label="Công cụ">
+        <button id="bbToolRun" class="bb-tool run" type="button" title="Rời trận, về sảnh chờ"
+          aria-label="Rời trận, về sảnh chờ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="15" cy="4" r="1.8" />
+            <path d="M14 7l-3 6" />
+            <path d="M14 8l4 2" />
+            <path d="M13 8L9 9l-2 3" />
+            <path d="M11 13l4 3-1 5" />
+            <path d="M11 13l-3 4-4 1" />
+          </svg>
+        </button>
+        <button id="bbToolExit" class="bb-tool exit" type="button" title="Thoát về trang chủ"
+          aria-label="Thoát về trang chủ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+        <button id="bbToolSet" class="bb-tool set" type="button" title="Cài đặt" aria-label="Cài đặt"
+          aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+
+        <div id="bbSettings" class="bb-menu" role="menu" hidden>
+          <button id="bbOptSound" class="bb-menu-item" type="button" role="menuitemcheckbox" aria-checked="true">
+            <span>🔊 Âm thanh</span><b>Bật</b>
+          </button>
+          <button id="bbOptFull" class="bb-menu-item" type="button" role="menuitem">
+            <span>⛶ Toàn màn hình</span><b>Bật/Tắt</b>
+          </button>
+        </div>
+      </nav>
+    </div>
+
     <div id="bbIntro" class="bb-intro" hidden></div>
+
+    <!-- Hộp xác nhận khi bấm rời trận / thoát -->
+    <div id="bbConfirm" class="bb-modal" hidden>
+      <div class="bb-dialog" role="dialog" aria-modal="true" aria-labelledby="bbConfirmTitle">
+        <h3 id="bbConfirmTitle"></h3>
+        <p id="bbConfirmText"></p>
+        <div class="bb-actions">
+          <button id="bbConfirmNo" class="bb-btn" type="button">Ở lại</button>
+          <button id="bbConfirmYes" class="bb-btn primary" type="button">Rời đi</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- ========== MÀN KẾT QUẢ ========== -->
@@ -66,7 +146,13 @@
   <audio id="sound-wrong" src="../../audio/wrong.mp3" preload="auto"></audio>
   <audio id="sound-finish" src="../../audio/finish.mp3" preload="auto"></audio>
 
+  <!-- Mạng (thứ tự quan trọng): SDK → cấu hình → từ vựng → luật → boss-net -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="../../JS/net/firebase-config.js"></script>
   <script src="../../data/englishVocabularys.js"></script>
+  <script src="../../JS/net/boss-rules.js"></script>
+  <script src="../../JS/net/boss-net.js"></script>
   <script src="../../JS/common/audio.js"></script>
   <script src="bossCore.js"></script>
   <script src="bossGames.js"></script>

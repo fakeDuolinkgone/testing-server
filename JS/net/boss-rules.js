@@ -9,7 +9,7 @@
     var R = {
         TARGET_ACCURACY: 0.7,        // mỗi người cần đúng khoảng 70% để thắng
         QUESTIONS_PER_STAGE: 10,
-        BOSS_COUNT: 3,               // số boss ngẫu nhiên (id 0..2)
+        BOSS_COUNT: 5,               // số boss ngẫu nhiên (id 0..4: Burger, Sushi, Baguette, Gà luộc, Khoai chiên)
         MIN_PLAYERS: 2,
         MAX_PLAYERS: 30,
 
@@ -19,7 +19,7 @@
 
         FIRST_STAGE_DELAY_MS: 8000,  // chờ trước giai đoạn 1 (đủ để mọi người load trang game)
         BREAK_MS: 5000,              // nghỉ giữa các giai đoạn
-        GRACE_MS: 1500,              // đợi điểm cuối cùng về sau khi hết giờ
+        GRACE_MS: 3000,              // đợi điểm cuối cùng về sau khi hết giờ (mạng chậm, tab chạy nền)
         OFFLINE_GRACE_MS: 12000      // mất kết nối quá lâu thì coi như đã rời phòng
     };
 
