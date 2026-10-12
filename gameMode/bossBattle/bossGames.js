@@ -67,26 +67,20 @@
   // NỐI CỘT: 10 từ = 2 vòng × 5 cặp, 1 điểm mỗi cặp đúng, nối sai không bị trừ điểm
   function runMatch(words, ctx) {
     const items = shuffle(words);
-    let round = 0, score = 0, matched = 0, stopped = false, busy = false, sel = {};
+    const rounds = Math.ceil(items.length / 5);
+    let round = 0, score = 0, matched = 0, size = 5, stopped = false, busy = false, sel = {};
 
     const btn = (w, side, text) =>
       `<button class="q-opt mt-item" data-s="${side}" data-i="${items.indexOf(w)}">${esc(text)}</button>`;
 
     function draw() {
       const part = items.slice(round * 5, round * 5 + 5);
-      matched = 0; sel = {}; busy = false;
-      // .q-card = khối câu hỏi, .q-panel = khối đáp án (bossBattle.css đặt hai khối này vào đúng chỗ trên màn hình)
+      matched = 0; sel = {}; busy = false; size = part.length;
       ctx.el.innerHTML = `
-        <div class="q-card">
-          <div class="q-count">Vòng ${round + 1} / 2</div>
-          <div class="q-prompt q-prompt-sm">Nối mỗi từ với nghĩa đúng</div>
-          <div class="q-prog"><i style="width:${score / 10 * 100}%"></i></div>
-        </div>
-        <div class="q-panel">
-          <div class="mt-grid">
-            <div class="mt-col">${shuffle(part).map(w => btn(w, "L", w.word)).join("")}</div>
-            <div class="mt-col">${shuffle(part).map(w => btn(w, "R", M(w))).join("")}</div>
-          </div>
+        <div class="q-count">Vòng ${round + 1} / ${rounds}</div>
+        <div class="mt-grid">
+          <div class="mt-col">${shuffle(part).map(w => btn(w, "L", w.word)).join("")}</div>
+          <div class="mt-col">${shuffle(part).map(w => btn(w, "R", M(w))).join("")}</div>
         </div>`;
       ctx.el.querySelectorAll(".mt-item").forEach(b => (b.onclick = () => pick(b)));
     }
@@ -105,13 +99,11 @@
       if (same) {
         pair.forEach(x => { x.classList.remove("sel"); x.classList.add("good", "done"); });
         score++; ctx.onScore(score); sfx("playCorrect");
-        const bar = ctx.el.querySelector(".q-prog i");
-        if (bar) bar.style.width = `${score / 10 * 100}%`;
-        if (++matched === 5) {
+        if (++matched === size) {
           busy = true;
           setTimeout(() => {
             if (stopped) return;
-            if (++round < 2) draw();
+            if (++round < rounds) draw();
             else { stopped = true; ctx.onDone(); }
           }, 400);
         }
@@ -119,12 +111,13 @@
         busy = true;
         pair.forEach(x => x.classList.add("bad"));
         sfx("playWrong");
+        if (ctx.onWrong) ctx.onWrong();
         setTimeout(() => { pair.forEach(x => x.classList.remove("sel", "bad")); busy = false; }, 350);
       }
     }
 
     draw();
-    return { stop() { stopped = true; return score; } };
+    return { stop() { stopped = true; return score; }, canSkip: false, max: items.length };
   }
 
   // HANGMAN RÚT GỌN: lộ sẵn khoảng nửa số chữ, chọn chữ còn thiếu, sai 3 lần là mất câu
@@ -153,15 +146,10 @@
       let wrong = 0;
 
       ctx.el.innerHTML = `
-        <div class="q-card">
-          <div class="q-count">${i + 1} / ${items.length} <span class="hg-lives">${"❤️".repeat(HG_LIVES)}</span></div>
-          <div class="q-sub">${esc(cls(w) + " " + M(w))}</div>
-          <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>
-          <div class="q-prog"><i style="width:${(i + 1) / items.length * 100}%"></i></div>
-        </div>
-        <div class="q-panel">
-          <div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>
-        </div>`;
+        <div class="q-count">${i + 1} / ${items.length} <span class="hg-lives">${"❤️".repeat(HG_LIVES)}</span></div>
+        <div class="q-sub">${esc(cls(w) + " " + M(w))}</div>
+        <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>
+        <div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>`;
 
       const slots = ctx.el.querySelectorAll(".hg-slot");
       ctx.el.querySelectorAll(".hg-keys .q-opt").forEach(b => (b.onclick = () => {
@@ -177,7 +165,8 @@
           sfx("playWrong");
           wrong++;
           ctx.el.querySelector(".hg-lives").textContent = "❤️".repeat(HG_LIVES - wrong) + "🖤".repeat(wrong);
-          if (wrong >= HG_LIVES) {   // hết lượt: hiện đáp án rồi sang câu sau
+          if (wrong >= HG_LIVES) {
+            if (ctx.onWrong) ctx.onWrong();   // hết lượt: hiện đáp án rồi sang câu sau
             [...hidden].forEach(k => { slots[k].textContent = a[k].toUpperCase(); slots[k].classList.add("miss"); });
             next(900);
           }
@@ -186,7 +175,7 @@
     }
 
     show();
-    return { stop() { stopped = true; return score; } };
+    return { stop() { stopped = true; return score; }, canSkip: false, max: items.length };
   }
 
   const CUSTOM = { match: runMatch, hangman: runHangman };
@@ -213,33 +202,33 @@
       }, delay);
     };
     const gain = () => { score++; ctx.onScore(score); sfx("playCorrect"); };
+    const wrong = () => { sfx("playWrong"); if (ctx.onWrong) ctx.onWrong(); };
 
     function show() {
       locked = false;
       const q = qs[i];
-      ctx.el.innerHTML = `
-        <div class="q-card">
-          <div class="q-count">${i + 1} / ${qs.length}</div>
-          <div class="q-prompt">${esc(q.prompt)}</div>
-          <div class="q-sub">${esc(q.sub || "")}</div>
-          <div class="q-prog"><i style="width:${(i + 1) / qs.length * 100}%"></i></div>
-        </div>
-        <div class="q-panel">${q.options
-          ? `<div class="q-opts ${q.options.length === 2 ? "two" : ""}">${q.options.map(o => `<button class="q-opt">${esc(o)}</button>`).join("")}</div>`
-          : `<input class="q-input" autocomplete="off" placeholder="${esc(q.ph)}"><button class="q-skip">Bỏ qua →</button>`}</div>`;
+      const head = `
+        <div class="q-count">${i + 1} / ${qs.length}</div>
+        <div class="q-prompt">${esc(q.prompt)}</div>
+        <div class="q-sub">${esc(q.sub || "")}</div>`;
+      const tail = q.options
+        ? `<div class="q-opts ${q.options.length === 2 ? "two" : ""}">${q.options.map(o => `<button class="q-opt">${esc(o)}</button>`).join("")}</div>`
+        : `<input class="q-input" autocomplete="off" placeholder="${esc(q.ph)}"><button class="q-skip">Bỏ qua →</button>`;
+      const ans = ctx.aEl || ctx.el;     // aEl (tuỳ chọn): hàng đáp án nằm riêng bên dưới bảng câu hỏi
+      if (ctx.aEl) { ctx.el.innerHTML = head; ctx.aEl.innerHTML = tail; } else ctx.el.innerHTML = head + tail;
 
       if (q.options) {
-        const btns = [...ctx.el.querySelectorAll(".q-opt")];
+        const btns = [...ans.querySelectorAll(".q-opt")];
         btns.forEach(b => b.onclick = () => {
           if (locked || stopped) return;
           btns.forEach(x => (x.disabled = true));
           const right = b.textContent === q.answer;
           b.classList.add(right ? "good" : "bad");
-          if (right) gain(); else sfx("playWrong");
+          if (right) gain(); else wrong();
           advance(350);
         });
       } else {
-        const inp = ctx.el.querySelector(".q-input");
+        const inp = ans.querySelector(".q-input");
         inp.focus();
         inp.oninput = () => {
           if (locked || stopped) return;
@@ -247,12 +236,12 @@
             inp.disabled = true; gain(); advance(200);
           }
         };
-        ctx.el.querySelector(".q-skip").onclick = () => { if (!locked && !stopped) { sfx("playWrong"); advance(0); } };
+        ans.querySelector(".q-skip").onclick = () => { if (!locked && !stopped) { wrong(); advance(0); } };
       }
     }
 
     show();
-    return { stop() { stopped = true; return score; } };
+    return { stop() { stopped = true; return score; }, skip() { if (!locked && !stopped) { wrong(); advance(0); } }, canSkip: true, max: qs.length };
   }
 
   root.BossGames = { ids: [...Object.keys(GAMES), ...Object.keys(CUSTOM)], names: NAMES, run };

@@ -25,6 +25,8 @@
             minPlayers: function () { return root.BossRules.MIN_PLAYERS; },
             maxPlayers: function () { return root.BossRules.MAX_PLAYERS; }
         },
+
+
         {
             id: "wordHunt",
             icon: "🔍",
@@ -33,9 +35,27 @@
             desc: "Cả phòng cùng săn từ trong bảng chữ cái, ai tìm được nhiều từ nhất thắng.",
             available: false
         },
-        { id: "race",     icon: "🏁", name: "Đua tốc độ",   desc: "Ai trả lời nhanh và đúng nhất sẽ về nhất.", available: false },
-        { id: "survival", icon: "💀", name: "Sinh tồn",     desc: "Trả lời sai là mất mạng, người cuối cùng thắng.", available: false },
-        { id: "bingo",    icon: "🎯", name: "Bingo từ vựng", desc: "Điền đủ hàng trên bảng từ để Bingo.", available: false },
+
+
+
+        { id: "race", icon: "🏁", name: "Đua tốc độ", desc: "Ai trả lời nhanh và đúng nhất sẽ về nhất.", available: false },
+
+
+
+        {
+            id: "survival", icon: "💀", name: "Sinh tồn",
+            desc: "Cả phòng cùng chơi, cứ vài vòng loại những người điểm thấp nhất, người cuối cùng sống sót thắng.",
+            page: "gameMode/survival/survival.html",
+            available: true,
+            summary: function (n) { return n + " người  •  loại dần cho tới khi còn 1 người"; },
+            minPlayers: function () { return 2; },
+            maxPlayers: function () { return 80; }
+        },
+
+
+        { id: "bingo", icon: "🎯", name: "Bingo từ vựng", desc: "Điền đủ hàng trên bảng từ để Bingo.", available: false },
+
+        
         { id: "wordChain", icon: "🔗", name: "Nối từ đối kháng", desc: "Thi nối từ với bạn bè theo từng lượt.", available: false }
     ];
 

@@ -5,7 +5,7 @@ const TIME = 60;        // giây cho mỗi từ
 const MAX_WRONG = 6;    // số lần sai tối đa
 // 11 nét của stickman gom thành 6 giai đoạn (chỉ số trong #hmMan), vẽ từ dưới trái đến chân phải
 const STAGES = [[0, 1, 2], [3, 4], [5, 6], [7, 8], [9], [10]];
-const TILES = 14;       // số ô chữ cái
+const TILES = 21;       // số ô chữ cái (7 cột x 3 hàng)
 const HOME = "../../game.html";
 
 const $ = id => document.getElementById(id);
@@ -117,7 +117,7 @@ function startRound() {
   slotsEl.style.setProperty("--n", word.length);
   slotsEl.innerHTML = [...word].map(() => '<span class="slot"></span>').join("");
 
-  // 14 ô: đủ chữ của từ + chữ ngẫu nhiên cho đủ số lượng
+  // 21 ô: đủ chữ của từ + chữ ngẫu nhiên cho đủ số lượng
   const letters = [...new Set(word)];
   const extra = shuffle("abcdefghijklmnopqrstuvwxyz".split("").filter(c => !letters.includes(c)))
     .slice(0, TILES - letters.length);

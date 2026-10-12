@@ -20,7 +20,7 @@
         FIRST_STAGE_DELAY_MS: 8000,  // chờ trước giai đoạn 1 (đủ để mọi người load trang game)
         BREAK_MS: 5000,              // nghỉ giữa các giai đoạn
         GRACE_MS: 3000,              // đợi điểm cuối cùng về sau khi hết giờ (mạng chậm, tab chạy nền)
-        OFFLINE_GRACE_MS: 12000      // mất kết nối quá lâu thì coi như đã rời phòng
+        OFFLINE_GRACE_MS: 60000      // mất kết nối quá lâu thì coi như đã rời phòng
     };
 
     /* Số HP mỗi người "gánh" ở mỗi giai đoạn: 10 câu x 0,7 = 7 */

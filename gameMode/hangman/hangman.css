@@ -223,7 +223,7 @@ body::before {
   color: var(--red);
 }
 
-/* ---------- 14 ô chữ cái ---------- */
+/* ---------- 21 ô chữ cái ---------- */
 .hm-keys {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

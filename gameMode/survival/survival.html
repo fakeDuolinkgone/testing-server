@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SURVIVAL - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <!-- Kiểu của các mini game (.q-*, .mt-*, .hg-*) dùng chung với BossBattle -->
+  <link rel="stylesheet" href="../bossBattle/bossBattle.css">
+  <link rel="stylesheet" href="survival.css">
+</head>
+
+<body spellcheck="false">
+  <div class="sv-bg"></div>
+
+  <!--
+    GIAO DIỆN: đổi bố cục thoải mái, miễn là giữ các id bên dưới (JS chỉ dùng id).
+    data-v="..." cho biết khối nào hiện ở màn nào: play (đang chơi), end (cuối vòng),
+    spec (khán giả), result (kết thúc). Màn hiện tại nằm ở #sv[data-view].
+  -->
+  <main id="sv" class="sv" data-view="play">
+
+    <!-- ===== BÊN TRÁI ===== -->
+    <section class="sv-card sv-left">
+      <div class="sv-badge"><i id="svDot" class="dot"></i><span id="svBadge">Still Alive</span></div>
+
+      <div class="sv-board">
+        <div id="svQ" class="sv-q" data-v="play"></div>            <!-- câu hỏi / vùng chơi -->
+        <ul id="svList" class="sv-list" data-v="end spec result"></ul> <!-- danh sách: loại / xếp hạng / kết quả -->
+      </div>
+
+      <div id="svA" class="sv-answers" data-v="play"></div>        <!-- hàng đáp án -->
+    </section>
+
+    <!-- ===== BÊN PHẢI ===== -->
+    <aside class="sv-right">
+      <section class="sv-card sv-top">
+        <ul id="svLb" class="sv-list sv-lb" data-v="play"></ul>    <!-- bảng xếp hạng rút gọn khi đang chơi -->
+        <figure class="sv-mascot" data-v="end spec result">
+          <img id="svMascot" alt="mascot">
+          <figcaption id="svCap"></figcaption>
+        </figure>
+      </section>
+
+      <section class="sv-card sv-stats">
+        <dl data-v="play">
+          <dt>time</dt><dd id="stTime">--</dd>
+          <dt>score</dt><dd id="stScore">0 / 0</dd>
+          <dt>ques</dt><dd id="stQues">0 / 0</dd>
+        </dl>
+        <dl data-v="end">
+          <dt>stage</dt><dd id="enStage">1/3</dd>
+          <dt>players left</dt><dd id="enLeft">-</dd>
+        </dl>
+        <dl data-v="spec">
+          <dt>total time play</dt><dd id="spTime">0:00</dd>
+          <dt>total score</dt><dd id="spScore">0</dd>
+          <dt>rank</dt><dd id="spRank">-</dd>
+        </dl>
+        <button id="svAgain" class="sv-again" data-v="result" type="button">⟳ CHƠI LẠI</button>
+
+        <div class="sv-btns">
+          <button id="svSkip" class="sv-ic ic-skip" type="button" title="Bỏ qua câu hỏi (tính là sai)" style="text-align: center; align-content: center;"><img src="../../pics/skip icon.png" alt="Bỏ qua" width="35" height="35"></button>
+          <button id="svExit" class="sv-ic ic-exit" type="button" title="Thoát phòng" style="text-align: center; align-content: center;"><img src="../../pics/exit icon.png" alt="Thoát phòng" width="35" height="35"></button>
+          <button id="svSet" class="sv-ic ic-set" type="button" title="Cài đặt" style="text-align: center; align-content: center;"><img src="../../pics/setting icon.png" alt="Cài đặt" width="35" height="35"></button>
+        </div>
+      </section>
+    </aside>
+
+    <div id="svIntro" class="bb-intro" hidden></div>
+
+    <!-- Popup khi bạn bị loại (tự mờ dần sau vài giây, bấm vào để đóng) -->
+    <div id="svPopup" class="sv-popup" hidden>
+      <div class="sv-popup-card">
+        <b>💀 Bạn đã bị loại</b>
+        <span id="svPopupSub"></span>
+      </div>
+    </div>
+
+    <div id="svSettings" class="sv-overlay" hidden>
+      <div class="sv-box">
+        <h2>CÀI ĐẶT</h2>
+        <button id="svResume" class="bb-btn primary" type="button">▶ Tiếp tục</button>
+        <button id="svLeave2" class="bb-btn" type="button">🚪 Thoát phòng</button>
+      </div>
+    </div>
+  </main>
+
+  <audio id="sound-correct" src="../../audio/correct.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="../../audio/wrong.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="../../audio/finish.mp3" preload="auto"></audio>
+
+  <!-- Mạng (thứ tự quan trọng): SDK → cấu hình → từ vựng → luật → boss-net → phần của Survival -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="../../JS/net/firebase-config.js"></script>
+  <script src="../../data/englishVocabularys.js"></script>
+  <script src="../../JS/net/boss-rules.js"></script>
+  <script src="../../JS/net/boss-net.js"></script>
+  <script src="../../JS/common/audio.js"></script>
+  <script src="../bossBattle/bossCore.js"></script>
+  <script src="../bossBattle/bossGames.js"></script>
+  <script src="survivalCore.js"></script>
+  <script src="survivalHost.js"></script>
+  <script src="survivalNet.js"></script>
+  <script src="survival.js"></script>
+</body>
+
+</html>

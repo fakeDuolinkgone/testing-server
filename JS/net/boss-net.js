@@ -26,6 +26,7 @@
     var PID_KEY = "normafix.boss.pid";
     var SESSION_KEY = "normafix.boss.session";
     var DEFAULT_MODE = "bossBattle";   // phòng không chọn chế độ (test, bản thử một mình) thì chơi BossBattle
+    var MODES = {};   // chế độ chơi đăng ký thêm: MODES[id] = { start(engine, room), tick(engine, room, now) }
     var CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";   // bỏ chữ dễ nhầm: I, O, 0, 1
 
 
@@ -407,7 +408,11 @@
         var room = await this.db.get("rooms/" + code);
         if (!room || !room.hostId) throw fail("ROOM_NOT_FOUND");
         if (room.state && room.state !== "lobby") throw fail("ROOM_STARTED");
-        if (Object.keys(room.players || {}).length >= R.MAX_PLAYERS) throw fail("ROOM_FULL");
+
+        var gm = root.GameModes && root.GameModes.get(room.mode);
+        var cap = gm && gm.maxPlayers ? gm.maxPlayers() : R.MAX_PLAYERS;
+        if (Object.keys(room.players || {}).length >= cap) throw fail("ROOM_FULL");
+
         this.code = code;
         await this.db.set(this._p("players/" + this.id), { name: this.name, joinedAt: this.db.TS, online: true });
         this._joined = true;
@@ -605,6 +610,7 @@
         if (r.state !== "lobby") throw fail("ALREADY_STARTED");
 
         var mode = r.mode || DEFAULT_MODE;
+        if (MODES[mode]) return MODES[mode].start(this, r);
         if (mode !== "bossBattle") throw fail("MODE_UNAVAILABLE", "Chế độ này chưa có, hãy chọn BossBattle.");
 
         var all = listPlayers(r, this.id), live = all.filter(function (p) { return p.online; });
@@ -655,7 +661,11 @@
         if (!r || !this._joined) return;
         var now = this.db.serverNow();
         this._maybeClaimHost(r, now);
-        if (r.hostId === this.id) this._hostDuties(r, now);
+        
+        if (r.hostId === this.id) {
+            var h = MODES[r.mode];
+            if (h && h.tick) h.tick(this, r, now); else this._hostDuties(r, now);
+        }
     };
 
     P._maybeClaimHost = function (r, now) {
@@ -755,6 +765,7 @@
        6. CỔNG VÀO
        =========================================================== */
     root.BossNet = {
+        registerMode: function (id, handler) { MODES[id] = handler; },
         isConfigured: function () { return isConfigured(); },
 
         /* Bản thật: nhiều máy chơi chung qua Firebase */

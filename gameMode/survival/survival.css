@@ -1,0 +1,730 @@
+/* survival.css — chạy SAU bossBattle.css (dùng lại kiểu của các mini game .q-*, .mt-*, .hg-*) */
+:root {
+  --ink: #161616;
+  --panel: #FFD36B;
+  --green: #5FD383;
+  --gold: #FFB703;
+  --teal: #00868B;
+  --red: #C93A3A;
+  --brown: #7B3200;
+  --lime: #72C93A;
+  --cream: #F4DD87;
+  --blue: #2A9DC4;
+  --dead: #F2332E;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 0;
+  height: 100vh;
+  height: 100dvh;
+  /* đúng bằng khung nhìn → không còn phần thừa để trang bị đẩy lệch */
+  display: flex;
+  /* căn giữa khối game theo cả chiều ngang lẫn dọc */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--green);
+  transition: background-color .8s ease;
+}
+
+body.mood-dead {
+  background: #ff4040;
+}
+
+/* khi bị loại */
+body.mood-end {
+  background: #13acac;
+}
+
+/* khi kết thúc */
+body::before {
+  content: none;
+}
+
+/* tắt hạt xanh của BossBattle */
+
+/* Nền họa tiết: cuộn chậm từ dưới lên, lặp liền mạch (cao đúng 1 ô họa tiết = 40px).
+   Muốn dùng ảnh của bạn: đổi url(...) và hai con số 80px 40px / 40px bên dưới theo kích thước ô lặp. */
+.sv-bg {
+  position: fixed;
+  inset: 0 0 -40px 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, .24);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cg fill='none' stroke='%23000' stroke-width='3'%3E%3Ccircle cx='0' cy='0' r='36'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3Ccircle cx='0' cy='0' r='18'/%3E%3Ccircle cx='80' cy='0' r='36'/%3E%3Ccircle cx='80' cy='0' r='27'/%3E%3Ccircle cx='80' cy='0' r='18'/%3E%3Ccircle cx='40' cy='20' r='36'/%3E%3Ccircle cx='40' cy='20' r='27'/%3E%3Ccircle cx='40' cy='20' r='18'/%3E%3Ccircle cx='0' cy='40' r='36'/%3E%3Ccircle cx='0' cy='40' r='27'/%3E%3Ccircle cx='0' cy='40' r='18'/%3E%3Ccircle cx='80' cy='40' r='36'/%3E%3Ccircle cx='80' cy='40' r='27'/%3E%3Ccircle cx='80' cy='40' r='18'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 80px 40px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cg fill='none' stroke='%23000' stroke-width='3'%3E%3Ccircle cx='0' cy='0' r='36'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3Ccircle cx='0' cy='0' r='18'/%3E%3Ccircle cx='80' cy='0' r='36'/%3E%3Ccircle cx='80' cy='0' r='27'/%3E%3Ccircle cx='80' cy='0' r='18'/%3E%3Ccircle cx='40' cy='20' r='36'/%3E%3Ccircle cx='40' cy='20' r='27'/%3E%3Ccircle cx='40' cy='20' r='18'/%3E%3Ccircle cx='0' cy='40' r='36'/%3E%3Ccircle cx='0' cy='40' r='27'/%3E%3Ccircle cx='0' cy='40' r='18'/%3E%3Ccircle cx='80' cy='40' r='36'/%3E%3Ccircle cx='80' cy='40' r='27'/%3E%3Ccircle cx='80' cy='40' r='18'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 80px 40px;
+  animation: svUp 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes svUp {
+  to {
+    transform: translateY(-40px);
+  }
+}
+
+/* Hiện/ẩn khối theo màn (data-view trên #sv, data-v trên từng khối) */
+.sv[data-view="play"] [data-v]:not([data-v~="play"]),
+.sv[data-view="end"] [data-v]:not([data-v~="end"]),
+.sv[data-view="spec"] [data-v]:not([data-v~="spec"]),
+.sv[data-view="result"] [data-v]:not([data-v~="result"]) {
+  display: none !important;
+}
+
+.sv {
+  width: min(1480px, 96vw);
+  height: min(780px, 92vh);
+  flex: none;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 29%;
+  gap: 36px;
+}
+
+.sv-card {
+  position: relative;
+  padding: 22px 26px;
+  background: var(--panel);
+  border: 4px solid var(--ink);
+  border-radius: 44px;
+  box-shadow: 6px 8px 0 var(--ink);
+}
+
+/* ---------- bên trái ---------- */
+.sv-left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 40px 34px;
+  min-height: 0;
+}
+
+.sv-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 34px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .25);
+}
+
+.dot {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--blue);
+  border: 3px solid #fff;
+}
+
+.dot.dead {
+  background: var(--dead);
+}
+
+.dot.end {
+  background: var(--ink);
+}
+
+.sv-board {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 40px 40px 40px 40px;
+  box-shadow: 0 6px 0 var(--ink);
+}
+
+.sv-q {
+  height: 100%;
+  padding: 18px 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.sv-q .wait {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.sv-answers {
+  flex: none;
+}
+
+.sv-answers:empty {
+  display: none;
+}
+
+.sv-answers .q-opts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 22px;
+}
+
+.sv-answers .q-opt {
+  min-height: 104px;
+  font-size: 24px;
+  border-radius: 26px;
+  box-shadow: 0 6px 0 var(--ink);
+}
+
+.sv-answers .q-input {
+  height: 78px;
+  border-radius: 26px;
+  box-shadow: 0 6px 0 var(--ink);
+}
+
+.sv-answers .q-skip {
+  display: block;
+  margin: 8px auto 0;
+}
+
+/* ---------- danh sách (bảng xếp hạng / loại / kết quả) ---------- */
+.sv-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sv-board .sv-list {
+  height: 100%;
+  padding: 22px 28px;
+  overflow-y: auto;
+}
+
+.sv-list h3 {
+  margin: 6px 0 2px;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.sv-list h3.warn {
+  color: var(--red);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 6px 24px;
+  font-size: 28px;
+  font-weight: 800;
+  background: #E6E6E6;
+  border-radius: 999px;
+}
+
+.row .nm {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row.me {
+  background: var(--gold);
+  border: 4px dashed var(--ink);
+}
+
+.row.r1 {
+  background: var(--teal);
+}
+
+.row.r2 {
+  background: var(--red);
+}
+
+.row.r3 {
+  background: var(--brown);
+}
+
+.row.r4 {
+  background: var(--lime);
+}
+
+.row.r5 {
+  background: var(--cream);
+}
+
+.row.white {
+  background: #fff;
+}
+
+.row.out {
+  text-decoration: line-through;
+  text-decoration-thickness: 4px;
+}
+
+.row.danger {
+  background: #FFD9D6;
+}
+
+.sv-list.result .row:not(.me) {
+  border: 3px dashed var(--ink);
+}
+
+.sv-list.result .gap {
+  height: 14px;
+  flex: none;
+}
+
+/* ---------- bên phải ---------- */
+.sv-right {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 30px;
+  min-height: 0;
+}
+
+.sv-top {
+  padding: 18px;
+  overflow: hidden;
+}
+
+.sv-lb {
+  gap: 10px;
+}
+
+.sv-lb .row {
+  min-height: 44px;
+  font-size: 22px;
+  padding: 4px 16px;
+}
+
+.sv-mascot {
+  margin: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+}
+
+.sv-mascot img {
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.sv-mascot figcaption {
+  font-size: 30px;
+  font-weight: 800;
+  color: #B47F00;
+}
+
+.sv-stats {
+  padding: 16px 26px 18px;
+}
+
+.sv-stats dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.sv-stats dt {
+  font-weight: 600;
+}
+
+.sv-stats dd {
+  margin: 0;
+  text-align: right;
+}
+
+.sv-again {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 18px;
+  font: inherit;
+  font-size: 34px;
+  font-weight: 800;
+  text-align: left;
+  color: var(--ink);
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.sv-again:hover {
+  background: #FFF3C4;
+}
+
+.sv-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.sv-ic {
+  width: 64px;
+  height: 64px;
+  font-size: 30px;
+  background: #fff;
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .1s;
+}
+
+.sv-ic:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.sv-ic:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.ic-skip {
+  background: #0F7E86;
+}
+
+.ic-exit {
+  background: #F2332E;
+}
+
+/* ---------- cài đặt ---------- */
+.sv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .45);
+}
+
+.sv-box {
+  width: min(380px, 92vw);
+  padding: 28px;
+  text-align: center;
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+}
+
+.sv-box h2 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+/* ---------- Popup bị loại ---------- */
+.sv-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .35);
+  cursor: pointer;
+  animation: svFadeIn .25s ease;
+}
+
+.sv-popup-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 56px;
+  color: #fff;
+  text-align: center;
+  background: #D62828;
+  border: 5px solid var(--ink);
+  border-radius: 36px;
+  box-shadow: 0 10px 0 var(--ink);
+  animation: svPopIn .5s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.sv-popup-card b {
+  font-size: clamp(34px, 6vw, 64px);
+}
+
+.sv-popup-card span {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sv-popup.leaving {
+  animation: svFadeOut .25s ease forwards;
+}
+
+@keyframes svPopIn {
+  from {
+    opacity: 0;
+    transform: scale(.6) rotate(-4deg);
+  }
+}
+
+/* ---------- Bảng xếp hạng: hàng đổi hạng trượt lên/xuống (JS tạo hiệu ứng), mũi tên báo tăng/giảm ---------- */
+.sv-list .row.keep {
+  animation: none;
+}
+
+.row .mv {
+  flex: none;
+  padding: 0 9px;
+  font-size: 18px;
+  font-style: normal;
+  line-height: 1.5;
+  background: #fff;
+  border-radius: 999px;
+  animation: svFadeIn .25s ease;
+}
+
+.row .mv.up {
+  color: #0B8A3C;
+}
+
+.row .mv.down {
+  color: #C0261E;
+}
+
+/* ---------- Hiệu ứng hiện / mất ---------- */
+@keyframes svFadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes svFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes svFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes svRowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes svOut {
+  to {
+    opacity: .5;
+    filter: grayscale(.7);
+  }
+}
+
+@keyframes svFloat {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes svShake {
+  25% {
+    transform: translateX(-8px);
+  }
+
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes svPop {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* chuyển màn: mờ dần rồi hiện dần (JS thêm/bớt class sv-out trên #sv) */
+.sv [data-v],
+.sv .sv-badge {
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.sv.sv-out [data-v],
+.sv.sv-out .sv-badge {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.dot {
+  transition: background .4s ease;
+}
+
+/* ba khối lớn hiện lần lượt lúc vào trang */
+.sv-left,
+.sv-top,
+.sv-stats {
+  animation: svFadeUp .5s ease both;
+}
+
+.sv-top {
+  animation-delay: .08s;
+}
+
+.sv-stats {
+  animation-delay: .16s;
+}
+
+/* hàng trong danh sách trượt vào lần lượt; người bị loại mờ đi sau đó */
+.sv-list .row {
+  animation: svRowIn .4s ease both;
+}
+
+.sv-list .row:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.sv-list .row:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.sv-list .row:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+.sv-list .row:nth-child(5) {
+  animation-delay: 0.24s;
+}
+
+.sv-list .row:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.sv-list .row:nth-child(7) {
+  animation-delay: 0.36s;
+}
+
+.sv-list .row:nth-child(8) {
+  animation-delay: 0.42s;
+}
+
+.sv-list .row:nth-child(9) {
+  animation-delay: 0.48s;
+}
+
+.sv-list .row:nth-child(10) {
+  animation-delay: 0.54s;
+}
+
+.sv-list .row:nth-child(11) {
+  animation-delay: 0.6s;
+}
+
+.sv-list .row:nth-child(12) {
+  animation-delay: 0.66s;
+}
+
+.sv-list .row.out {
+  animation: svRowIn .4s ease both, svOut .7s ease .7s forwards !important;
+}
+
+/* mỗi câu hỏi mới hiện dần */
+.sv-q .q-count,
+.sv-q .q-prompt,
+.sv-q .q-sub,
+.sv-q .mt-grid,
+.sv-q .hg-word,
+.sv-q .q-opts {
+  animation: svFadeUp .35s ease both;
+}
+
+.sv-answers>* {
+  animation: svFadeUp .35s ease .08s both;
+}
+
+.sv-q .q-opt.good,
+.sv-q .mt-item.good,
+.sv-answers .q-opt.good {
+  animation: svPop .3s ease;
+}
+
+.sv-q .q-opt.bad,
+.sv-q .mt-item.bad,
+.sv-answers .q-opt.bad {
+  animation: svShake .3s ease;
+}
+
+/* lớp phủ hiện dần và mờ dần (JS thêm class leaving trước khi ẩn) */
+.sv-overlay {
+  animation: svFadeIn .2s ease;
+}
+
+.sv-box {
+  animation: svFadeUp .25s ease;
+}
+
+.bb-intro.leaving,
+.sv-overlay.leaving {
+  animation: svFadeOut .22s ease forwards;
+}
+
+.sv-mascot img {
+  animation: svFloat 3.2s ease-in-out infinite;
+}
+
+@media (max-width: 960px) {
+
+  html,
+  body {
+    overflow: auto;
+  }
+
+  body {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .sv {
+    height: auto;
+    margin: 24px auto;
+    grid-template-columns: 1fr;
+  }
+
+  .sv-left {
+    min-height: 520px;
+  }
+
+  .sv-top {
+    min-height: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .sv-bg,
+  .sv *,
+  .sv-overlay,
+  .bb-intro,
+  .sv-popup,
+  .sv-popup-card {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body {
+    transition: none;
+  }
+}
