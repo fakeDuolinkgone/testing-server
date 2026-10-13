@@ -1,7 +1,5 @@
 
 
-
-
 let retryQueue = [];         // chứa các câu sai
 
 
@@ -22,6 +20,7 @@ const sentenceBtn2 = document.getElementById("sentenceBtn2");
 
 function startSentenceFill() {
     retryQueue = [];
+    failedSentenceWords = new Set();
     updateProgress(0, 10);
     document.querySelector(".learn-box").style.width = "1000px";
     input.style.display = "none";
@@ -130,46 +129,27 @@ function loadSentenceQuestion() {
 
 
 function checkSentence(answer, current, btn) {
-
     sentenceBtn1.disabled = true;
     sentenceBtn2.disabled = true;
 
     if (answer === current.word) {
-
         btn.classList.add("correct");
-
         playCorrect();
-
         speak(current.word);
 
-        sentenceScore++;
-
+        if (!failedSentenceWords.has(current.word)) sentenceScore++;
         completedSentence++;
 
-        updateProgress(
-            completedSentence,
-            vocabData.length
-        );
-
-    }
-    else {
-
+        updateProgress(completedSentence, 10);
+    } else {
         btn.classList.add("wrong");
-
         playWrong();
-
+        failedSentenceWords.add(current.word);
         retryQueue.push(current);
-
     }
 
     currentWords.shift();
-
-    setTimeout(() => {
-
-        loadSentenceQuestion();
-
-    }, 350);
-
+    setTimeout(loadSentenceQuestion, 350);
 }
 
 
@@ -180,24 +160,13 @@ function checkSentence(answer, current, btn) {
 
 
 
-
-
 function finishSentence() {
-
     sentenceBox.style.display = "none";
-
     progressFill.style.width = "100%";
 
     gameResult.sentence = sentenceScore;
 
     playFinish();
 
-    showLoading(
-
-        "Calculating Result...",
-
-        showResult,
-
-    );
-
+    nextMiniGame();   // thay cho showLoading(...)
 }

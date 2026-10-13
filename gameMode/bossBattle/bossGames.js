@@ -8,6 +8,11 @@
   const cls = w => (w.classword ? `(${w.classword})` : "");
   const sfx = name => { try { if (typeof window[name] === "function") window[name](); } catch (e) { } };
 
+  // Bố cục BossBattle: câu hỏi nằm trong thẻ .q-card (kèm thanh tiến độ .q-prog), đáp án nằm trong .q-panel (xem bossBattle.css).
+  // Khi trang tự cung cấp hai khung riêng (ctx.aEl, như Survival) thì KHÔNG bọc.
+  const card = (inner, pct) => `<div class="q-card">${inner}<div class="q-prog"><i style="width:${pct}%"></i></div></div>`;
+  const panel = inner => `<div class="q-panel">${inner}</div>`;
+
   // Lấy n từ khác nhau (theo key) để làm đáp án nhiễu — random riêng cho từng người
   const others = (vocab, w, key, n) => {
     const seen = new Set([key(w)]), out = [];
@@ -76,12 +81,14 @@
     function draw() {
       const part = items.slice(round * 5, round * 5 + 5);
       matched = 0; sel = {}; busy = false; size = part.length;
-      ctx.el.innerHTML = `
-        <div class="q-count">Vòng ${round + 1} / ${rounds}</div>
+      const count = `<div class="q-count">Vòng ${round + 1} / ${rounds}</div>`;
+      const grid = `
         <div class="mt-grid">
           <div class="mt-col">${shuffle(part).map(w => btn(w, "L", w.word)).join("")}</div>
           <div class="mt-col">${shuffle(part).map(w => btn(w, "R", M(w))).join("")}</div>
         </div>`;
+      ctx.el.innerHTML = ctx.aEl ? count + grid
+        : card(count + '<div class="q-prompt q-prompt-sm">Nối từ với nghĩa đúng</div>', Math.round(round * 5 / items.length * 100)) + panel(grid);
       ctx.el.querySelectorAll(".mt-item").forEach(b => (b.onclick = () => pick(b)));
     }
 
@@ -99,6 +106,8 @@
       if (same) {
         pair.forEach(x => { x.classList.remove("sel"); x.classList.add("good", "done"); });
         score++; ctx.onScore(score); sfx("playCorrect");
+        const bar = ctx.el.querySelector(".q-prog i");
+        if (bar) bar.style.width = Math.round(score / items.length * 100) + "%";
         if (++matched === size) {
           busy = true;
           setTimeout(() => {
@@ -145,11 +154,12 @@
       const tiles = shuffle([...need, ...extra]);
       let wrong = 0;
 
-      ctx.el.innerHTML = `
+      const top = `
         <div class="q-count">${i + 1} / ${items.length} <span class="hg-lives">${"❤️".repeat(HG_LIVES)}</span></div>
         <div class="q-sub">${esc(cls(w) + " " + M(w))}</div>
-        <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>
-        <div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>`;
+        <div class="hg-word">${a.map((c, k) => `<span class="hg-slot">${hidden.has(k) ? "" : esc(c.toUpperCase())}</span>`).join("")}</div>`;
+      const keys = `<div class="q-opts hg-keys">${tiles.map(c => `<button class="q-opt">${c.toUpperCase()}</button>`).join("")}</div>`;
+      ctx.el.innerHTML = ctx.aEl ? top + keys : card(top, Math.round(i / items.length * 100)) + panel(keys);
 
       const slots = ctx.el.querySelectorAll(".hg-slot");
       ctx.el.querySelectorAll(".hg-keys .q-opt").forEach(b => (b.onclick = () => {
@@ -209,13 +219,13 @@
       const q = qs[i];
       const head = `
         <div class="q-count">${i + 1} / ${qs.length}</div>
-        <div class="q-prompt">${esc(q.prompt)}</div>
+        <div class="q-prompt${String(q.prompt).length > 40 ? " q-prompt-sm" : ""}">${esc(q.prompt)}</div>
         <div class="q-sub">${esc(q.sub || "")}</div>`;
       const tail = q.options
         ? `<div class="q-opts ${q.options.length === 2 ? "two" : ""}">${q.options.map(o => `<button class="q-opt">${esc(o)}</button>`).join("")}</div>`
         : `<input class="q-input" autocomplete="off" placeholder="${esc(q.ph)}"><button class="q-skip">Bỏ qua →</button>`;
       const ans = ctx.aEl || ctx.el;     // aEl (tuỳ chọn): hàng đáp án nằm riêng bên dưới bảng câu hỏi
-      if (ctx.aEl) { ctx.el.innerHTML = head; ctx.aEl.innerHTML = tail; } else ctx.el.innerHTML = head + tail;
+      if (ctx.aEl) { ctx.el.innerHTML = head; ctx.aEl.innerHTML = tail; } else ctx.el.innerHTML = card(head, Math.round(i / qs.length * 100)) + panel(tail);
 
       if (q.options) {
         const btns = [...ans.querySelectorAll(".q-opt")];
@@ -225,7 +235,7 @@
           const right = b.textContent === q.answer;
           b.classList.add(right ? "good" : "bad");
           if (right) gain(); else wrong();
-          advance(350);
+          advance(ctx.feedbackMs || 350);
         });
       } else {
         const inp = ans.querySelector(".q-input");
@@ -233,7 +243,7 @@
         inp.oninput = () => {
           if (locked || stopped) return;
           if (inp.value.trim().toLowerCase() === q.answer.toLowerCase()) {
-            inp.disabled = true; gain(); advance(200);
+            inp.disabled = true; gain(); advance(ctx.feedbackMs || 200);
           }
         };
         ans.querySelector(".q-skip").onclick = () => { if (!locked && !stopped) { wrong(); advance(0); } };

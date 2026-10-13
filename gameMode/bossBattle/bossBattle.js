@@ -15,13 +15,18 @@ const LOBBY = "../../room.html";
 // foot = phần chiều cao ảnh còn trống dưới chân boss ở dạng 1/2/3, để chân boss luôn đứng giữa bục.
 const BOSS_PIC_DIR = "../../pics/bosspics/";
 const BOSSES = [
-  { name: "Cậu bé' Burgur", foot: [0.109, 0.109, 0.05], pic: n => `${BOSS_PIC_DIR}bossBurgur_stage${n}.png` },
+  { name: "Cậu bé Burgur", foot: [0.109, 0.109, 0.05], pic: n => `${BOSS_PIC_DIR}bossBurgur_stage${n}.png` },
   { name: "Sú Shì Mắm Tôm", foot: [0.156, 0.141, 0.141], pic: n => `${BOSS_PIC_DIR}bossSushi_stage${n}.png` },
   { name: "Baguette Phép Lèm", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossBaguette_stage${n}.png` },
   { name: "Hoàng Kê Luộc", foot: [0.031, 0.016, 0.031], pic: n => `${BOSS_PIC_DIR}bossBoiledChicken_stage${n}.png` },
   { name: "Hỏa Quái Chili Pepper", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossChiliPepper_stage${n}.png` }
 ];
 const BOSS_PHASES = 3;
+
+// boss-net.js bốc boss theo BossRules.BOSS_COUNT: nếu nhỏ hơn số boss ở đây thì boss cuối danh sách không bao giờ xuất hiện
+if (typeof BossRules !== "undefined" && BossRules.BOSS_COUNT !== BOSSES.length) {
+  console.warn(`[BossBattle] BossRules.BOSS_COUNT = ${BossRules.BOSS_COUNT} nhưng có ${BOSSES.length} boss. Hãy đặt BOSS_COUNT: ${BOSSES.length} trong JS/net/boss-rules.js.`);
+}
 
 // Giai đoạn → dạng boss: chia đều khoảng giai đoạn thành 3 phần (3 gđ: 1-2-3; 4 gđ: 1-1-2-3; 5 gđ: 1-1-2-2-3).
 function bossPhase(stage, stageCount) {
@@ -101,8 +106,35 @@ function popDamage(n, team = false) {
   setTimeout(() => el.remove(), 1000);
 }
 
+// Pháo giấy khi thắng (CSS lo hiệu ứng rơi, tự xoá sau vài giây)
+function confetti() {
+  const box = document.createElement("div");
+  box.className = "bb-confetti";
+  const colors = ["#FFB703", "#FB8500", "#52B788", "#E63946", "#219EBC", "#ffffff"];
+  for (let i = 0; i < 48; i++) {
+    const p = document.createElement("i");
+    p.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;background:${colors[i % colors.length]};` +
+      `animation-delay:${(Math.random() * 0.8).toFixed(2)}s;animation-duration:${(2.2 + Math.random() * 1.8).toFixed(2)}s;` +
+      `--sway:${Math.round((Math.random() - .5) * 160)}px`;
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 5200);
+}
+
 function mine() {
   return summary && summary.ranking.find(r => r.id === net.id);
+}
+
+// Vẽ thanh máu (v = máu còn lại, max = máu tối đa)
+function drawHp(v, max) {
+  const m = Math.max(1, max);
+  v = Math.max(0, Math.min(m, Math.ceil(v)));
+  $("bbHpFill").style.width = `${v / m * 100}%`;
+  $("bbHpText").textContent = `HP: ${v}/${max}`;
+  const low = v > 0 && v / m <= 0.25;            // dưới 25% máu: thanh máu nhấp nháy, boss thở gấp
+  document.querySelector(".bb-hp").classList.toggle("low", low);
+  $("bbBattle").classList.toggle("low", low);
 }
 
 // Thanh máu = số thật từ mạng, trừ phần điểm của mình chưa được tính (xem trước ở máy mình, không tốn mạng)
@@ -110,36 +142,37 @@ function renderHp() {
   if (!summary) return;
   const me = mine();
   const pending = Math.max(0, myLive - ((me && me.perStage[stageNow]) || 0));
-  const v = Math.max(0, Math.ceil(summary.hp - pending));
-  $("bbHpFill").style.width = `${v / hpMax * 100}%`;
-  $("bbHpText").textContent = `HP: ${v}/${hpMax}`;
+  drawHp(summary.hp - pending, hpMax);
   $("bbMyDmg").textContent = `⚔️ Sát thương của bạn: ${((me && me.total) || 0) + pending}`;
-  const low = v > 0 && v / hpMax <= 0.25;        // dưới 25% máu: thanh máu nhấp nháy, boss thở gấp
-  document.querySelector(".bb-hp").classList.toggle("low", low);
-  $("bbBattle").classList.toggle("low", low);
 }
 
+// Màn giới thiệu giai đoạn: đếm ngược, rồi mờ dần đúng lúc bắt đầu chơi
 async function intro(title, sub, st) {
   const el = $("bbIntro");
-  el.hidden = false;
-  while (st.serverNow() < st.startAt) {
-    const s = Math.ceil((st.startAt - st.serverNow()) / 1000);
+  const paint = () => {
+    const s = Math.max(0, Math.ceil((st.startAt - st.serverNow()) / 1000));
     el.innerHTML = `<b>${esc(title)}</b><span>${esc(sub)}</span><span>Bắt đầu sau ${s}...</span>`;
-    await sleep(200);
-  }
+  };
+  el.classList.remove("leaving");
+  paint();
+  el.hidden = false;
+  while (st.serverNow() < st.startAt - 250) { paint(); await sleep(200); }
+  el.classList.add("leaving");
+  await sleep(250);
   el.hidden = true;
+  el.classList.remove("leaving");
 }
 
 
 /* ================= MỘT GIAI ĐOẠN ================= */
 function runStage(st, gameId) {
   return new Promise(resolve => {
-    let score = 0, finished = false, handle, tick;
+    let score = 0, done = false, handle, tick;
     const total = st.endsAt - st.startAt;
 
     const finish = () => {
-      if (finished) return;
-      finished = true;
+      if (done) return;
+      done = true;
       clearInterval(tick);
       score = handle.stop();
       $("bbArena").innerHTML = "";
@@ -175,6 +208,9 @@ async function playStage(st) {
 
   $("bbStageName").textContent = label;
   $("bbStageNo").textContent = `Giai đoạn ${st.stage}/${st.stageCount}`;
+  $("bbTime").textContent = `${st.durationSec}s`;               // xoá số cũ của giai đoạn trước
+  $("bbTime").classList.remove("warn");
+  $("bbTimeFill").style.width = "100%";
   renderPips(st.stage, st.stageCount);
   $("bbArena").innerHTML = "";
   show("bbBattle");
@@ -212,8 +248,8 @@ function showResult(e) {
     ? `${boss.name} đã gục ngã!`
     : `${boss.name} vẫn còn ${e.hp} HP. Lần sau cố lên!`;
 
-  $("bbRank").innerHTML = e.ranking.map(r => `
-    <li class="${r.id === net.id ? "me" : ""}">
+  $("bbRank").innerHTML = e.ranking.map((r, i) => `
+    <li class="${r.id === net.id ? "me" : ""}" style="--i:${i}">
       <span>${r.rank === 1 ? "👑" : "#" + r.rank}</span>
       <b>${esc(r.name)}${r.rank === 1 ? " (MVP)" : ""}${r.left ? " (đã rời)" : ""}</b>
       <span>${r.total} sát thương</span>
@@ -221,6 +257,7 @@ function showResult(e) {
     </li>`).join("");
 
   show("bbResult");
+  if (win) confetti();
   if (typeof playFinish === "function") playFinish();
 }
 
@@ -234,18 +271,24 @@ async function backTo(url) {
 function wire() {
   // Đăng ký callback TRƯỚC khi resume()/startGame(): callback sẽ nhận ngay trạng thái hiện tại.
   net.onGameStart(g => {
-    boss = BOSSES[g.boss % BOSSES.length];
-    hpMax = g.maxHp;
+    boss = BOSSES[(+g.boss || 0) % BOSSES.length];   // boss không hợp lệ thì dùng boss đầu tiên
+    hpMax = Math.max(1, g.maxHp || 1);
     const s = net.getSummary();
     preloadBoss();
     setBossArt(1, g.stageCount);
+    drawHp(hpMax, hpMax);                            // máu đầy ngay từ đầu, không đợi bản tổng hợp điểm đầu tiên
     $("bbBossName").textContent = boss.name;
     $("bbTeam").textContent = `👥 ${s ? s.ranking.length : net.getPlayers().length} người chơi · ${g.stageCount} giai đoạn`;
     renderPips(1, g.stageCount);
     show("bbBattle");
+    const art = $("bbBossArt");                      // boss xuất hiện: rơi xuống bục
+    art.classList.remove("enter");
+    void art.offsetWidth;
+    art.classList.add("enter");
+    setTimeout(() => art.classList.remove("enter"), 900);
   });
 
-  net.onScoresUpdate(s => { summary = s; hpMax = s.effectiveMaxHp; renderHp(); });
+  net.onScoresUpdate(s => { summary = s; hpMax = Math.max(1, s.effectiveMaxHp); renderHp(); });
   net.onStageStart(st => queue(() => playStage(st)));
   net.onStageEnd(e => queue(() => stageEnded(e)));
   net.onGameEnd(e => queue(() => showResult(e)));
@@ -255,30 +298,45 @@ function wire() {
 }
 
 /* ================= NÚT CÔNG CỤ (rời trận / thoát / cài đặt) ================= */
+let askReturn = null;                                 // nút đang giữ focus trước khi mở hộp xác nhận
 function ask(title, text, yesLabel, onYes) {
+  askReturn = document.activeElement;
   $("bbConfirmTitle").textContent = title;
   $("bbConfirmText").textContent = text;
   $("bbConfirmYes").textContent = yesLabel;
   $("bbConfirm").hidden = false;
   $("bbConfirmNo").focus();
-  $("bbConfirmYes").onclick = () => { $("bbConfirm").hidden = true; onYes(); };
+  $("bbConfirmYes").onclick = () => { closeAsk(false); onYes(); };
 }
-const closeAsk = () => ($("bbConfirm").hidden = true);
+function closeAsk(restore = true) {
+  if ($("bbConfirm").hidden) return;
+  $("bbConfirm").hidden = true;
+  if (restore && askReturn && askReturn.focus) askReturn.focus();   // trả focus về nút cũ (bàn phím không bị lạc)
+}
 
 // Rời giữa trận: boss bớt máu theo phần của mình và cả đội được báo (do boss-net xử lý)
 $("bbToolRun").addEventListener("click", () =>
   ask("Rời trận?", "Bạn sẽ rời phòng và về sảnh chờ, boss sẽ bớt máu theo phần của bạn.", "Về sảnh chờ", () => backTo(LOBBY)));
 $("bbToolExit").addEventListener("click", () =>
   ask("Thoát game?", "Bạn sẽ rời phòng và về trang chủ.", "Về trang chủ", () => backTo(HOME)));
-$("bbConfirmNo").addEventListener("click", closeAsk);
+$("bbConfirmNo").addEventListener("click", () => closeAsk());
 $("bbConfirm").addEventListener("click", e => { if (e.target === $("bbConfirm")) closeAsk(); });
 
 // Cài đặt: âm thanh + toàn màn hình
 let soundOn = true;
 try { soundOn = localStorage.getItem("bb.sound") !== "0"; } catch (e) { /* bỏ qua */ }
+
+// Tắt âm thanh phải tắt cả giọng đọc (speak của audio.js), không chỉ mấy file mp3
+if (typeof window.speak === "function" && !window.speak.__bb) {
+  const baseSpeak = window.speak;
+  window.speak = w => { if (soundOn) baseSpeak(w); };
+  window.speak.__bb = true;
+}
+
 function applySound() {
   document.querySelectorAll("audio").forEach(a => (a.muted = !soundOn));
   window.soundEnabled = soundOn;
+  if (!soundOn && window.speechSynthesis) speechSynthesis.cancel();
   $("bbOptSound").setAttribute("aria-checked", String(soundOn));
   $("bbOptSound").querySelector("b").textContent = soundOn ? "Bật" : "Tắt";
 }

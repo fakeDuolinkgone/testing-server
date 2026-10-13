@@ -1,0 +1,96 @@
+/* bossBattle.polish.css — lớp làm đẹp thêm. Nạp SAU bossBattle.css, không đổi bố cục có sẵn.
+   Muốn tắt: bỏ thẻ <link> của file này. */
+
+@keyframes bbUp { from { opacity: 0; transform: translateY(14px); } }
+@keyframes bbPop { 50% { transform: scale(1.08); } }
+@keyframes bbShake { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+@keyframes bbShine { from { background-position: 160% 0; } to { background-position: -60% 0; } }
+@keyframes bbVignette { from { opacity: .3; } to { opacity: 1; } }
+@keyframes bbBossIn { from { opacity: 0; transform: translateY(-36px) scale(.7); } }
+@keyframes bbFadeOut { to { opacity: 0; } }
+@keyframes bbPopIn { from { opacity: 0; transform: scale(.7); } }
+@keyframes bbRow { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes bbFall {
+  from { transform: translate3d(0, -12vh, 0) rotate(0); opacity: 1; }
+  to { transform: translate3d(var(--sway, 0px), 112vh, 0) rotate(720deg); opacity: .9; }
+}
+
+/* ---------- Phông cảnh ----------
+   Ảnh nền gắn thẳng vào body: phủ kín, không bị méo, dùng chung cho cả màn bắt đầu, chiến đấu và kết quả,
+   và chỉ phải giải mã MỘT lần (trước đây ảnh bị kéo giãn trong .bb-scene). */
+body {
+  background: #8fd0f0 url("../../pics/background_bossBattle.gif") center / cover fixed no-repeat;
+}
+
+.bb-scene { display: none; }
+
+/* thay hạt xanh cũ bằng lớp tối nhẹ ở rìa màn hình để chữ và thẻ nổi hơn */
+body::before {
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, transparent 55%, rgba(2, 48, 71, .3));
+  animation: none;
+}
+
+/* ---------- Thanh máu và đồng hồ ---------- */
+#bbHpFill::before {                    /* vệt sáng chạy ngang thanh máu */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .3) 50%, transparent 65%) 0 0 / 220% 100%;
+  animation: bbShine 2.8s linear infinite;
+}
+
+.bb-hud:has(#bbTime.warn) #bbTimeFill {          /* sắp hết giờ: thanh thời gian ngả đỏ */
+  background: linear-gradient(90deg, #ff9a9a, var(--red));
+}
+
+/* Boss sắp gục (dưới 25% máu): viền màn hình đỏ nhấp nháy */
+.bb-battle.low::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: inset 0 0 160px 24px rgba(230, 57, 70, .42);
+  animation: bbVignette 1.1s ease-in-out infinite alternate;
+}
+
+/* ---------- Boss ---------- */
+.bb-boss-art.enter { animation: bbBossIn .8s cubic-bezier(.2, 1.3, .4, 1) both; }
+
+/* ---------- Đáp án ---------- */
+.q-panel .q-opt { animation: bbUp .35s ease both; }
+.q-panel .q-opt:nth-child(2) { animation-delay: .05s; }
+.q-panel .q-opt:nth-child(3) { animation-delay: .1s; }
+.q-panel .q-opt:nth-child(4) { animation-delay: .15s; }
+.q-panel .q-opt:nth-child(5) { animation-delay: .2s; }
+.q-panel .q-opt:nth-child(6) { animation-delay: .25s; }
+.q-panel .q-opt:nth-child(7) { animation-delay: .3s; }
+.q-panel .q-opt:nth-child(8) { animation-delay: .35s; }
+
+.q-opt.good { animation: bbPop .3s ease; }       /* đúng: nảy nhẹ */
+.q-opt.bad { animation: bbShake .3s ease; }      /* sai: rung */
+
+/* ---------- Lớp phủ và hộp thoại ---------- */
+.bb-intro { backdrop-filter: blur(4px); }
+.bb-intro b { animation: bbPop .6s ease; }
+.bb-intro.leaving, .bb-modal.leaving { animation: bbFadeOut .25s ease forwards; }
+.bb-dialog { animation: bbPopIn .35s cubic-bezier(.2, 1.4, .4, 1) both; }
+
+/* ---------- Kết quả ---------- */
+.bb-rank li {
+  animation: bbRow .4s ease both;
+  animation-delay: min(calc(var(--i, 0) * 60ms), 900ms);   /* hàng hiện lần lượt, tối đa 0,9 giây */
+}
+.bb-rank li:first-child { background: linear-gradient(90deg, #fff0b3, #ffd86b); }
+.bb-rank li.me { outline: 3px dashed var(--ink); outline-offset: -3px; }
+
+.bb-confetti { position: fixed; inset: 0; z-index: 80; overflow: hidden; pointer-events: none; }
+.bb-confetti i { position: absolute; top: 0; width: 10px; height: 16px; border-radius: 2px; animation: bbFall linear both; }
+
+/* Giảm chuyển động: tắt cả các hiệu ứng gắn vào ::before / ::after (quy tắc * của bossBattle.css không phủ tới) */
+@media (prefers-reduced-motion: reduce) {
+  .bb-battle.low::after, #bbHpFill::before, .bb-confetti i { animation: none !important; }
+  .bb-confetti { display: none; }
+}

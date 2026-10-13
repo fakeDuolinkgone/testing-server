@@ -1,0 +1,207 @@
+/* CSS/resultScreen.css */
+
+:root {
+  --rs-bg: #219EBC;
+  --rs-ink: #023047;
+  --rs-sun: #FFB703;
+  --rs-orange: #FB8500;
+  --rs-paper: #FFFFFF;
+  --rs-track: #D6EEF5;
+}
+
+.result-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  background: var(--rs-bg);
+  font-family: "Baloo 2", system-ui, sans-serif;
+}
+
+.result-screen.show {
+  display: flex;
+}
+
+.result-card {
+  width: min(480px, 100%);
+  margin: auto;
+  padding: 24px 24px 28px;
+  text-align: center;
+  color: var(--rs-ink);
+  background: var(--rs-paper);
+  border: 4px solid var(--rs-ink);
+  border-radius: 28px;
+  box-shadow: 0 8px 0 var(--rs-ink);
+}
+
+.result-title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+/* ---------- Vòng điểm ---------- */
+.result-ring {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 8px;
+}
+
+.result-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-track,
+.ring-fill {
+  fill: none;
+  stroke-width: 16;
+}
+
+.ring-track {
+  stroke: var(--rs-track);
+}
+
+.ring-fill {
+  stroke: var(--rs-orange);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-percent {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ring-total {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* ---------- Xếp loại ---------- */
+.result-rank {
+  margin: 8px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.result-message {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* ---------- Điểm từng phần ---------- */
+.result-list {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.result-row + .result-row {
+  margin-top: 10px;
+}
+
+.result-row-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.result-row-head strong {
+  font-weight: 800;
+}
+
+.result-bar {
+  height: 10px;
+  margin-top: 4px;
+  overflow: hidden;
+  background: var(--rs-track);
+  border-radius: 999px;
+}
+
+.result-bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--rs-sun);
+  border-radius: 999px;
+  transition: width 0.8s ease-out;
+}
+
+.result-row.is-perfect .result-bar-fill {
+  background: var(--rs-orange);
+}
+
+/* ---------- Nút ---------- */
+.result-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.result-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--rs-ink);
+  cursor: pointer;
+  background: var(--rs-paper);
+  border: 3px solid var(--rs-ink);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--rs-ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.result-btn.primary {
+  background: var(--rs-sun);
+}
+
+.result-btn:hover {
+  transform: translateY(-1px);
+}
+
+.result-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--rs-ink);
+}
+
+.result-btn:focus-visible {
+  outline: 3px solid var(--rs-orange);
+  outline-offset: 3px;
+}
+
+@media (max-width: 420px) {
+  .result-actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-bar-fill,
+  .result-btn {
+    transition: none;
+  }
+}
