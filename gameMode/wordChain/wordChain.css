@@ -1,1211 +1,1401 @@
-#typingBox {
-    display: none;
+/* wordChain.css — bản làm đẹp. Giữ nguyên MỌI class/id mà wordChain.html và wordChain.js đang dùng
+   (kể cả các class do JS tự tạo: .message, .bubble-chat, .meaning-*, .history-*, .stat...). */
+
+:root {
+  --teal: #31A7C9;
+  --teal-dark: #1c7f9d;
+  --ink: #1d2b36;
+  --sun: #FFD25C;
+  /* bong bóng người chơi */
+  --sun-dark: #e6b83f;
+  --sky: #84C7EC;
+  /* bong bóng AI */
+  --sky-dark: #5fb0dc;
+  --red: #E63946;
+  --green: #35d07f;
 }
-
-
-
-
-.game-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Baloo 2", system-ui, "Segoe UI", Arial, sans-serif;
 }
-
-
 
 body {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #31A7C9;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 14%, #55c7e6 0, transparent 46%),
+    radial-gradient(circle at 86% 92%, #1f8fb0 0, transparent 52%),
+    var(--teal);
 }
 
+#typingBox {
+  display: none;
+}
 
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-
-
-
-/* ================= BACKGROUND ================= */
+/* ================= NỀN BONG BÓNG ================= */
 .bubble-container {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .bubble {
-    position: absolute;
-    bottom: -120px;
-    width: 28px;
-    height: 28px;
-    border: 6px solid rgba(255, 255, 255, .23);
-    border-radius: 50%;
-    animation: float 16s linear infinite;
+  position: absolute;
+  bottom: -120px;
+  width: 28px;
+  height: 28px;
+  border: 6px solid rgba(255, 255, 255, .23);
+  border-radius: 50%;
+  animation: float 16s linear infinite;
+  will-change: transform;
+}
+
+.bubble:nth-child(3n) {
+  width: 42px;
+  height: 42px;
+  border-width: 7px;
+}
+
+.bubble:nth-child(4n) {
+  width: 18px;
+  height: 18px;
+  border-width: 4px;
 }
 
 .bubble:nth-child(1) {
-    left: 2%;
-    animation-duration: 12s;
+  left: 2%;
+  animation-duration: 12s;
 }
 
 .bubble:nth-child(2) {
-    left: 8%;
-    animation-duration: 17s;
+  left: 8%;
+  animation-duration: 17s;
 }
 
 .bubble:nth-child(3) {
-    left: 14%;
-    animation-duration: 15s;
+  left: 14%;
+  animation-duration: 15s;
 }
 
 .bubble:nth-child(4) {
-    left: 20%;
-    animation-duration: 13s;
+  left: 20%;
+  animation-duration: 13s;
 }
 
 .bubble:nth-child(5) {
-    left: 26%;
-    animation-duration: 18s;
+  left: 26%;
+  animation-duration: 18s;
 }
 
 .bubble:nth-child(6) {
-    left: 32%;
-    animation-duration: 14s;
+  left: 32%;
+  animation-duration: 14s;
 }
 
 .bubble:nth-child(7) {
-    left: 38%;
-    animation-duration: 16s;
+  left: 38%;
+  animation-duration: 16s;
 }
 
 .bubble:nth-child(8) {
-    left: 44%;
-    animation-duration: 12s;
+  left: 44%;
+  animation-duration: 12s;
 }
 
 .bubble:nth-child(9) {
-    left: 50%;
-    animation-duration: 15s;
+  left: 50%;
+  animation-duration: 15s;
 }
 
 .bubble:nth-child(10) {
-    left: 56%;
-    animation-duration: 17s;
+  left: 56%;
+  animation-duration: 17s;
 }
 
 .bubble:nth-child(11) {
-    left: 62%;
-    animation-duration: 13s;
+  left: 62%;
+  animation-duration: 13s;
 }
 
 .bubble:nth-child(12) {
-    left: 68%;
-    animation-duration: 18s;
+  left: 68%;
+  animation-duration: 18s;
 }
 
 .bubble:nth-child(13) {
-    left: 74%;
-    animation-duration: 15s;
+  left: 74%;
+  animation-duration: 15s;
 }
 
 .bubble:nth-child(14) {
-    left: 80%;
-    animation-duration: 16s;
+  left: 80%;
+  animation-duration: 16s;
 }
 
 .bubble:nth-child(15) {
-    left: 86%;
-    animation-duration: 12s;
+  left: 86%;
+  animation-duration: 12s;
 }
 
 .bubble:nth-child(16) {
-    left: 92%;
-    animation-duration: 17s;
+  left: 92%;
+  animation-duration: 17s;
 }
 
 .bubble:nth-child(17) {
-    left: 5%;
-    animation-duration: 19s;
+  left: 5%;
+  animation-duration: 19s;
 }
 
 .bubble:nth-child(18) {
-    left: 30%;
-    animation-duration: 20s;
+  left: 30%;
+  animation-duration: 20s;
 }
 
 .bubble:nth-child(19) {
-    left: 58%;
-    animation-duration: 14s;
+  left: 58%;
+  animation-duration: 14s;
 }
 
 .bubble:nth-child(20) {
-    left: 78%;
-    animation-duration: 19s;
+  left: 78%;
+  animation-duration: 19s;
 }
-
 
 @keyframes float {
-    from {
-        transform: translateY(0);
-    }
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
 
-    to {
+  10% {
+    opacity: 1;
+  }
 
-        transform: translateY(-120vh);
-    }
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
 }
 
-
-
-
-
-
-
-/* ================= CONTAINER ================= */
+/* ================= KHUNG GAME ================= */
 .wc-container {
-    width: 1120px;
-    height: 670px;
-    background: white;
-    border-radius: 35px;
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  width: min(1120px, 96vw);
+  height: min(670px, calc(100vh - 70px));
+  height: min(670px, calc(100dvh - 70px));
+  overflow: hidden;
+  background: #fff;
+  border-radius: 35px;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, .35), 0 26px 60px rgba(0, 55, 75, .38);
+  animation: wcIn .55s cubic-bezier(.2, 1.2, .4, 1) both;
 }
 
+@keyframes wcIn {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(.96);
+  }
+}
 
-
-
-
-
-
-/* ================= TOP ================= */
+/* ================= THANH TRÊN ================= */
 .wc-top {
-    height: 90px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
+  position: relative;
+  z-index: 2;
+  height: 90px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 36px;
+  background: linear-gradient(#fff 70%, rgba(255, 255, 255, 0));
 }
 
 .player-life {
-    display: flex;
-    gap: 18px;
+  display: flex;
+  gap: 14px;
 }
 
 .life {
-    font-size: 52px;
+  display: grid;
+  place-items: center;
+  font-size: 52px;
+  transition: opacity .4s, transform .4s, filter .4s;
+}
+
+.life img {
+  display: block;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, .14));
+}
+
+.life:not([style*="0.2"]) {
+  animation: beat 1.8s ease-in-out infinite;
+}
+
+/* tim còn sống đập nhẹ */
+.life[style*="0.2"] {
+  transform: scale(.8);
+  filter: grayscale(1);
+  animation: heartBreak .5s;
+}
+
+/* tim đã mất */
+@keyframes beat {
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes heartBreak {
+  25% {
+    transform: rotate(-14deg) scale(1.2);
+  }
+
+  60% {
+    transform: rotate(10deg) scale(.9);
+  }
+}
+
+.timer-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .timer {
-
-    font-size: 40px;
-
-    font-weight: bold;
-
+  min-width: 128px;
+  padding: 0 24px;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  background: #eef9fd;
+  border: 3px solid #cdeaf5;
+  border-radius: 999px;
+  transition: color .3s, background .3s, border-color .3s;
 }
 
-
-.top-icon button {
-    background: none;
-    border: none;
-    font-size: 42px;
-    cursor: pointer;
+.timer.danger {
+  color: var(--red);
+  background: #ffecee;
+  border-color: #ffc1c6;
+  animation: tick .8s ease-in-out infinite;
 }
 
-
-.timer-box {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
+@keyframes tick {
+  50% {
+    transform: scale(1.08);
+  }
 }
 
 .mistake {
-
-    font-size: 22px;
-
-    font-weight: bold;
-
-    margin-top: -8px;
-
+  margin-top: 2px;
+  font-size: 20px;
+  font-weight: 800;
+  transition: color .3s;
 }
 
+.mistake.danger {
+  color: var(--red);
+}
 
+.top-icon {
+  display: flex;
+}
 
+.top-icon button {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform .15s, background .15s;
+}
 
+.top-icon button:hover {
+  background: #eef9fd;
+  transform: scale(1.1);
+}
 
-/* ================= CHAT ================= */
+.top-icon button:active {
+  transform: scale(.92);
+}
+
+.top-icon button:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+
+#settingBtn:hover img {
+  animation: spin .8s ease;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+/* ================= KHUNG CHAT ================= */
 .chat-area {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 110px;
-    overflow-y: auto;
-    padding: 25px 35px;
-    top: 120px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 90px;
+  bottom: 110px;
+  padding: 18px 40px 26px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  background: linear-gradient(#fff, #f3fafd);
 }
 
 .chat-area::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 
 .chat-area::-webkit-scrollbar-thumb {
-    background: #9c9c9c;
-    border-radius: 20px;
+  background: #b9c9d1;
+  border-radius: 20px;
 }
 
+.chat-area::-webkit-scrollbar-track {
+  background: transparent;
+}
 
 .message {
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    margin-bottom: 30px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  animation: appear .3s ease;
 }
 
 .left {
-    justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .right {
-
-    justify-content: flex-end;
-}
-
-
-
-
-
-
-
-/* ================= AVATAR ================= */
-.avatar {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.player-avatar {
-    background: #FFD25C;
-    margin-right: 18px;
-}
-
-
-.ai-avatar {
-    background: #84C7EC;
-    margin-left: 18px;
-}
-
-
-
-
-
-
-
-
-
-
-/* ================= CHAT BOX ================= */
-.bubble-chat {
-    min-width: 280px;
-    max-width: 500px;
-    padding: 18px 24px;
-    border-radius: 26px;
-    background: #FFD25C;
-    font-size: 22px;
-    font-weight: bold;
-    animation: bounce .3s;
-}
-
-
-@keyframes bounce {
-    0% {
-        transform: scale(.8);
-    }
-
-    70% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-
-
-
-}
-
-.ai {
-    background: #84C7EC;
-}
-
-.word {
-    font-size: 22px;
-}
-
-
-
-.meaning {
-    margin-top: 6px;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-
-
-.typing {
-    animation: typing .8s infinite alternate;
-    width: 220px;
-    text-align: center;
-    font-size: 22px;
-}
-
-
-
-
-.notice {
-    position: fixed;
-    top: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #ff6b6b;
-    color: white;
-    padding: 14px 30px;
-    border-radius: 30px;
-    font-size: 22px;
-    font-weight: bold;
-    z-index: 999;
-    animation: noticeShow .25s;
-}
-
-
-@keyframes noticeShow {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -20px);
-
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-}
-
-
-
-
-
-
-
-/* ================= INPUT AND SUBMIT BTN================= */
-.input-area {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 110px;
-    display: grid;
-    grid-template-columns: 1fr 150px;
-    gap: 12px;
-    align-items: center;
-    padding: 0 25px;
-}
-
-
-#wordInput {
-    width: 100%;
-    height: 62px;
-    border-radius: 35px;
-    border: 3px solid #777;
-    outline: none;
-    font-size: 26px;
-    padding: 0 25px;
-    font-weight: bold;
-}
-
-#wordInput::placeholder {
-    color: #777;
-}
-
-
-
-
-.submit-button {
-    width: 100%;
-    height: 62px;
-    border-radius: 35px;
-    border: 3px solid #777;
-    outline: none;
-    font-size: 26px;
-    padding: 0 25px;
-    font-weight: bold;
-    cursor: pointer;
-    background: #84C7EC;
-    transition: .2s;
-}
-
-
-.submit-button:hover {
-    transform: scale(1.05);
-}
-
-
-.submit-button:active {
-    transform: scale(.95);
-}
-
-
-
-
-
-
-
-
-
-
-/* ================= EFFECT ================= */
-
-.message {
-    animation: appear .25s;
+  justify-content: flex-end;
 }
 
 @keyframes appear {
-
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
 }
 
-
-@keyframes typing {
-    from {
-        opacity: .4;
-    }
-
-    to {
-        opacity: 1;
-    }
+/* ================= AVATAR ================= */
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 60, 80, .2);
 }
 
-
-
-.correct-input {
-    animation: correctFlash .4s;
+.avatar img {
+  display: block;
 }
 
-
-.wrong-input {
-    animation: shake .4s;
+.player-avatar {
+  background: var(--sun);
+  margin-right: 16px;
 }
 
-
-@keyframes correctFlash {
-    0% {
-        border-color: #777;
-    }
-
-    50% {
-        border-color: #35d07f;
-        box-shadow:
-            0 0 20px #35d07f;
-    }
-
-    100% {
-        border-color: #777;
-    }
+.ai-avatar {
+  background: var(--sky);
+  margin-left: 16px;
 }
 
-
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    20% {
-        transform: translateX(-12px);
-    }
-
-    40% {
-        transform: translateX(12px);
-    }
-
-    60% {
-        transform: translateX(-8px);
-    }
-
-    80% {
-        transform: translateX(8px);
-    }
+/* ================= BONG BÓNG CHAT ================= */
+.bubble-chat {
+  position: relative;
+  min-width: 260px;
+  max-width: min(520px, 62%);
+  padding: 14px 24px 16px;
+  font-size: 22px;
+  font-weight: 700;
+  background: var(--sun);
+  border-radius: 26px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, .09);
+  animation: bounce .35s;
 }
 
-
-
-
-
-
-
-/*===================BẢNG KẾT QUẢ====================*/
-.result-screen {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, .5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-
+.bubble-chat.ai {
+  background: var(--sky);
 }
 
-
-
-.result-box {
-    background: white;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    min-width: 40%;
-    min-height: 80%;
-    margin-left: 20px;
-
+/* đuôi bong bóng, chĩa về phía avatar */
+.bubble-chat::after {
+  content: "";
+  position: absolute;
+  bottom: 16px;
+  width: 14px;
+  height: 14px;
+  background: inherit;
 }
 
-
-
-.result-box h1 {
-    font-size: 48px;
+.left .bubble-chat::after {
+  left: -6px;
+  border-radius: 0 0 0 14px;
+  transform: skewX(18deg);
 }
 
-
-
-.result-box button {
-    margin-top: 20px;
-    padding: 15px 40px;
-    border-radius: 30px;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
+.right .bubble-chat::after {
+  right: -6px;
+  border-radius: 0 0 14px 0;
+  transform: skewX(-18deg);
 }
 
+@keyframes bounce {
+  0% {
+    transform: scale(.8);
+  }
 
-
-
-.restartGame-btn {
-    color: rgb(35, 29, 29);
-    background-color: #FFD25C;
-    transition: all 0.3s ease;
-    margin: 5px;
-}
-
-.restartGame-btn:hover {
-    background-color: #e6c14a;
+  70% {
     transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.word {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .type {
-    font-size: 16px;
-    margin-left: 8px;
-    padding: 4px 10px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, .35);
-    font-weight: bold;
-    opacity: 0.85;
+  padding: 1px 11px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  background: rgba(255, 255, 255, .55);
+  border-radius: 999px;
 }
 
-
-
-#resultTitle {
-
-    font-size: 48px;
-    text-align: center;
-    margin-bottom: 25px;
-
-}
-
-#resultScore {
-
-    font-size: 24px;
-    text-align: left;
-    margin-left: 20px;
-    line-height: 1.8;
-
-}
-
-
-.result-meaning {
-    margin: 25px;
-    font-size: 20px;
-    line-height: 1.6;
-    color: #555;
-
-    background: white;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    min-width: 50%;
-    min-height: 80%;
-}
-
-
-.result-meaning h2 {
-    color: black;
-    font-size: 32px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*==========THANH STREAK==========*/
-.streak-box {
-    margin-bottom: 14px;
-    width: 88%;
-    height: 18px;
-    margin: 8px auto;
-    border-radius: 50px;
-    background: #ddd;
-    overflow: hidden;
-    position: relative;
-    display: none;
-}
-
-
-
-.streak-fill {
-    width: 0%;
-    height: 100%;
-    background: #ff4040;
-    transition: .35s;
-}
-
-
-
-.streak-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 0 4px black;
-    pointer-events: none;
-}
-
-
-
-.rainbow {
-    background: linear-gradient(90deg,
-            red,
-            orange,
-            yellow,
-            lime,
-            cyan,
-            blue,
-            violet,
-            red);
-
-    background-size: 300% 100%;
-    animation: rainbowMove 2s linear infinite;
-}
-
-@keyframes rainbowMove {
-    from {
-        background-position: 0 0;
-    }
-
-    to {
-        background-position: 300% 0;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-css
-/* ==============================
-   MEANING
-   ============================== */
-
+.meaning,
 .meaning-preview {
-    margin-top: 4px;
-    color: #555;
-
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #2c3b46;
 }
-
-
-/* ==============================
-   NÚT [V]
-   ============================== */
-
-
-
-
-/* ==============================
-   ANIMATION
-   ============================== */
-
-@keyframes meaningOpen {
-
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-
-
-
-
-
-
-/* =========================================
-   MEANING PREVIEW
-   ========================================= */
-
-.meaning-preview {
-    margin-top: 6px;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.45;
-}
-
-
-/* =========================================
-   NÚT [V]
-   ========================================= */
 
 .meaning-toggle {
-    display: block;
-
-    margin-top: 8px;
-    padding: 4px 8px;
-
-    border: none;
-    border-radius: 7px;
-
-    background: rgba(255, 255, 255, 0.35);
-    opacity: 0.81;
-
-    color: inherit;
-
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.15s ease;
+  display: block;
+  margin-top: 8px;
+  padding: 4px 11px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  color: inherit;
+  background: rgba(255, 255, 255, .4);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
 }
 
 .meaning-toggle:hover {
-    background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, .7);
 }
 
 .meaning-toggle:active {
-    transform: scale(0.95);
+  transform: scale(.95);
 }
 
-
-/* =========================================
-   DANH SÁCH NGHĨA
-   ========================================= */
-
 .meaning-list {
-    display: none;
-
-    margin-top: 8px;
-    padding-top: 8px;
-
-    border-top: 2px solid rgba(255, 255, 255, 0.35);
-
-    animation: meaningOpen 0.2s ease;
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px dashed rgba(255, 255, 255, .6);
+  animation: meaningOpen .22s ease;
 }
 
 .meaning-list.show {
-    display: block;
+  display: block;
 }
 
-
-/* =========================================
-   TỪNG NGHĨA
-   ========================================= */
-
 .meaning-item {
-    display: flex;
-    align-items: flex-start;
-
-    gap: 7px;
-
-    margin-bottom: 6px;
-
-    font-size: 18px;
-    font-weight: 600;
-
-    line-height: 1.45;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .meaning-bullet {
-    flex-shrink: 0;
-
-    font-size: 15px;
-    line-height: 1.55;
-
-    opacity: 0.65;
+  flex-shrink: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: .65;
 }
 
 .meaning-text {
-    flex: 1;
+  flex: 1;
 }
-
-
-/* =========================================
-   ANIMATION
-   ========================================= */
 
 @keyframes meaningOpen {
-
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
 }
 
+/* "AI đang gõ..." */
+.typing {
+  min-width: 170px;
+  width: auto;
+  text-align: center;
+  font-size: 22px;
+  animation: typing .8s infinite alternate;
+}
 
+@keyframes typing {
+  from {
+    opacity: .4;
+  }
 
+  to {
+    opacity: 1;
+  }
+}
 
-/* ===============================
-   LỊCH SỬ TỪ VỰNG
-   =============================== */
+/* thông báo lỗi */
+.notice {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  z-index: 999;
+  padding: 12px 30px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(#ff6b6b, #e84a5f);
+  border-radius: 30px;
+  box-shadow: 0 8px 22px rgba(200, 40, 60, .4);
+  transform: translateX(-50%);
+  animation: noticeShow .25s;
+}
 
+@keyframes noticeShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ================= Ô NHẬP VÀ NÚT GỬI ================= */
+.input-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 110px;
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 12px;
+  align-items: center;
+  padding: 0 25px;
+  background: #fff;
+  border-top: 2px solid #eaf3f7;
+}
+
+#wordInput {
+  width: 100%;
+  height: 62px;
+  padding: 0 28px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  outline: none;
+  background: #fafdfe;
+  border: 3px solid #b8c4ca;
+  border-radius: 35px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+#wordInput::placeholder {
+  color: #8a979e;
+}
+
+#wordInput:focus {
+  background: #fff;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 5px rgba(49, 167, 201, .22);
+}
+
+#wordInput:disabled {
+  background: #eef2f4;
+  cursor: not-allowed;
+}
+
+.submit-button {
+  width: 100%;
+  height: 62px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  background: linear-gradient(#9bd3f2, var(--sky));
+  border: 3px solid #5f8aa3;
+  border-radius: 35px;
+  box-shadow: 0 5px 0 #5f8aa3;
+  transition: transform .15s, box-shadow .15s, filter .15s;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 7px 0 #5f8aa3;
+}
+
+.submit-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #5f8aa3;
+}
+
+.submit-button:focus-visible {
+  outline: 4px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.submit-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ================= HIỆU ỨNG NHẬP ================= */
+.correct-input {
+  animation: correctFlash .4s;
+}
+
+.wrong-input {
+  animation: shake .4s;
+  border-color: var(--red) !important;
+}
+
+@keyframes correctFlash {
+  50% {
+    border-color: var(--green);
+    box-shadow: 0 0 22px var(--green);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-12px);
+  }
+
+  40% {
+    transform: translateX(12px);
+  }
+
+  60% {
+    transform: translateX(-8px);
+  }
+
+  80% {
+    transform: translateX(8px);
+  }
+}
+
+/* ================= THANH STREAK ================= */
+.streak-box {
+  position: relative;
+  display: none;
+  width: 88%;
+  height: 20px;
+  margin: 0 auto 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .5);
+  border: 3px solid #fff;
+  border-radius: 50px;
+  box-shadow: 0 6px 16px rgba(0, 55, 75, .25);
+}
+
+.streak-fill {
+  width: 0%;
+  height: 100%;
+  background: #ff4040;
+  border-radius: 50px;
+  transition: width .35s, background .35s;
+}
+
+.streak-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: #fff;
+  text-shadow: 0 0 4px #000, 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.rainbow {
+  background: linear-gradient(90deg, red, orange, yellow, lime, cyan, blue, violet, red);
+  background-size: 300% 100%;
+  animation: rainbowMove 2s linear infinite;
+}
+
+@keyframes rainbowMove {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* ================= BẢNG KẾT QUẢ ================= */
+.result-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  padding: 20px;
+  background: rgba(2, 48, 71, .62);
+  backdrop-filter: blur(4px);
+  animation: fadeIn .3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.result-box,
+.result-meaning {
+  max-height: 90vh;
+  max-height: 90dvh;
+  background: #fff;
+  border-radius: 30px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .3);
+  animation: popIn .45s cubic-bezier(.2, 1.3, .4, 1) both;
+}
+
+.result-meaning {
+  animation-delay: .1s;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(.85) translateY(20px);
+  }
+}
+
+.result-box {
+  width: min(440px, 46vw);
+  padding: 30px 34px;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.result-box h1,
+#resultTitle {
+  margin-bottom: 6px;
+  font-size: 46px;
+  font-weight: 800;
+  text-align: center;
+}
+
+#resultReason {
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5b6b75;
+}
+
+#resultReason:empty {
+  display: none;
+}
+
+/* ----- vòng điểm % (giống bảng kết quả của chế độ PLAY) ----- */
+.rs-ring {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  margin: 4px auto 6px;
+}
+
+.rs-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.rs-ring circle {
+  fill: none;
+  stroke-width: 16;
+}
+
+.rs-ring .trk {
+  stroke: #D6EEF5;
+}
+
+.rs-ring .fil {
+  stroke: #FB8500;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.rs-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rs-percent {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.rs-total {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: .7;
+}
+
+.rs-rank {
+  margin: 6px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.rs-message {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: .8;
+}
+
+/* ----- các dòng điểm kèm thanh ----- */
+#resultScore {
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.result-row {
+  animation: rowIn .4s ease both;
+  animation-delay: calc(var(--i, 0) * 70ms + .25s);
+}
+
+.result-row+.result-row {
+  margin-top: 10px;
+}
+
+.result-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.result-row-head strong {
+  font-weight: 800;
+}
+
+.result-bar {
+  height: 10px;
+  margin-top: 4px;
+  overflow: hidden;
+  background: #D6EEF5;
+  border-radius: 999px;
+}
+
+.result-bar-fill {
+  width: 0;
+  height: 100%;
+  background: #FFB703;
+  border-radius: 999px;
+  transition: width .8s ease-out;
+}
+
+.result-row.is-perfect .result-bar-fill {
+  background: #FB8500;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+}
+
+.result-box button {
+  margin-top: 20px;
+  padding: 12px 34px;
+  font-size: 21px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.restartGame-btn {
+  margin: 20px 5px 0;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--sun);
+  box-shadow: 0 5px 0 var(--sun-dark);
+  transition: transform .15s, box-shadow .15s, background .15s;
+}
+
+.restartGame-btn:hover {
+  background: #ffdb78;
+  transform: translateY(-2px);
+}
+
+.restartGame-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--sun-dark);
+}
+
+.result-meaning {
+  width: min(540px, 50vw);
+  padding: 28px 30px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.result-meaning h2 {
+  margin-bottom: 12px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* ================= LỊCH SỬ TỪ VỰNG ================= */
 #resultWord {
-    margin-top: 20px;
-
-    height: 500px;
-
-    overflow-y: auto;
-
-    padding-right: 10px;
-
-    text-align: left;
+  flex: 1;
+  min-height: 0;
+  padding-right: 8px;
+  overflow-y: auto;
+  text-align: left;
 }
-
 
 #resultWord::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 #resultWord::-webkit-scrollbar-thumb {
-    background: #aaa;
-    border-radius: 20px;
+  background: #b9c9d1;
+  border-radius: 20px;
 }
 
-
-/* ===============================
-   HISTORY ITEM
-   =============================== */
-
 .history-item {
-    display: flex;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 11px 14px;
+  background: #f4f8fa;
+  border-left: 5px solid var(--sky);
+  border-radius: 14px;
+  transition: transform .15s, background .15s;
+}
 
-    align-items: flex-start;
-
-    gap: 10px;
-
-    padding: 12px 15px;
-
-    margin-bottom: 8px;
-
-    border-radius: 14px;
-
-    background: #f5f5f5;
-
-    border-left: 5px solid #84C7EC;
+.history-item:hover {
+  transform: translateX(3px);
+  background: #ecf5f9;
 }
 
 .history-item.player {
-    border-left-color: #FFD25C;
+  border-left-color: var(--sun);
 }
-
-
-/* ===============================
-   SỐ THỨ TỰ
-   =============================== */
 
 .history-number {
-    width: 27px;
-    height: 27px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 50%;
-
-    background: #e5e5e5;
-
-    font-size: 13px;
-    font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+  background: #e1eaee;
+  border-radius: 50%;
 }
-
-
-/* ===============================
-   CONTENT
-   =============================== */
 
 .history-content {
-    flex: 1;
-    min-width: 0;
+  flex: 1;
+  min-width: 0;
 }
 
-
 .history-word {
-    font-size: 20px;
-    color: black;
-    line-height: 1.3;
-    transition: all 0.2s ease;
+  font-size: 20px;
+  line-height: 1.3;
+  color: #000;
+  cursor: pointer;
+  transition: color .2s;
 }
 
 .history-word:hover {
-    color: #644e19ab;
+  color: #b27a00;
 }
-
 
 .history-type {
-    display: inline-block;
-
-    margin-left: 7px;
-
-    padding: 2px 8px;
-
-    border-radius: 12px;
-
-    background: #e8e8e8;
-
-    font-size: 12px;
-
-    font-weight: bold;
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #e4ecf0;
+  border-radius: 12px;
 }
-
 
 .history-meaning {
-    margin-top: 3px;
-
-    color: #555;
-
-    font-size: 16px;
-
-    line-height: 1.4;
+  margin-top: 3px;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #4f5d66;
 }
 
+.history-toggle {
+  background: #e4ecf0;
+}
 
+.history-toggle:hover {
+  background: #d3e0e6;
+}
 
+.history-meaning-list {
+  border-top-color: #d3e0e6;
+}
 
-
-
-
-
-
-/* =========================================
-   SETTINGS
-   ========================================= */
-
+/* ================= CÀI ĐẶT ================= */
 .settings-overlay {
-    position: absolute;
-
-    inset: 0;
-
-    display: none;
-
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.45);
-
-    z-index: 100;
-
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, .45);
+  backdrop-filter: blur(3px);
 }
-
 
 .settings-overlay.show {
-    display: flex;
+  display: flex;
+  animation: fadeIn .2s ease;
 }
-
-
-/* =========================================
-   SETTINGS BOX
-   ========================================= */
 
 .settings-box {
-
-    width: 380px;
-
-    padding: 35px 30px;
-
-    background: white;
-
-    border-radius: 28px;
-
-    text-align: center;
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.2);
-
-    animation: settingsOpen 0.2s ease;
+  width: 380px;
+  max-width: 92vw;
+  padding: 35px 30px;
+  text-align: center;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+  animation: settingsOpen .25s cubic-bezier(.2, 1.3, .4, 1);
 }
-
 
 .settings-box h2 {
-
-    margin-bottom: 25px;
-
-    font-size: 32px;
+  margin-bottom: 22px;
+  font-size: 32px;
+  font-weight: 800;
 }
-
-
-/* =========================================
-   SETTINGS BUTTON
-   ========================================= */
 
 .settings-btn {
-
-    width: 100%;
-
-    height: 58px;
-
-    margin-top: 12px;
-
-    border: none;
-
-    border-radius: 30px;
-
-    font-family: inherit;
-
-    font-size: 22px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.15s ease,
-        filter 0.15s ease;
+  width: 100%;
+  height: 58px;
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  border: none;
+  border-radius: 30px;
+  transition: transform .15s, filter .15s;
 }
-
 
 .settings-btn:hover {
-
-    transform: scale(1.03);
-
-    filter: brightness(1.04);
+  transform: scale(1.03);
+  filter: brightness(1.05);
 }
-
 
 .settings-btn:active {
-
-    transform: scale(0.97);
+  transform: scale(.97);
 }
-
 
 #continueBtn {
-    background: #84C7EC;
+  background: var(--sky);
 }
-
-
-/* Chơi lại */
 
 #restartSettingsBtn {
-    background: #FFD25C;
+  background: var(--sun);
 }
-
-
-/* Thoát */
 
 #exitSettingsBtn {
-    background: #ff8c8c;
+  background: #ff8c8c;
 }
 
-/* Continue */
-
-
-
-/* Exit */
-
-
-
-/* =========================================
-   ANIMATION
-   ========================================= */
-
 @keyframes settingsOpen {
+  from {
+    opacity: 0;
+    transform: scale(.9);
+  }
+}
 
-    from {
-        opacity: 0;
-        transform: scale(0.92);
-    }
+/* ================= MÀN HẸP ================= */
+@media (max-width: 900px) {
+  .wc-top {
+    padding: 0 18px;
+  }
 
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  .chat-area {
+    padding: 14px 16px 20px;
+  }
 
+  .bubble-chat {
+    min-width: 0;
+    max-width: 78%;
+    font-size: 19px;
+  }
+
+  .word {
+    font-size: 22px;
+  }
+
+  .result-screen {
+    flex-direction: column;
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+
+  .result-box,
+  .result-meaning {
+    width: min(560px, 96vw);
+    max-height: none;
+    flex: none;
+  }
+
+  #resultWord {
+    max-height: 340px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ================= BẢNG KẾT QUẢ LỚN =================
+   Hai thẻ (kết quả + lịch sử từ vựng) cao gần hết màn hình và rộng bằng nhau, giống màn kết quả mẫu.
+   Đặt cuối file để ghi đè kích thước nhỏ ở phía trên. */
+.result-screen {
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 48px);
+  padding: clamp(10px, 2.4vh, 22px) clamp(12px, 4vw, 70px);
+}
+
+.result-box,
+.result-meaning {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 900px;
+  width: auto;
+  height: 100%;
+  max-height: none;
+  border-radius: 28px;
+}
+
+.result-box {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 3.4vh, 40px) clamp(24px, 3vw, 48px);
+}
+
+.result-meaning {
+  min-height: 0;
+  padding: clamp(22px, 3.4vh, 40px) clamp(20px, 2.6vw, 40px);
+}
+
+.result-box h1,
+#resultTitle {
+  margin-bottom: 4px;
+  font-size: clamp(40px, 7vh, 64px);
+}
+
+#resultReason {
+  font-size: clamp(18px, 2.6vh, 24px);
+}
+
+.rs-ring {
+  width: clamp(150px, 27vh, 260px);
+  height: clamp(150px, 27vh, 260px);
+  margin: clamp(6px, 1.4vh, 16px) auto;
+}
+
+.rs-percent {
+  font-size: clamp(38px, 6.4vh, 62px);
+}
+
+.rs-total {
+  font-size: clamp(14px, 2vh, 18px);
+}
+
+.rs-rank {
+  font-size: clamp(24px, 3.8vh, 34px);
+}
+
+.rs-message {
+  font-size: clamp(16px, 2.3vh, 21px);
+}
+
+#resultScore {
+  font-size: clamp(16px, 2.4vh, 21px);
+}
+
+.result-row+.result-row {
+  margin-top: clamp(8px, 1.6vh, 16px);
+}
+
+.result-bar {
+  height: clamp(10px, 1.5vh, 14px);
+}
+
+/* hai nút nằm ở đáy thẻ */
+.rs-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: clamp(14px, 2.4vh, 28px);
+}
+
+.rs-actions .restartGame-btn {
+  flex: 1 1 0;
+  max-width: 240px;
+  margin: 0;
+  padding: 14px 20px;
+  font-size: clamp(18px, 2.6vh, 24px);
+}
+
+.result-meaning h2 {
+  margin-bottom: clamp(10px, 1.8vh, 18px);
+  font-size: clamp(28px, 4.6vh, 42px);
+}
+
+/* lịch sử từ vựng: chữ to hơn cho vừa thẻ lớn */
+.history-item {
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: clamp(10px, 1.6vh, 16px) clamp(12px, 1.4vw, 20px);
+}
+
+.history-number {
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
+}
+
+.history-word {
+  font-size: clamp(20px, 3.2vh, 28px);
+}
+
+.history-type {
+  font-size: 14px;
+}
+
+.history-meaning {
+  font-size: clamp(16px, 2.4vh, 21px);
+}
+
+/* màn hẹp: xếp dọc, cuộn được */
+@media (max-width: 900px) {
+  .result-screen {
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+
+  .result-box,
+  .result-meaning {
+    flex: none;
+    width: min(640px, 96vw);
+    max-width: none;
+    height: auto;
+  }
+
+  #resultWord {
+    flex: none;
+    max-height: 420px;
+  }
 }

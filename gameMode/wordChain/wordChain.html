@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Chain</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="wordChain.css">
 </head>
 
@@ -16,20 +19,40 @@
 <body spellcheck="false">
 
 
-    <div class="result-screen" id="resultScreen">
+    <!-- ================= BẢNG KẾT QUẢ ================= -->
+    <div class="result-screen" id="resultScreen" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
         <div class="result-box">
             <h1 id="resultTitle">
                 RESULT
             </h1>
             <p id="resultReason"></p>
-            <p id="resultScore"></p>
-            <button onclick="restartGame()" class="restartGame-btn">
-                Chơi lại
-            </button>
 
-            <button class="restartGame-btn" onclick="location.href='../../game.html'">
-                Quay về
-            </button>
+            <!-- Vòng tròn % (độ chính xác), giống bảng kết quả của chế độ PLAY -->
+            <div class="rs-ring">
+                <svg viewBox="0 0 200 200" aria-hidden="true">
+                    <circle class="trk" cx="100" cy="100" r="82" pathLength="100"></circle>
+                    <circle id="resultRingFill" class="fil" cx="100" cy="100" r="82" pathLength="100"></circle>
+                </svg>
+                <div class="rs-ring-text">
+                    <div id="resultPercent" class="rs-percent">0%</div>
+                    <div id="resultTotal" class="rs-total"></div>
+                </div>
+            </div>
+
+            <p id="resultRank" class="rs-rank"></p>
+            <p id="resultMessage" class="rs-message"></p>
+
+            <ul id="resultScore"></ul>
+
+            <div class="rs-actions">
+                <button type="button" onclick="restartGame()" class="restartGame-btn">
+                    Chơi lại
+                </button>
+
+                <button type="button" class="restartGame-btn" onclick="location.href='../../game.html'">
+                    Quay về
+                </button>
+            </div>
         </div>
 
         <div class="result-meaning">
@@ -53,7 +76,7 @@
 
 
     <!-- Background Bubble -->
-    <div class="bubble-container">
+    <div class="bubble-container" aria-hidden="true">
         <span class="bubble"></span>
         <span class="bubble"></span>
         <span class="bubble"></span>
@@ -89,15 +112,15 @@
 
                 <h2>CÀI ĐẶT</h2>
 
-                <button class="settings-btn" id="continueBtn">
+                <button type="button" class="settings-btn" id="continueBtn">
                     ▶ Tiếp tục
                 </button>
 
-                <button class="settings-btn" id="restartSettingsBtn">
+                <button type="button" class="settings-btn" id="restartSettingsBtn">
                     🔄 Chơi lại
                 </button>
 
-                <button class="settings-btn" id="exitSettingsBtn">
+                <button type="button" class="settings-btn" id="exitSettingsBtn">
                     🚪 Thoát
                 </button>
 
@@ -128,8 +151,8 @@
             <!-- Top Bar -->
             <div class="wc-top">
                 <div class="player-life">
-                    <span class="life"><img src="../../pics/heart icon.png" alt="Life" width="40" height="40"></span>
-                    <span class="life"><img src="../../pics/heart icon.png" alt="Life" width="40" height="40"></span>
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Mạng" width="40" height="40"></span>
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Mạng" width="40" height="40"></span>
                 </div>
                 <div class="timer-box">
                     <div class="timer" id="timer">
@@ -140,8 +163,8 @@
                     </div>
                 </div>
                 <div class="top-icon">
-                    <button id="chatBtn"><img src="../../pics/chatting icon.png" alt="Chat" width="40" height="40" style="margin-right: 10px;"></button>
-                    <button id="settingBtn"><img src="../../pics/setting icon.png" alt="Settings" width="40" height="40"style="margin-right: 10px;"></button>
+                    <button type="button" id="chatBtn" title="Trò chuyện" aria-label="Trò chuyện"><img src="../../pics/chatting icon.png" alt="" width="40" height="40"></button>
+                    <button type="button" id="settingBtn" title="Cài đặt" aria-label="Cài đặt"><img src="../../pics/setting icon.png" alt="" width="40" height="40"></button>
                 </div>
             </div>
 
@@ -168,8 +191,8 @@
 
             <!-- Input -->
             <div class="input-area">
-                <input id="wordInput" type="text" placeholder="Input here">
-                <button class="submit-button">Submit</button>
+                <input id="wordInput" type="text" placeholder="Input here" autocomplete="off" autocapitalize="off" autofocus>
+                <button type="button" class="submit-button">Submit</button>
             </div>
         </div>
     </div>
