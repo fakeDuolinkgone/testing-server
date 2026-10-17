@@ -57,21 +57,65 @@
 
     <!-- Màn hình kết quả -->
     <div class="wh-overlay hidden" id="resultScreen">
-        <div class="wh-card">
-            <h1 id="resultTitle">Hết giờ!</h1>
-            <p class="wh-big-score"><span id="resultScore">0</span> điểm</p>
-            <p class="wh-rules" id="resultInfo"></p>
+        <div class="wh-card wh-result" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
 
-            <h2>Từ bạn đã tìm được</h2>
-            <ul class="wh-words" id="resultFound"></ul>
+            <header class="wh-result-head">
+                <h1 id="resultTitle">Hết giờ!</h1>
+                <p class="wh-big-score"><span id="resultScore">0</span> điểm</p>
+                <p class="wh-badge hidden" id="resultBadge">🏆 Kỷ lục mới!</p>
 
-            <h2>Còn nhiều từ khác nữa, ví dụ</h2>
-            <ul class="wh-words" id="resultMissed"></ul>
+                <div class="wh-result-stats">
+                    <div class="wh-stat">
+                        <b id="resultCount">0</b>
+                        <small>Số từ</small>
+                    </div>
+                    <div class="wh-stat">
+                        <b id="resultLongest">–</b>
+                        <small>Từ dài nhất</small>
+                    </div>
+                    <div class="wh-stat">
+                        <b id="resultBest">0</b>
+                        <small>Kỷ lục</small>
+                    </div>
+                </div>
+            </header>
 
-            <div class="wh-actions">
+            <div class="wh-result-body">
+                <section class="wh-chart" aria-labelledby="chartTitle">
+                    <div class="wh-donut" role="img" id="donutImg">
+                        <svg viewBox="0 0 120 120" aria-hidden="true">
+                            <circle class="wh-donut-track" cx="60" cy="60" r="48" pathLength="100"></circle>
+                            <circle class="wh-donut-fill" id="donutFill" cx="60" cy="60" r="48" pathLength="100"></circle>
+                        </svg>
+                        <div class="wh-donut-text">
+                            <b id="donutPercent">0%</b>
+                            <small>đã tìm</small>
+                        </div>
+                    </div>
+                    <div class="wh-legend">
+                        <h2 id="chartTitle">Tiến độ chữ <span id="chartLetter">A</span></h2>
+                        <ul>
+                            <li><i class="wh-dot found"></i>Đã tìm được <b id="legendFound">0</b> từ</li>
+                            <li><i class="wh-dot missed"></i>Chưa tìm được <b id="legendMissed">0</b> từ</li>
+                        </ul>
+                        <p class="wh-legend-total">Tổng cộng <b id="legendTotal">0</b> từ bắt đầu bằng chữ này</p>
+                    </div>
+                </section>
+
+                <p class="wh-hint">🔊 Chạm vào một từ để nghe phát âm</p>
+
+                <h2>Từ bạn đã tìm được</h2>
+                <ul class="wh-words wh-words-result" id="resultFound"></ul>
+
+                <h2>Còn nhiều từ khác nữa, ví dụ</h2>
+                <ul class="wh-words wh-words-result" id="resultMissed"></ul>
+            </div>
+
+            <footer class="wh-actions">
                 <button class="wh-btn wh-btn-big" id="restartBtn" type="button">Chơi lại</button>
                 <a class="wh-btn wh-btn-big wh-btn-alt" href="../../game.html">Quay về</a>
-            </div>
+            </footer>
+
         </div>
     </div>
 
