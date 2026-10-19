@@ -5,8 +5,8 @@
   const WP = {
     // 3 level: kích thước bảng, số từ, số giây, các hướng đặt từ (E ngang, S dọc, SE chéo xuống, NE chéo lên), độ dài từ
     LEVELS: [
-      { size: 6, words: 3, sec: 60, dirs: ["E", "S"], len: [3, 5] },
-      { size: 8, words: 4, sec: 90, dirs: ["E", "S"], len: [4, 6] },
+      { size: 6, words: 3, sec: 75, dirs: ["E", "S"], len: [3, 5] },
+      { size: 8, words: 4, sec: 100, dirs: ["E", "S"], len: [4, 6] },
       { size: 9, words: 5, sec: 120, dirs: ["E", "S", "SE", "NE"], len: [5, 8] }
     ],
     WORD_BASE: 10,        // điểm cơ bản mỗi từ

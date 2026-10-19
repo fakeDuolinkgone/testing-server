@@ -2,8 +2,10 @@
 
 :root {
   --red: #C9363A;
-  --ink: #7A1F1F;          /* chữ trong bảng */
-  --shade: #5B1B1B;        /* bóng đổ đậm của các thẻ */
+  --ink: #7A1F1F;
+  /* chữ trong bảng */
+  --shade: #5B1B1B;
+  /* bóng đổ đậm của các thẻ */
   --card: #F2F2F2;
   --peach: #FFB380;
   --gold: #FFB703;
@@ -14,9 +16,19 @@
   --locked: #96735A;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-[hidden] { display: none !important; }
-html { overflow: hidden; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  overflow: hidden;
+}
 
 body {
   height: 100vh;
@@ -33,7 +45,14 @@ body {
 /* ================= NỀN =================
    Lớp dưới: mây vàng trôi từ trái sang phải (JS tạo, xen kẽ hai ảnh).
    Lớp trên: hạt tròn đen mờ (background_dust.png) phủ lên cả mây. */
-.wp-clouds { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+.wp-clouds {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .wp-cloud {
   position: absolute;
   left: 0;
@@ -43,11 +62,33 @@ body {
   animation: cloudDrift linear forwards;
   will-change: transform;
 }
+
 @keyframes cloudDrift {
-  from { transform: translateX(-110%); }
-  to { transform: translateX(calc(100vw + 10%)); }
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(calc(100vw + 10%));
+  }
 }
-.wp-dust { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: url("../../pics/background_dust.png"); }
+
+.wp-dust {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("../../pics/background_dusty.png") 0 0 / 932px auto repeat;
+  animation: dustDrift 90s linear infinite;
+}
+
+@keyframes dustDrift {
+  to {
+    background-position: -932px 0;
+  }
+
+  /* đúng bằng 1 chiều rộng ảnh nên vòng lặp liền mạch */
+}
 
 /* ================= BỐ CỤC ================= */
 .wp {
@@ -66,21 +107,50 @@ body {
   box-shadow: 7px 9px 0 var(--shade);
   animation: cardIn .5s cubic-bezier(.2, 1.2, .4, 1) both;
 }
-.wp-side { animation-delay: .08s; }
-@keyframes cardIn { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+
+.wp-side {
+  animation-delay: .08s;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(.97);
+  }
+}
 
 /* Hiện/ẩn khối theo màn (data-view trên #wp, data-v trên từng khối) */
 .wp[data-view="play"] [data-v]:not([data-v~="play"]),
-.wp[data-view="result"] [data-v]:not([data-v~="result"]) { display: none !important; }
+.wp[data-view="result"] [data-v]:not([data-v~="result"]) {
+  display: none !important;
+}
 
 /* Chuyển màn: mờ dần rồi hiện dần (JS thêm/bớt class wp-out) */
-.wp [data-v] { transition: opacity .2s ease, transform .2s ease; }
-.wp.wp-out [data-v] { opacity: 0; transform: translateY(8px); }
+.wp [data-v] {
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.wp.wp-out [data-v] {
+  opacity: 0;
+  transform: translateY(8px);
+}
 
 /* ================= BẢNG CHỮ (trái) ================= */
-.wp-left { display: grid; place-items: center; padding: clamp(14px, 2.6vh, 28px); background: var(--card); }
+.wp-left {
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 2.6vh, 28px);
+  background: var(--card);
+}
 
-.wp-gridwrap { position: relative; height: 100%; max-width: 100%; aspect-ratio: 1; container-type: inline-size; }
+.wp-gridwrap {
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1;
+  container-type: inline-size;
+}
+
 .wp-grid {
   position: absolute;
   inset: 0;
@@ -92,6 +162,7 @@ body {
   -webkit-user-select: none;
   cursor: pointer;
 }
+
 .wp-cell {
   display: grid;
   place-items: center;
@@ -102,7 +173,12 @@ body {
 }
 
 /* "Viên thuốc" tô từ: nằm TRÊN chữ và trộn màu (multiply) nên chữ hơi ngả màu như ảnh thiết kế */
-.wp-caps { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.wp-caps {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
 .wp-cap {
   position: absolute;
   transform: translate(-50%, -50%) rotate(var(--rot, 0rad));
@@ -110,19 +186,57 @@ body {
   mix-blend-mode: multiply;
   animation: capIn .28s cubic-bezier(.2, 1.4, .4, 1) both;
 }
-.wp-cap.pre { background: rgba(33, 158, 188, .55); animation: none; }
-.wp-cap.bad { background: rgba(230, 57, 70, .6); animation: capShake .35s; }
-.wp-cap.miss { background: rgba(91, 63, 42, .3); outline: 3px dashed rgba(91, 63, 42, .75); outline-offset: -3px; }
-@keyframes capIn { from { opacity: 0; transform: translate(-50%, -50%) rotate(var(--rot, 0rad)) scale(.6); } }
+
+.wp-cap.pre {
+  background: rgba(33, 158, 188, .55);
+  animation: none;
+}
+
+.wp-cap.bad {
+  background: rgba(230, 57, 70, .6);
+  animation: capShake .35s;
+}
+
+.wp-cap.miss {
+  background: rgba(91, 63, 42, .3);
+  outline: 3px dashed rgba(91, 63, 42, .75);
+  outline-offset: -3px;
+}
+
+@keyframes capIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--rot, 0rad)) scale(.6);
+  }
+}
+
 @keyframes capShake {
-  25% { transform: translate(calc(-50% - 6px), -50%) rotate(var(--rot, 0rad)); }
-  75% { transform: translate(calc(-50% + 6px), -50%) rotate(var(--rot, 0rad)); }
+  25% {
+    transform: translate(calc(-50% - 6px), -50%) rotate(var(--rot, 0rad));
+  }
+
+  75% {
+    transform: translate(calc(-50% + 6px), -50%) rotate(var(--rot, 0rad));
+  }
 }
 
 /* ================= BẢNG PHỤ (phải) ================= */
-.wp-side { display: flex; flex-direction: column; gap: 14px; min-height: 0; padding: clamp(18px, 3.4vh, 38px) clamp(16px, 2vw, 34px) clamp(14px, 2.4vh, 26px); background: var(--peach); }
+.wp-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: clamp(18px, 3.4vh, 38px) clamp(16px, 2vw, 34px) clamp(14px, 2.4vh, 26px);
+  background: var(--peach);
+}
 
-.wp-hud { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.wp-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .wp-pill {
   padding: 2px 16px;
   font-size: clamp(16px, 2.4vh, 22px);
@@ -131,16 +245,56 @@ body {
   border-radius: 999px;
   transition: color .3s, background .3s;
 }
-.wp-pill.warn { color: #fff; background: #D62828; animation: pulse .8s ease-in-out infinite; }
-.wp-pill.bump { animation: bump .35s ease; }
-@keyframes pulse { 50% { transform: scale(1.08); } }
-@keyframes bump { 50% { transform: scale(1.18); } }
 
-.wp-timebar { flex: none; height: 10px; overflow: hidden; background: rgba(255, 255, 255, .55); border-radius: 999px; }
-#wpBar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--gold), #E63946); border-radius: 999px; transition: width .12s linear; }
+.wp-pill.warn {
+  color: #fff;
+  background: #D62828;
+  animation: pulse .8s ease-in-out infinite;
+}
+
+.wp-pill.bump {
+  animation: bump .35s ease;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes bump {
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.wp-timebar {
+  flex: none;
+  height: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .55);
+  border-radius: 999px;
+}
+
+#wpBar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #E63946);
+  border-radius: 999px;
+  transition: width .12s linear;
+}
 
 /* Danh sách từ: "(n) từ" + nghĩa; chưa tìm thì hiện "(n) ?" trên nền nâu nét đứt */
-.wp-words { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(8px, 1.6vh, 16px); overflow-y: auto; list-style: none; }
+.wp-words {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6vh, 16px);
+  overflow-y: auto;
+  list-style: none;
+}
+
 .wp-word {
   padding: clamp(6px, 1.2vh, 12px) clamp(16px, 1.8vw, 28px) clamp(8px, 1.4vh, 14px);
   background: var(--card);
@@ -149,16 +303,58 @@ body {
   line-height: 1.2;
   animation: wordIn .4s ease both;
 }
-.wp-word b { display: block; font-size: clamp(20px, 3.5vh, 34px); font-weight: 800; }
-.wp-word small { display: block; font-size: clamp(14px, 2.2vh, 22px); font-weight: 700; }
-.wp-word.locked { color: #5E3F2B; background: var(--locked); border: 3px dashed #fff; }
-.wp-word.found { border-left: 16px solid var(--c); animation: wordFound .5s ease; }
-.wp-word.missed { color: #fff; background: #B69A87; border: 3px dashed #fff; }
-@keyframes wordIn { from { opacity: 0; transform: translateX(20px); } }
-@keyframes wordFound { 40% { transform: scale(1.05); } }
+
+.wp-word b {
+  display: block;
+  font-size: clamp(20px, 3.5vh, 34px);
+  font-weight: 800;
+}
+
+.wp-word small {
+  display: block;
+  font-size: clamp(14px, 2.2vh, 22px);
+  font-weight: 700;
+}
+
+.wp-word.locked {
+  color: #5E3F2B;
+  background: var(--locked);
+  border: 3px dashed #fff;
+}
+
+.wp-word.found {
+  opacity: .5;
+  border-left: 16px solid var(--c);
+  animation: wordFound .5s ease;
+}
+
+.wp-word.missed {
+  color: #fff;
+  background: #B69A87;
+  border: 3px dashed #fff;
+}
+
+@keyframes wordIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes wordFound {
+  40% {
+    transform: scale(1.05);
+  }
+}
 
 /* Nút tròn ở đáy */
-.wp-btns { display: flex; justify-content: flex-end; gap: 14px; margin-top: auto; }
+.wp-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: auto;
+}
+
 .wp-ic {
   display: grid;
   place-items: center;
@@ -171,26 +367,102 @@ body {
   border-radius: 50%;
   transition: transform .12s, opacity .2s;
 }
-.wp-ic svg { width: 56%; height: 56%; }
-.wp-ic:hover:not(:disabled) { transform: translateY(-3px) scale(1.07); }
-.wp-ic:active:not(:disabled) { transform: translateY(1px); }
-.wp-ic:disabled { opacity: .35; cursor: not-allowed; }
-.wp-ic:focus-visible { outline: 4px solid #1a1a1a; outline-offset: 3px; }
-.ic-skip { background: #0F7E86; }
-.ic-exit { background: #F2332E; }
-.ic-set { color: #1a1a1a; background: #fff; }
+
+.wp-ic svg {
+  width: 56%;
+  height: 56%;
+}
+
+.wp-ic:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.07);
+}
+
+.wp-ic:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.wp-ic:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.wp-ic:focus-visible {
+  outline: 4px solid #1a1a1a;
+  outline-offset: 3px;
+}
+
+.ic-skip {
+  background: #0F7E86;
+}
+
+.ic-exit {
+  background: #F2332E;
+}
+
+.ic-set {
+  color: #1a1a1a;
+  background: #fff;
+}
 
 /* ================= KẾT QUẢ / CHỜ ================= */
-.wp-result { width: 100%; height: 100%; display: flex; flex-direction: column; padding: clamp(8px, 1.6vh, 18px) clamp(8px, 1.6vw, 22px) 0; min-height: 0; }
-.wp-result h2 { text-align: center; font-size: clamp(24px, 4vh, 36px); font-weight: 800; color: #222; }
-.wp-ressub { min-height: 1.4em; margin-bottom: 6px; text-align: center; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; opacity: .75; }
+.wp-result {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(8px, 1.6vh, 18px) clamp(8px, 1.6vw, 22px) 0;
+  min-height: 0;
+}
 
-.wp-list { list-style: none; display: flex; flex-direction: column; gap: clamp(8px, 1.6vh, 14px); }
-#wpList { flex: 1; min-height: 0; padding: 6px 12px 6px 4px; overflow-y: auto; }
-#wpList::-webkit-scrollbar { width: 12px; }
-#wpList::-webkit-scrollbar-thumb { background: #444; border-radius: 20px; }
-#wpList::-webkit-scrollbar-track { background: #fff; border: 2px solid #444; border-radius: 20px; }
-.wp-me { flex: none; padding: clamp(10px, 2vh, 20px) 4px clamp(8px, 1.6vh, 18px); }
+.wp-result h2 {
+  text-align: center;
+  font-size: clamp(24px, 4vh, 36px);
+  font-weight: 800;
+  color: #222;
+}
+
+.wp-ressub {
+  min-height: 1.4em;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: clamp(14px, 2.2vh, 20px);
+  font-weight: 700;
+  opacity: .75;
+}
+
+.wp-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6vh, 14px);
+}
+
+#wpList {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 12px 6px 4px;
+  overflow-y: auto;
+}
+
+#wpList::-webkit-scrollbar {
+  width: 12px;
+}
+
+#wpList::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 20px;
+}
+
+#wpList::-webkit-scrollbar-track {
+  background: #fff;
+  border: 2px solid #444;
+  border-radius: 20px;
+}
+
+.wp-me {
+  flex: none;
+  padding: clamp(10px, 2vh, 20px) 4px clamp(8px, 1.6vh, 18px);
+}
 
 .wp-row {
   display: flex;
@@ -206,21 +478,90 @@ body {
   animation: rowIn .4s ease both;
   animation-delay: min(calc(var(--i, 0) * 60ms), 900ms);
 }
-.wp-row .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wp-row.r1 { background: var(--teal); }
-.wp-row.r2 { background: #C93A3A; }
-.wp-row.r3 { background: var(--brown); }
-.wp-row.r4 { background: var(--lime); }
-.wp-row.r5 { background: var(--cream); }
-.wp-row.r1, .wp-row.r2, .wp-row.r3, .wp-row.r4, .wp-row.r5 { border: 3px dashed #161616; }
-.wp-row.me { background: var(--gold); border: 4px dashed #161616; }
-@keyframes rowIn { from { opacity: 0; transform: translateX(-22px); } }
 
-.wp-mascot { flex: 1; min-height: 0; display: grid; grid-template-rows: 1fr auto; gap: 6px; }
-.wp-mascot-box { display: grid; place-items: center; min-height: 0; padding: 14px; background: var(--card); border-radius: 22px; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .6); }
-.wp-mascot img { max-width: 100%; max-height: 100%; object-fit: contain; animation: float 3.2s ease-in-out infinite; }
-.wp-mascot figcaption { font-size: clamp(18px, 3vh, 28px); font-weight: 800; text-align: center; }
-@keyframes float { 50% { transform: translateY(-10px); } }
+.wp-row .nm {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wp-row.r1 {
+  background: var(--teal);
+}
+
+.wp-row.r2 {
+  background: #C93A3A;
+}
+
+.wp-row.r3 {
+  background: var(--brown);
+}
+
+.wp-row.r4 {
+  background: var(--lime);
+}
+
+.wp-row.r5 {
+  background: var(--cream);
+}
+
+.wp-row.r1,
+.wp-row.r2,
+.wp-row.r3,
+.wp-row.r4,
+.wp-row.r5 {
+  border: 3px dashed #161616;
+}
+
+.wp-row.me {
+  background: var(--gold);
+  border: 4px dashed #161616;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+}
+
+.wp-mascot {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 6px;
+}
+
+.wp-mascot-box {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 14px;
+  background: var(--card);
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .6);
+}
+
+.wp-mascot img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  animation: float 3.2s ease-in-out infinite;
+}
+
+.wp-mascot figcaption {
+  font-size: clamp(18px, 3vh, 28px);
+  font-weight: 800;
+  text-align: center;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
 
 /* ================= LỚP PHỦ ================= */
 .wp-intro {
@@ -238,16 +579,68 @@ body {
   backdrop-filter: blur(3px);
   animation: fadeIn .3s ease both;
 }
-.wp-intro b { font-size: clamp(44px, 10vh, 84px); animation: popB .6s cubic-bezier(.2, 1.4, .4, 1); }
-.wp-intro span { font-size: clamp(20px, 3.4vh, 30px); font-weight: 600; }
-@keyframes popB { from { opacity: 0; transform: scale(.6); } }
-@keyframes fadeIn { from { opacity: 0; } }
-.wp-intro.leaving, .wp-overlay.leaving { animation: fadeOut .25s ease forwards; }
-@keyframes fadeOut { to { opacity: 0; } }
 
-.wp-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .5); animation: fadeIn .2s ease; }
-.wp-box { width: min(400px, 92vw); padding: 28px; text-align: center; background: #fff; border: 4px solid #161616; border-radius: 28px; animation: cardIn .3s ease both; }
-.wp-box h2 { margin-bottom: 8px; font-size: 32px; color: #222; }
+.wp-intro b {
+  font-size: clamp(44px, 10vh, 84px);
+  animation: popB .6s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.wp-intro span {
+  font-size: clamp(20px, 3.4vh, 30px);
+  font-weight: 600;
+}
+
+@keyframes popB {
+  from {
+    opacity: 0;
+    transform: scale(.6);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.wp-intro.leaving,
+.wp-overlay.leaving {
+  animation: fadeOut .25s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+.wp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .5);
+  animation: fadeIn .2s ease;
+}
+
+.wp-box {
+  width: min(400px, 92vw);
+  padding: 28px;
+  text-align: center;
+  background: #fff;
+  border: 4px solid #161616;
+  border-radius: 28px;
+  animation: cardIn .3s ease both;
+}
+
+.wp-box h2 {
+  margin-bottom: 8px;
+  font-size: 32px;
+  color: #222;
+}
+
 .wp-btn {
   display: block;
   width: 100%;
@@ -264,22 +657,71 @@ body {
   box-shadow: 0 4px 0 #161616;
   transition: transform .1s, box-shadow .1s;
 }
-.wp-btn.primary { background: var(--gold); }
-.wp-btn:hover { transform: translateY(-1px); }
-.wp-btn:active { transform: translateY(4px); box-shadow: none; }
-.wp-note { margin-top: 12px; font-size: 14px; font-weight: 600; color: #666; }
+
+.wp-btn.primary {
+  background: var(--gold);
+}
+
+.wp-btn:hover {
+  transform: translateY(-1px);
+}
+
+.wp-btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.wp-note {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
 
 /* ================= MÀN HẸP ================= */
 @media (max-width: 900px) {
-  html, body { overflow: auto; }
-  body { display: block; height: auto; min-height: 100vh; }
-  .wp { height: auto; margin: 16px auto; grid-template-columns: 1fr; }
-  .wp-left { min-height: 0; }
-  .wp-gridwrap { height: auto; width: 100%; }
-  .wp-result { min-height: 420px; }
-  .wp-words { max-height: 360px; }
+
+  html,
+  body {
+    overflow: auto;
+  }
+
+  body {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .wp {
+    height: auto;
+    margin: 16px auto;
+    grid-template-columns: 1fr;
+  }
+
+  .wp-left {
+    min-height: 0;
+  }
+
+  .wp-gridwrap {
+    height: auto;
+    width: 100%;
+  }
+
+  .wp-result {
+    min-height: 420px;
+  }
+
+  .wp-words {
+    max-height: 360px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
