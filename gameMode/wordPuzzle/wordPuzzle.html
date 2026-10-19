@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>WORD PUZZLE - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="wordPuzzle.css">
+
+  <link rel="icon" type="image/png" href="../../pics/mascotPics/mascotWukong_main.png">
+</head>
+
+<body spellcheck="false">
+
+  <!-- Nền: mây vàng trôi từ trái sang phải (JS tạo), rồi lớp hạt tròn đen mờ phủ lên trên -->
+  <div id="wpClouds" class="wp-clouds" aria-hidden="true"></div>
+  <div class="wp-dust" aria-hidden="true"></div>
+
+  <!--
+    GIAO DIỆN: đổi bố cục thoải mái, miễn là giữ các id bên dưới (JS chỉ dùng id).
+    data-v="..." cho biết khối nào hiện ở màn nào: play (đang chơi) hoặc result (chờ / kết quả).
+    Màn hiện tại nằm ở #wp[data-view].
+  -->
+  <main id="wp" class="wp" data-view="play">
+
+    <!-- ===== BÊN TRÁI: bảng chữ (đang chơi) / bảng xếp hạng (kết quả) ===== -->
+    <section class="wp-card wp-left">
+      <div id="wpGridWrap" class="wp-gridwrap" data-v="play">
+        <div id="wpGrid" class="wp-grid"></div>
+        <div id="wpCaps" class="wp-caps"></div> <!-- các "viên thuốc" tô màu từ đã tìm -->
+      </div>
+
+      <div id="wpResult" class="wp-result" data-v="result">
+        <h2 id="wpResTitle">KẾT THÚC</h2>
+        <p id="wpResSub" class="wp-ressub"></p>
+        <ul id="wpList" class="wp-list"></ul> <!-- bảng xếp hạng đầy đủ (cuộn được) -->
+        <ul id="wpMe" class="wp-list wp-me"></ul> <!-- hàng của bạn, ghim ở đáy -->
+      </div>
+    </section>
+
+    <!-- ===== BÊN PHẢI: danh sách từ + nút / mascot + nút ===== -->
+    <aside class="wp-card wp-side">
+      <div class="wp-hud" data-v="play">
+        <span id="wpLevel" class="wp-pill">LEVEL 1/3</span>
+        <span class="wp-pill">⏱ <b id="wpTime">60</b></span>
+        <span class="wp-pill">★ <b id="wpScore">0</b></span>
+      </div>
+      <div class="wp-timebar" data-v="play">
+        <div id="wpBar"></div>
+      </div>
+
+      <ul id="wpWords" class="wp-words" data-v="play"></ul> <!-- (n) từ / nghĩa; từ chưa tìm hiện (n) ? -->
+
+      <figure class="wp-mascot" data-v="result">
+        <div class="wp-mascot-box"><img id="wpMascot" alt="Mascot"></div>
+        <figcaption id="wpCap"></figcaption>
+      </figure>
+
+      <div class="wp-btns">
+        <button id="wpSkip" class="wp-ic ic-skip" type="button" title="Bỏ qua level này" aria-label="Bỏ qua level này">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M5 4l10 8-10 8z" />
+            <path d="M19 5v14" />
+          </svg>
+        </button>
+        <button id="wpExit" class="wp-ic ic-exit" type="button" title="Thoát phòng" aria-label="Thoát phòng">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+        <button id="wpSet" class="wp-ic ic-set" type="button" title="Cài đặt" aria-label="Cài đặt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Màn giới thiệu level (đếm ngược / nghỉ giữa các level) -->
+    <div id="wpIntro" class="wp-intro" hidden></div>
+
+    <!-- Cài đặt -->
+    <div id="wpSettings" class="wp-overlay" hidden>
+      <div class="wp-box">
+        <h2>CÀI ĐẶT</h2>
+        <button id="wpSound" class="wp-btn" type="button" aria-pressed="true">🔊 Đọc từ khi tìm được: Bật</button>
+        <button id="wpResume" class="wp-btn primary" type="button">▶ Tiếp tục</button>
+        <button id="wpLeave2" class="wp-btn" type="button">🚪 Thoát phòng</button>
+        <p class="wp-note">Đồng hồ vẫn chạy khi mở cài đặt.</p>
+      </div>
+    </div>
+  </main>
+
+  <audio id="sound-correct" src="../../audio/correct.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="../../audio/wrong.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="../../audio/finish.mp3" preload="auto"></audio>
+
+  <!-- Mạng (thứ tự quan trọng): SDK → cấu hình → từ vựng → luật → boss-net → phần của Word Puzzle -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="../../JS/net/firebase-config.js"></script>
+  <script src="../../data/englishVocabularys.js"></script>
+
+  <script src="../../JS/net/boss-rules.js"></script>
+  <script src="../../JS/net/boss-net.js"></script>
+
+  <script src="../../JS/common/audio.js"></script>
+
+  <script src="../bossBattle/bossCore.js"></script>
+  <script src="wordPuzzleCore.js"></script>
+  <script src="wordPuzzleHost.js"></script>
+  <script src="wordPuzzleNet.js"></script>
+  <script src="wordPuzzle.js"></script>
+</body>
+
+</html>

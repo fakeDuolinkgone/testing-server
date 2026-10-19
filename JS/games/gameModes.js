@@ -53,7 +53,7 @@
         },
 
 
-        { id: "bingo", icon: "🎯", name: "Bingo từ vựng", desc: "Điền đủ hàng trên bảng từ để Bingo.", available: false },
+        { id: "wordPuzzle", icon: "🎯", name: "Word Puzzle", desc: "Điền đủ hàng trên bảng từ để thắng.", available: false },
 
         
         { id: "wordChain", icon: "🔗", name: "Nối từ đối kháng", desc: "Thi nối từ với bạn bè theo từng lượt.", available: false }
