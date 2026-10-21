@@ -2,20 +2,48 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
-    <title>DOCUMENT - normaFix</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <link rel="stylesheet" href="CSS/englishCSS.css">
-
-    <link rel="icon" type="image/png" href="pics/mascotPics/iconWebsite_main.png">
+  <meta charset="UTF-8">
+  <title>DOCUMENT - normaFix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="pics/mascotPics/iconWebsite_main.png">
+  <link rel="stylesheet" href="CSS/document.css">
 </head>
 
 
-
-
 <body spellcheck="false">
+
+  <nav class="tabs" role="tablist" aria-label="Nguồn từ vựng">
+    <button class="tab" role="tab" id="tabGlobal" data-src="global" aria-selected="true">global success</button>
+    <button class="tab" role="tab" id="tabNorma" data-src="norma" aria-selected="false">normaFix</button>
+    <a class="back" href="index.html" title="Về trang game" aria-label="Về trang game">←</a>
+  </nav>
+
+  <main class="panel">
+    <div id="list" class="list" role="tabpanel" tabindex="-1">
+      <!-- hàng tiêu đề (JS không đụng tới 3 ô này) -->
+      <div class="c w hd hd-word">
+        <div class="pill">
+          <button id="az" class="az" type="button" title="Đổi thứ tự sắp xếp">a-z</button>
+          <input id="q" type="search" placeholder="searching word.." autocomplete="off" aria-label="Tìm từ">
+        </div>
+      </div>
+      <div class="c k hd">
+        <div class="pill">classword</div>
+      </div>
+      <div class="c m hd">
+        <div class="pill">meaning</div>
+      </div>
+    </div>
+  </main>
+
+
+
+  <!-- global success: khai báo const vocabData -->
+  <script src="data/englishVocabularys.js"></script>
+  <script src="JS/games/document.js"></script>
+</body>
+
+</html>

@@ -56,7 +56,7 @@
 
 
 
-.menu-item {
+.menu-item-back, .menu-item-room, .menu-item-document {
   display: flex;
   align-items: center;
   height: 70px;
@@ -68,7 +68,7 @@
 
 
 
-.menu-item:hover {
+.menu-item-back:hover, .menu-item-room:hover, .menu-item-document:hover {
   background: #2f2f2f;
 }
 
@@ -234,7 +234,7 @@
 
 
 
-.soon {
+.wordpuzzle {
   background: #9ed8ff;
   grid-column: 1;
 
@@ -242,7 +242,7 @@
 }
 
 
-.soon h2 {
+.wordpuzzle h2 {
   font-size: 56px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -822,23 +822,23 @@
 }
 
 .learn.game-card::after {
-  content: "Học từ vựng tiếng Anh qua các câu hỏi và nhiều chế độ luyện tập khác nhau.";
+  content: "Gan thì bá vô mà núc?";
 }
 
 .wordhunt.game-card::after {
-  content: "Tìm và ghép các từ tiếng Anh để kiểm tra khả năng ghi nhớ từ vựng.";
+  content: "Liệt kê các từ có chữ bắt đầu ngẫu nhiên";
 }
 
 .hangman.game-card::after {
-  content: "Đoán từ bí mật bằng cách chọn các chữ cái đúng trước khi hết lượt.";
+  content: "Còn trẻ đừng dại dột con nhé!";
 }
 
 .wordchain.game-card::after {
-  content: "Nối các từ với nhau để tạo thành chuỗi và rèn luyện vốn từ tiếng Anh.";
+  content: "Nối chữ phiên bản tiếng anh nè";
 }
 
-.soon.game-card::after {
-  content: "Chế độ game mới đang được phát triển. Hãy chờ những cập nhật tiếp theo!";
+.wordpuzzle.game-card::after {
+  content: "Tìm các từ ẩn trong bảng chữ dài ngoằng và to đùng!";
 }
 
 .game-card:hover::after {

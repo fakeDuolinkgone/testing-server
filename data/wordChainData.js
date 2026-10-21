@@ -822407,8 +822407,18 @@ const wordChainData = {
       "meanings": [
         {
           "type": "n",
-          "text": "màu nâu sẫm, màu sôcôla ((cũng) nigger brown)",
-          "examples": []
+          "text": "màu nâu sẫm, màu sôcôla",
+          "examples": [],
+        },
+        {
+          "type": "n",
+          "text": "người da đen",
+          "examples": [
+            {
+              "en": "Nhan Tuan Kiet is the worst nigger",
+              "vi": "Nhan Tuấn Kiệt là nigger tệ nhất"
+            }
+          ]
         }
       ],
       "phrases": [

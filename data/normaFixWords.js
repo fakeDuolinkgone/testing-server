@@ -186813,7 +186813,7 @@
     "word": "nigger",
     "pronounce": "/'nigə/",
     "type": "danh từ (thường), quổi người da đen",
-    "meaning": "màu nâu sẫm, màu sôcôla ((cũng) nigger brown)"
+    "meaning": "màu nâu sẫm, màu sôcôla"
   },
   {
     "word": "niggle",
@@ -264243,7 +264243,7 @@
     "word": "smart",
     "pronounce": "/smɑ:t/",
     "type": "tính từ",
-    "meaning": "sự đau đớn, sự nhức nhối; nỗi đau khổ"
+    "meaning": "Thông minh"
   },
   {
     "word": "smart-alecky",

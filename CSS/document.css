@@ -1,0 +1,419 @@
+:root {
+    --sky: #8FC9E6;
+    --ink: #1a1a1a;
+    --yellow: #FFD25F;
+    --line: #e3e3e3;
+    --col-class: clamp(96px, 11vw, 160px);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(10px, 2.4vh, 28px) clamp(10px, 2.6vw, 48px) clamp(10px, 3vh, 32px);
+    overflow: hidden;
+    font-family: "Baloo 2", system-ui, "Segoe UI", Arial, sans-serif;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--sky);
+}
+
+/* ================= TAB ================= */
+.tabs {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(14px, 2.2vw, 36px);
+    margin: 0 0 -4px clamp(20px, 5vw, 96px);
+}
+
+.tab {
+    min-width: clamp(130px, 15vw, 290px);
+    padding: 2px 22px 0;
+    font: inherit;
+    font-size: clamp(18px, 2.8vh, 28px);
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    background: #fff;
+    border: 4px solid var(--ink);
+    border-bottom: 0;
+    border-radius: 56px 56px 0 0;
+    height: clamp(40px, 7vh, 80px);
+    transition: transform .12s;
+}
+
+.tab[aria-selected="true"] {
+    background: var(--yellow);
+}
+
+.tab:hover {
+    transform: translateY(-2px);
+}
+
+.tab:focus-visible {
+    outline: 4px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.back {
+    display: grid;
+    place-items: center;
+    width: clamp(36px, 5.6vh, 52px);
+    aspect-ratio: 1;
+    margin: 0 0 clamp(6px, 1.2vh, 12px) auto;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+    text-decoration: none;
+    background: #fff;
+    border: 4px solid var(--ink);
+    border-radius: 50%;
+}
+
+.back:hover {
+    background: var(--yellow);
+}
+
+.back:focus-visible {
+    outline: 4px solid var(--ink);
+    outline-offset: 3px;
+}
+
+/* ================= BẢNG ================= */
+.panel {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: clamp(8px, 1.6vh, 18px) clamp(8px, 1.4vw, 24px) clamp(8px, 1.6vh, 18px) clamp(8px, 1.4vw, 24px);
+    background: #fff;
+    border: 4px solid var(--ink);
+    border-radius: clamp(28px, 4vw, 56px);
+}
+
+/* Một lưới 3 cột duy nhất: mọi ô cùng hàng tự cao bằng nhau, và đường kẻ dọc liền mạch */
+.list {
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) var(--col-class) minmax(0, 1fr);
+    grid-auto-rows: min-content;
+    align-content: start;
+    overflow-y: scroll;
+    scrollbar-color: #333 #fff;
+}
+
+.list::-webkit-scrollbar {
+    width: 18px;
+}
+
+.list::-webkit-scrollbar-track {
+    margin: 4px 0;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background: #333;
+    border: 3px solid #fff;
+    border-radius: 20px;
+}
+
+.c {
+    padding: clamp(4px, .8vh, 9px) clamp(6px, .8vw, 12px);
+}
+
+.c.k,
+.c.m {
+    border-left: 3px solid var(--line);
+}
+
+.c.w {
+    padding-left: 0;
+}
+
+.c.m {
+    padding-right: clamp(10px, 1.4vw, 22px);
+}
+
+.pill {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    min-height: clamp(42px, 8vh, 80px);
+    padding: 4px clamp(14px, 2vw, 30px);
+    font-size: clamp(16px, 2.7vh, 28px);
+    font-weight: 800;
+    line-height: 1.15;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: clamp(24px, 4vh, 40px);
+}
+
+.c.w .pill {
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.c.k .pill,
+.c.m .pill {
+    justify-content: center;
+    text-align: center;
+}
+
+.pill i {
+    font-style: normal;
+    font-size: .72em;
+    font-weight: 600;
+    color: #6b6b6b;
+}
+
+.c.k .pill.long {
+    font-size: clamp(12px, 1.9vh, 18px);
+    padding-inline: 10px;
+}
+
+/* Hàng tiêu đề giống navbar: dính trên cùng, kéo xuống thì trượt lên ẩn đi, kéo lên thì trượt ra lại */
+.hd {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+    transition: transform .35s cubic-bezier(.3, .8, .3, 1), box-shadow .25s ease;
+}
+
+.list.scrolled .hd {
+    box-shadow: 0 12px 10px -10px rgba(26, 26, 26, .35);
+}
+
+.list.hide .hd {
+    transform: translateY(-110%);
+    box-shadow: none;
+}
+
+.hd .pill {
+    background: var(--yellow);
+    font-size: clamp(16px, 2.7vh, 28px);
+}
+
+.hd-word {
+    position: relative;
+    padding: 0;
+}
+
+.hd-word .pill {
+    padding: 0;
+}
+
+.az {
+    align-self: stretch;
+    flex: none;
+    margin: -3px 0 -3px -3px;
+    padding: 0 clamp(16px, 2vw, 30px);
+    font: inherit;
+    font-size: clamp(20px, 3.4vh, 36px);
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    background: var(--yellow);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+}
+
+.az:hover {
+    background: #ffe08c;
+}
+
+.az:focus-visible {
+    outline: 4px solid var(--ink);
+    outline-offset: 3px;
+}
+
+#q {
+    flex: 1;
+    min-width: 0;
+    padding: 0 clamp(14px, 2vw, 40px);
+    font: inherit;
+    font-size: clamp(20px, 3.6vh, 38px);
+    font-weight: 800;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    outline: 0;
+}
+
+#q::placeholder {
+    color: var(--ink);
+    opacity: .85;
+}
+
+.hd-word .pill:focus-within {
+    box-shadow: 0 0 0 4px rgba(26, 26, 26, .25);
+}
+
+/* ================= ANIMATION ================= */
+/* 1) Vào trang: một chuỗi duy nhất — tab rơi xuống, bảng trồi lên, ba ô tiêu đề bật ra lần lượt */
+.tab {
+    animation: tabIn .55s cubic-bezier(.2, 1.3, .4, 1) both;
+}
+
+#tabNorma {
+    animation-delay: .08s;
+}
+
+.back {
+    animation: popIn .5s cubic-bezier(.2, 1.5, .4, 1) .25s both;
+}
+
+.panel {
+    animation: panelIn .6s cubic-bezier(.2, 1, .3, 1) .12s both;
+}
+
+.hd .pill {
+    animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+
+.hd-word .pill {
+    animation-delay: .4s;
+}
+
+.hd.k .pill {
+    animation-delay: .48s;
+}
+
+.hd.m .pill {
+    animation-delay: .56s;
+}
+
+@keyframes tabIn {
+    from {
+        opacity: 0;
+        transform: translateY(-36px);
+    }
+}
+
+@keyframes panelIn {
+    from {
+        opacity: 0;
+        transform: translateY(48px) scale(.98);
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(.6);
+    }
+}
+
+/* 2) Mỗi lần vẽ hàng mới (đổi tab, tìm kiếm, cuộn thêm): hàng trượt lên lần lượt, tối đa 14 hàng đầu mới trễ */
+.row {
+    animation: rowIn .4s cubic-bezier(.2, .9, .3, 1.15) both;
+    animation-delay: calc(var(--i, 0) * 28ms);
+}
+
+@keyframes rowIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+
+.note {
+    animation: fadeUp .35s ease both;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+/* 3) Phản hồi khi người dùng thao tác */
+.c:not(.hd) .pill {
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.c:not(.hd) .pill:hover {
+    transform: translateY(-3px);
+    background: #FFF4CC;
+    box-shadow: 0 4px 0 var(--ink);
+}
+
+.tab {
+    transition: transform .15s ease, background .25s ease;
+}
+
+.az.flip {
+    animation: flip .4s ease;
+}
+
+@keyframes flip {
+    50% {
+        transform: scaleY(0);
+    }
+}
+
+.note {
+    grid-column: 1 / -1;
+    padding: 28px 12px;
+    font-size: clamp(16px, 2.6vh, 24px);
+    font-weight: 800;
+    text-align: center;
+    color: #555;
+}
+
+/* ================= MÀN HẸP ================= */
+@media (max-width: 700px) {
+    :root {
+        --col-class: 64px;
+    }
+
+    .tab {
+        min-width: 0;
+        padding-inline: 14px;
+    }
+
+    .list {
+        grid-template-columns: minmax(0, 1.5fr) var(--col-class) minmax(0, 1fr);
+    }
+
+    .c {
+        padding-inline: 4px;
+    }
+
+    .pill {
+        padding-inline: 12px;
+    }
+
+    .list::-webkit-scrollbar {
+        width: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}

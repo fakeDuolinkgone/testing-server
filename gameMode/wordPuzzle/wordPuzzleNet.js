@@ -68,6 +68,29 @@
     };
   }
 
+  /* ================= CHƠI ĐƠN: một mình, không bot, không Firebase ================= */
+  // Cùng hợp đồng với create/connect, thêm result() để trang game lấy kết quả ngay khi xong 3 level.
+  function createSingle(opts) {
+    opts = opts || {};
+    const WP = root.WordPuzzleCore.WP, name = opts.name || "Bạn";
+    const seed = (Math.random() * 4294967295) >>> 0, cb = {};
+    let last = { score: 0, timeMs: 0 };
+    return {
+      id: "me", names: { me: name }, total: 1,
+      onStart: f => (cb.start = f),
+      onProgress: f => (cb.progress = f),
+      onFinal: f => (cb.final = f),
+      onClosed: f => (cb.closed = f),
+      start() { setTimeout(() => cb.start && cb.start({ seed, startAt: Date.now() + WP.COUNTDOWN_MS, resume: null, serverNow: Date.now }), 0); },
+      submitLevel(levels, score, timeMs) { last = { score, timeMs }; },
+      result() {
+        const ranking = [{ id: "me", name, rank: 1, score: last.score, timeMs: last.timeMs, left: false }];
+        return { ranking, myRank: 1 };
+      },
+      leave() { }
+    };
+  }
+
   /* ================= BẢN THẬT: nối với phòng của BossNet (Firebase) ================= */
   // engine = BossNet.create() đã resume() vào phòng. Dữ liệu ở rooms/{mã}/wp (xem wordPuzzleHost.js).
   // Máy này chỉ GHI 3 lần cả ván (sau mỗi level); mọi thứ còn lại là đọc dữ liệu phòng đã có sẵn trên máy.
@@ -120,5 +143,5 @@
     };
   }
 
-  root.WordPuzzleNet = { create, connect };
+  root.WordPuzzleNet = { create, connect, createSingle };
 })(typeof window !== "undefined" ? window : globalThis);

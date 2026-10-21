@@ -16,9 +16,8 @@
 <body spellcheck="false">
 
   <!-- Nền: mây vàng trôi từ trái sang phải (JS tạo), rồi lớp hạt tròn đen mờ phủ lên trên -->
-  <div class="wp-dust" aria-hidden="true"></div>
   <div id="wpClouds" class="wp-clouds" aria-hidden="true"></div>
-
+  <div class="wp-dust" aria-hidden="true"></div>
 
   <!--
     GIAO DIỆN: đổi bố cục thoải mái, miễn là giữ các id bên dưới (JS chỉ dùng id).
@@ -61,6 +60,13 @@
       </figure>
 
       <div class="wp-btns">
+        <button id="wpAgain" class="wp-ic ic-again" type="button" hidden title="Chơi lại" aria-label="Chơi lại">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 3-6.7" />
+            <polyline points="3 4 3 10 9 10" />
+          </svg>
+        </button>
         <button id="wpSkip" class="wp-ic ic-skip" type="button" title="Bỏ qua level này" aria-label="Bỏ qua level này">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
             stroke-linejoin="round">

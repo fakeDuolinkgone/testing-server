@@ -8,7 +8,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 const sfx = n => { try { if (typeof window[n] === "function") window[n](); } catch (e) { /* bỏ qua */ } };
 
 const Core = WordPuzzleCore, WP = Core.WP;
-const LOBBY = "../../room.html";
+const SINGLE = new URLSearchParams(location.search).has("single");   // chơi đơn: mở từ game.html (wordPuzzle.html?single=1)
+const LOBBY = SINGLE ? "../../game.html" : "../../room.html";
 const CLOUD_SRC = ["../../pics/yellow%20a%20cloud.png", "../../pics/yellow%20clouds.png"];
 const MASCOT = ["../../pics/mascotPics/mascotWukong_main.gif", "../../pics/mascotPics/mascotWukong_main.png"];
 const PALETTE = ["#5AAA28", "#FFB703", "#219EBC", "#FFB380", "#C8F580", "#5BBAD8"];   // màu "viên thuốc" theo thứ tự tìm được
@@ -26,6 +27,7 @@ const POOL = (typeof vocabData !== "undefined" ? vocabData : [])
 
 let net, ended = false, soundOn = true, waiting = false;
 let seed = 0, score = 0, totalMs = 0, progress = { done: 0, total: 0 };
+let foundAll = 0, wordsAll = 0;      // tổng số từ tìm được / tổng số từ (để hiện ở màn kết quả chơi đơn)
 let cur = null;                       // level đang chơi: { level, L, words, board, found:Map, gain, total, t0, over, finish }
 
 
@@ -250,11 +252,13 @@ async function runGame(info) {
     const res = await playLevel();
     score += res.gain;
     totalMs += res.used;
+    foundAll += cur.found.size; wordsAll += cur.words.length;
     $("wpScore").textContent = score;
     net.submitLevel(level + 1, score, totalMs, level === N - 1);   // ghi 1 lần sau mỗi level
     await reveal();
   }
-  showWaiting();
+  if (SINGLE) showFinal(net.result());          // chơi đơn: không phải chờ ai, có kết quả ngay
+  else showWaiting();
 }
 
 
@@ -285,6 +289,15 @@ async function showFinal(g) {
   await view("result", () => {
     $("wpResTitle").textContent = "KẾT THÚC";
     $("wpResSub").textContent = "";
+    if (SINGLE) {
+      const m = g.ranking[0];
+      $("wpResSub").textContent = `Tìm được ${foundAll}/${wordsAll} từ · ${Math.round(m.timeMs / 1000)} giây`;
+      $("wpList").innerHTML = row(m, "me");
+      $("wpMe").innerHTML = "";
+      $("wpCap").textContent = foundAll === wordsAll ? "Xuất sắc! 🏆" : "Hoàn thành!";
+      $("wpAgain").hidden = false;
+      return;
+    }
     $("wpList").innerHTML = g.ranking.map((r, i) => row(r, r.rank <= 5 ? "r" + r.rank : "", { rank: true, i })).join("");
     const me = g.ranking.find(r => r.id === net.id);
     $("wpMe").innerHTML = me ? row(me, "me", { rank: true }) : "";
@@ -298,7 +311,9 @@ async function showFinal(g) {
 async function leave() { try { await net.leave(); } catch (e) { /* bỏ qua */ } location.href = LOBBY; }
 
 $("wpSkip").onclick = () => { if (cur && !cur.over && cur.finish) cur.finish("skip"); };    // bỏ qua level: giữ điểm các từ đã tìm
-$("wpExit").onclick = () => { if (confirm("Thoát khỏi phòng? Điểm của bạn sẽ giữ như hiện tại.")) leave(); };
+$("wpExit").onclick = () => { if (confirm(SINGLE ? "Thoát game? Điểm của lượt này sẽ không được lưu." : "Thoát khỏi phòng? Điểm của bạn sẽ giữ như hiện tại.")) leave(); };
+$("wpAgain").onclick = () => location.reload();                       // chơi lại: bộ từ mới, bảng mới
+if (SINGLE) { $("wpLeave2").textContent = "🚪 Thoát game"; $("wpExit").title = $("wpExit").ariaLabel = "Thoát game"; }
 $("wpSet").onclick = () => { $("wpSettings").classList.remove("leaving"); $("wpSettings").hidden = false; };
 $("wpResume").onclick = () => fadeHide($("wpSettings"));
 $("wpLeave2").onclick = leave;
@@ -326,7 +341,9 @@ function wire() {
 
 (async () => {
   try {
-    if (SOLO) {
+    if (SINGLE) {
+      net = WordPuzzleNet.createSingle({ name: (window.normaPlayer && normaPlayer.getName && normaPlayer.getName()) || "Bạn" });
+    } else if (SOLO) {
       net = WordPuzzleNet.create({ players: PLAYERS, timeScale: FAST ? 4 : 1, name: "Bạn" });
     } else {
       const engine = BossNet.create();                       // cần Firebase đã cấu hình (JS/net/firebase-config.js)

@@ -391,6 +391,10 @@ body {
   outline-offset: 3px;
 }
 
+.ic-again {
+  background: #5AAA28;
+}
+
 .ic-skip {
   background: #0F7E86;
 }

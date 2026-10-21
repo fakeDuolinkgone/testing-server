@@ -31,29 +31,6 @@ input {
 
 
 
-
-button {
-  font-size: 20px;
-  padding: 12px 20px;
-  margin: 10px 6px;
-  background: linear-gradient(135deg, #FF4D4D, #8B0000);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-button:hover {
-  background: linear-gradient(135deg, #ff5454, #9a0c0c);
-  transform: translateY(-3px);
-}
-
-
-
-
-
 * {
   -webkit-tap-highlight-color: transparent;
 }
