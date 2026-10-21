@@ -1,4 +1,4 @@
-    (function () {
+(function () {
       "use strict";
 
       var NORMA_URL = "data/normaFixWords.js";   // file chỉ chứa một mảng JSON nên phải fetch, không nạp bằng <script>
@@ -81,6 +81,10 @@
           var b = document.createElement("span");
           b.textContent = e.word;
           w.p.appendChild(b);
+          w.p.dataset.word = e.word;
+          w.p.tabIndex = 0;
+          w.p.setAttribute("role", "button");
+          w.p.setAttribute("aria-label", "Đọc từ " + e.word);
           if (e.pron) { var pr = document.createElement("i"); pr.textContent = e.pron; w.p.appendChild(pr); }
           if (e.note) w.c.title = e.note;
           [w.c, k.c, m.c].forEach(function (c) { c.classList.add("row"); c.style.setProperty("--i", Math.min(i - start, 14)); });
@@ -145,6 +149,19 @@
         azBtn.classList.remove("flip"); void azBtn.offsetWidth; azBtn.classList.add("flip");
         setTimeout(function () { azBtn.textContent = asc ? "a-z" : "z-a"; }, 200);   // đổi chữ đúng lúc nút lật ngang
         render();
+      });
+
+      function say(pill) {
+        if (!pill || !pill.dataset.word || typeof window.speak !== "function") return;
+        window.speak(pill.dataset.word);
+        pill.classList.add("say");
+        setTimeout(function () { pill.classList.remove("say"); }, 1000);
+      }
+      list.addEventListener("click", function (ev) { say(ev.target.closest(".pill[data-word]")); });
+      list.addEventListener("keydown", function (ev) {
+        if (ev.key !== "Enter" && ev.key !== " ") return;
+        var p = ev.target.closest && ev.target.closest(".pill[data-word]");
+        if (p) { ev.preventDefault(); say(p); }
       });
 
       var timer = 0;

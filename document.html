@@ -10,8 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="pics/mascotPics/iconWebsite_main.png">
   <link rel="stylesheet" href="CSS/document.css">
-</head>
 
+</head>
 
 <body spellcheck="false">
 
@@ -22,7 +22,7 @@
   </nav>
 
   <main class="panel">
-    <div id="list" class="list" role="tabpanel" tabindex="-1">
+    <div id="list" class="list" role="tabpanel">
       <!-- hàng tiêu đề (JS không đụng tới 3 ô này) -->
       <div class="c w hd hd-word">
         <div class="pill">
@@ -30,20 +30,17 @@
           <input id="q" type="search" placeholder="searching word.." autocomplete="off" aria-label="Tìm từ">
         </div>
       </div>
-      <div class="c k hd">
-        <div class="pill">classword</div>
-      </div>
-      <div class="c m hd">
-        <div class="pill">meaning</div>
-      </div>
+      <div class="c k hd"><div class="pill">classword</div></div>
+      <div class="c m hd"><div class="pill">meaning</div></div>
     </div>
   </main>
 
-
-
   <!-- global success: khai báo const vocabData -->
   <script src="data/englishVocabularys.js"></script>
+  <!-- hàm speak(word) -->
+  <script src="JS/common/audio.js"></script>
   <script src="JS/games/document.js"></script>
+
 </body>
 
 </html>

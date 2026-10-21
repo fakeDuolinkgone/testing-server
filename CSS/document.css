@@ -117,6 +117,11 @@ body {
     scrollbar-color: #333 #fff;
 }
 
+.list:focus,
+.list:focus-visible {
+    outline: 0;
+}
+
 .list::-webkit-scrollbar {
     width: 18px;
 }
@@ -177,6 +182,46 @@ body {
     text-align: center;
 }
 
+/* Bấm vào từ tiếng Anh để nghe đọc */
+.c.w .pill[data-word] {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.c.w .pill[data-word]::after {
+    content: "🔊";
+    margin-left: auto;
+    font-size: .8em;
+    opacity: 0;
+    transition: opacity .15s;
+}
+
+.c.w .pill[data-word]:hover::after,
+.c.w .pill[data-word]:focus-visible::after {
+    opacity: .55;
+}
+
+.c.w .pill[data-word]:focus-visible {
+    outline: 4px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.c.w .pill[data-word].say {
+    background: var(--yellow);
+}
+
+.c.w .pill[data-word].say::after {
+    opacity: 1;
+    animation: talk .5s ease 2;
+}
+
+@keyframes talk {
+    50% {
+        transform: scale(1.35);
+    }
+}
+
 .pill i {
     font-style: normal;
     font-size: .72em;
@@ -213,7 +258,6 @@ body {
 }
 
 .hd-word {
-    position: relative;
     padding: 0;
 }
 
@@ -352,9 +396,9 @@ body {
 }
 
 .c:not(.hd) .pill:hover {
-    transform: translateY(-3px);
+    transform: translateY(-1px);
     background: #FFF4CC;
-    box-shadow: 0 4px 0 var(--ink);
+    box-shadow: 0 1px 0 var(--ink);
 }
 
 .tab {
