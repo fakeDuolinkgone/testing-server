@@ -1,5 +1,4 @@
 /* global playCorrect, playWrong, playFinish, speak */
-
 let gameHistory = [];
 
 let gamePaused = false;
@@ -1097,214 +1096,303 @@ const MAX_WRONG = 5;          // số lần sai liên tiếp thì mất 1 mạng
 let aiTurn = false;           // true khi đang tới lượt AI: người chơi chưa được gõ
 
 const RESULT_RANKS = [
-  { min: 90, title: "Xuất sắc! 🏆", message: "Gần như không sai chữ nào." },
-  { min: 70, title: "Rất tốt! 🎉", message: "Vốn từ của bạn rất ổn." },
-  { min: 50, title: "Khá ổn 👍", message: "Chơi thêm một ván để nối mượt hơn nhé." },
-  { min: 0, title: "Cố lên! 💪", message: "Thử nghĩ từ có chữ cuối dễ nối, bạn sẽ tiến bộ ngay." }
+    { min: 90, title: "Xuất sắc! 🏆", message: "Gần như không sai chữ nào." },
+    { min: 70, title: "Rất tốt! 🎉", message: "Vốn từ của bạn rất ổn." },
+    { min: 50, title: "Khá ổn 👍", message: "Chơi thêm một ván để nối mượt hơn nhé." },
+    { min: 0, title: "Cố lên! 💪", message: "Thử nghĩ từ có chữ cuối dễ nối, bạn sẽ tiến bộ ngay." }
 ];
 
 
 /* ================= SỐ LẦN SAI ================= */
 function updateMistake() {
-  mistakeBox.innerText = "❌ " + wrongCount + "/" + MAX_WRONG;
-  mistakeBox.classList.toggle("danger", wrongCount >= MAX_WRONG - 1);
+    mistakeBox.innerText = "❌ " + wrongCount + "/" + MAX_WRONG;
+    mistakeBox.classList.toggle("danger", wrongCount >= MAX_WRONG - 1);
 }
 
 function wrongAnswer(reason) {
-  wrongCount++;
-  totalWrong++;
-  inputEffect("wrong-input");
-  playWrong();
-  updateMistake();
-  showNotice("❌ " + reason);
-
-  if (wrongCount >= MAX_WRONG) {
-    wrongCount = 0;
+    wrongCount++;
+    totalWrong++;
+    inputEffect("wrong-input");
+    playWrong();
     updateMistake();
-    loseLife();
-  }
+    showNotice("❌ " + reason);
+
+    if (wrongCount >= MAX_WRONG) {
+        wrongCount = 0;
+        updateMistake();
+        loseLife();
+    }
 }
 
 
 /* ================= ĐỒNG HỒ ================= */
 function startTimer() {
-  clearInterval(timerID);
-  timer = 30;
-  timerBox.innerText = timer + "s";
-  timerBox.classList.remove("danger");
-  timerID = setInterval(() => {
-    if (gamePaused) return;
-    timer--;
+    clearInterval(timerID);
+    timer = 30;
     timerBox.innerText = timer + "s";
-    timerBox.classList.toggle("danger", timer <= 10);     // còn ≤ 10 giây: số đỏ và đập
-    if (timer <= 0) {
-      clearInterval(timerID);
-      loseLife();
-    }
-  }, 1000);
+    timerBox.classList.remove("danger");
+    timerID = setInterval(() => {
+        if (gamePaused) return;
+        timer--;
+        timerBox.innerText = timer + "s";
+        timerBox.classList.toggle("danger", timer <= 10);     // còn ≤ 10 giây: số đỏ và đập
+        if (timer <= 0) {
+            clearInterval(timerID);
+            loseLife();
+        }
+    }, 1000);
 }
+
+
+
+/* ================= AI THÍCH NGHI ================= */
+const ADAPT_MIN_LEVEL = 5;      // chỉ áp dụng từ level 5
+const ADAPT_WINDOW = 6;         // xét 6 lượt gần nhất của người chơi
+const ADAPT_HIT = 3;            // đủ 3 lượt "nhanh / dài / cùng chữ cuối" thì kích hoạt
+const FAST_MS = 4000;           // dưới 4 giây là nhanh
+const LONG_LEN = 8;             // từ dài từ 8 chữ trở lên coi là khó
+const ADAPT_CHANCE = 0.8;       // xác suất AI dùng chiến thuật ở mỗi lượt
+const HARD_END_WEIGHTS = { y: 90, i: 4, x: 2, z: 2, q: 2 };
+
+let turnStartedAt = Date.now(); // lúc bắt đầu lượt của người chơi
+let playerMoves = [];
+
+function getPlayerLevel() {
+    return Math.floor(maxStreak / LEVEL_SIZE) + 1;
+}
+
+function recordPlayerMove(word) {
+    playerMoves.push({
+        fast: Date.now() - turnStartedAt < FAST_MS,
+        long: word.length >= LONG_LEN,
+        end: word[word.length - 1]
+    });
+    if (playerMoves.length > ADAPT_WINDOW) playerMoves.shift();
+}
+
+function randomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function groupByLastLetter(words) {
+    const groups = {};
+    words.forEach(w => {
+        const c = w[w.length - 1];
+        (groups[c] = groups[c] || []).push(w);
+    });
+    return groups;
+}
+
+function pickAIWord(available) {
+    // chưa đủ điều kiện: chơi ngẫu nhiên như cũ
+    if (getPlayerLevel() < ADAPT_MIN_LEVEL ||
+        playerMoves.length < ADAPT_HIT ||
+        Math.random() > ADAPT_CHANCE) {
+        return randomItem(available);
+    }
+
+    // bỏ các từ làm người chơi hết đường nối
+    const hasNext = w =>
+        (wordChainData.startsWith[w[w.length - 1]] || [])
+            .some(x => x !== w && !usedWords.has(x));
+    const safe = available.filter(hasNext);
+    const pool = safe.length ? safe : available;
+    const groups = groupByLastLetter(pool);
+
+    const count = fn => playerMoves.filter(fn).length;
+
+    // ---- Luật 2: người chơi hay dùng từ dài/khó -> AI kết thúc bằng chữ khó ----
+    if (count(m => m.long) >= ADAPT_HIT) {
+        const letters = Object.keys(HARD_END_WEIGHTS).filter(c => groups[c]);
+        if (letters.length) {
+            const total = letters.reduce((s, c) => s + HARD_END_WEIGHTS[c], 0);
+            let r = Math.random() * total;
+            for (const c of letters) {
+                r -= HARD_END_WEIGHTS[c];
+                if (r <= 0) return randomItem(groups[c]);
+            }
+            return randomItem(groups[letters[0]]);
+        }
+    }
+
+    // ---- Luật 1: trả lời quá nhanh, hoặc hay kết thúc bằng cùng một chữ ----
+    const endCount = {};
+    playerMoves.forEach(m => (endCount[m.end] = (endCount[m.end] || 0) + 1));
+    const maxSame = Math.max(...Object.values(endCount));
+
+    if (count(m => m.fast) >= ADAPT_HIT || maxSame >= ADAPT_HIT) {
+        const favorite = Object.keys(endCount).filter(c => endCount[c] === maxSame);
+        const usable = favorite.filter(c => groups[c]);
+        if (usable.length) return randomItem(groups[randomItem(usable)]);
+    }
+
+    return randomItem(pool);
+}
+
 
 
 /* ================= LƯỢT NGƯỜI CHƠI ================= */
 function submitWord() {
-  if (gameEnd || aiTurn || gamePaused) return;     // đang tới lượt AI hoặc đang tạm dừng: bỏ qua, giữ nguyên chữ đã gõ
+    if (gameEnd || aiTurn || gamePaused) return;     // đang tới lượt AI hoặc đang tạm dừng: bỏ qua, giữ nguyên chữ đã gõ
 
-  const word = input.value.trim().toLowerCase();
-  input.value = "";
-  if (!word) return;
+    const word = input.value.trim().toLowerCase();
+    input.value = "";
+    if (!word) return;
 
-  const result = checkPlayerWord(word);
-  if (!result.correct) {
-    wrongAnswer(result.reason);
-    return;
-  }
+    const result = checkPlayerWord(word);
+    if (!result.correct) {
+        wrongAnswer(result.reason);
+        return;
+    }
 
-  inputEffect("correct-input");
-  playCorrect();
-  score++;
-  streak++;
-  if (streak > maxStreak) maxStreak = streak;
-  updateStreak();
-  wrongCount = 0;
-  updateMistake();
+    inputEffect("correct-input");
+    playCorrect();
+    score++;
+    streak++;
+    if (streak > maxStreak) maxStreak = streak;
+    recordPlayerMove(word);          // <-- THÊM DÒNG NÀY
+    updateStreak();
+    wrongCount = 0;
+    updateMistake();
 
-  const data = wordChainData.lookup[word];
-  currentWord = word;
-  usedWords.add(word);
-  addHistory(word, data, "player");
-  addMessage(data.word, null, data.type, "player", data.meanings);
-  speak(data.word);
-  resetTimer();
+    const data = wordChainData.lookup[word];
+    currentWord = word;
+    usedWords.add(word);
+    addHistory(word, data, "player");
+    addMessage(data.word, null, data.type, "player", data.meanings);
+    speak(data.word);
+    resetTimer();
 
-  aiTurn = true;                                    // khóa ô nhập cho tới khi AI đi xong
-  setTimeout(AIPlay, 1000);
+    aiTurn = true;                                    // khóa ô nhập cho tới khi AI đi xong
+    setTimeout(AIPlay, 1000);
 }
 
 
 /* ================= LƯỢT AI ================= */
 function createTypingBox() {
-  typingBox = document.createElement("div");
-  typingBox.className = "message right";
-  typingBox.innerHTML = `
+    typingBox = document.createElement("div");
+    typingBox.className = "message right";
+    typingBox.innerHTML = `
     <div class="bubble-chat ai typing">typing...</div>
     <div class="avatar ai-avatar"><img src="../../pics/robot icon.png" alt="AI" width="35" height="35"></div>`;
-  chatArea.appendChild(typingBox);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  startTyping();
+    chatArea.appendChild(typingBox);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    startTyping();
 }
 
 function AIPlay() {
-  if (gameEnd) return;
-  aiTurn = true;
-  createTypingBox();
-
-  const think = () => {
-    aiTimeoutID = null;
     if (gameEnd) return;
-    if (gamePaused) { aiTimeoutID = setTimeout(think, 300); return; }   // đang tạm dừng: đợi rồi mới đi (trước đây AI bị kẹt luôn)
+    aiTurn = true;
+    createTypingBox();
 
-    if (typingBox) { typingBox.remove(); typingBox = null; }
-    clearInterval(typingID);
+    const think = () => {
+        aiTimeoutID = null;
+        if (gameEnd) return;
+        if (gamePaused) { aiTimeoutID = setTimeout(think, 300); return; }   // đang tạm dừng: đợi rồi mới đi (trước đây AI bị kẹt luôn)
 
-    const lastLetter = currentWord[currentWord.length - 1];
-    const list = wordChainData.startsWith[lastLetter] || [];
-    const available = list.filter(w => !usedWords.has(w));
+        if (typingBox) { typingBox.remove(); typingBox = null; }
+        clearInterval(typingID);
 
-    if (available.length === 0) {
-      endGame("Bạn thắng!", "AI hết từ");
-      return;
-    }
+        const lastLetter = currentWord[currentWord.length - 1];
+        const list = wordChainData.startsWith[lastLetter] || [];
+        const available = list.filter(w => !usedWords.has(w));
 
-    const aiWord = available[Math.floor(Math.random() * available.length)];
-    const data = wordChainData.lookup[aiWord];
-    currentWord = aiWord;
-    usedWords.add(aiWord);
-    addHistory(aiWord, data, "ai");
-    addMessage(data.word, null, data.type, "ai", data.meanings);
-    speak(data.word);
-    resetTimer();
+        if (available.length === 0) {
+            endGame("Bạn thắng!", "AI hết từ");
+            return;
+        }
 
-    aiTurn = false;                                 // trả lượt cho người chơi
-    input.focus();
-  };
+        const aiWord = pickAIWord(available);
+        const data = wordChainData.lookup[aiWord];
+        currentWord = aiWord;
+        usedWords.add(aiWord);
+        addHistory(aiWord, data, "ai");
+        addMessage(data.word, null, data.type, "ai", data.meanings);
+        speak(data.word);
+        resetTimer();
 
-  aiTimeoutID = setTimeout(think, 1200);
+        aiTurn = false;
+        turnStartedAt = Date.now();
+        input.focus();
+    };
+
+    aiTimeoutID = setTimeout(think, 1200);
 }
 
 
 /* ================= KẾT THÚC VÀ BẢNG KẾT QUẢ ================= */
 function endGame(title, reason) {
-  playFinish();
-  gameEnd = true;
-  aiTurn = false;
-  clearInterval(timerID);
-  clearTimeout(aiTimeoutID);
-  clearInterval(typingID);
-  if (typingBox) { typingBox.remove(); typingBox = null; }   // không để "typing..." treo lại sau khi hết ván
-  settingsOverlay.classList.remove("show");
-  input.disabled = true;
-  if (submitBtn) submitBtn.disabled = true;
-  showResult(title, reason);
+    playFinish();
+    gameEnd = true;
+    aiTurn = false;
+    clearInterval(timerID);
+    clearTimeout(aiTimeoutID);
+    clearInterval(typingID);
+    if (typingBox) { typingBox.remove(); typingBox = null; }   // không để "typing..." treo lại sau khi hết ván
+    settingsOverlay.classList.remove("show");
+    input.disabled = true;
+    if (submitBtn) submitBtn.disabled = true;
+    showResult(title, reason);
 }
 
 function showResult(title, reason) {
-  const $ = id => document.getElementById(id);
-  const attempts = score + totalWrong;                                  // số lần nộp từ (đúng + sai)
-  const percent = attempts > 0 ? Math.round(score / attempts * 100) : 0;
-  const rank = RESULT_RANKS.find(r => percent >= r.min);
+    const $ = id => document.getElementById(id);
+    const attempts = score + totalWrong;                                  // số lần nộp từ (đúng + sai)
+    const percent = attempts > 0 ? Math.round(score / attempts * 100) : 0;
+    const rank = RESULT_RANKS.find(r => percent >= r.min);
 
-  const seconds = Math.floor((Date.now() - startTime) / 1000);
-  const mm = Math.floor(seconds / 60), ss = String(seconds % 60).padStart(2, "0");
+    const seconds = Math.floor((Date.now() - startTime) / 1000);
+    const mm = Math.floor(seconds / 60), ss = String(seconds % 60).padStart(2, "0");
 
-  resultTitle.innerText = title;
-  resultReason.innerText = reason || "";
-  $("resultTotal").innerText = `${score} / ${attempts} lượt đúng`;
-  $("resultRank").innerText = rank.title;
-  $("resultMessage").innerText = rank.message;
+    resultTitle.innerText = title;
+    resultReason.innerText = reason || "";
+    $("resultTotal").innerText = `${score} / ${attempts} lượt đúng`;
+    $("resultRank").innerText = rank.title;
+    $("resultMessage").innerText = rank.message;
 
-  // mỗi dòng: nhãn, giá trị, và (nếu có) phần trăm để vẽ thanh
-  const rows = [
-    ["🏆 Từ nối đúng", score, percent],
-    ["🔥 Streak tối đa", maxStreak, Math.min(100, maxStreak / LEVEL_SIZE * 100)],
-    ["❤️ Mạng còn lại", `${Math.max(0, life)} / 2`, Math.max(0, life) / 2 * 100],
-    ["🧠 Từ đã dùng", usedWords.size, null],
-    ["⏱ Thời gian", `${mm}:${ss}`, null],
-    ["⭐ Rank streak", rankStreak === "none" ? "—" : rankStreak, null]
-  ];
-  resultScore.innerHTML = rows.map(([label, value, pct], i) => `
+    // mỗi dòng: nhãn, giá trị, và (nếu có) phần trăm để vẽ thanh
+    const rows = [
+        ["🏆 Từ nối đúng", score, percent],
+        ["🔥 Streak tối đa", maxStreak, Math.min(100, maxStreak / LEVEL_SIZE * 100)],
+        ["❤️ Mạng còn lại", `${Math.max(0, life)} / 2`, Math.max(0, life) / 2 * 100],
+        ["🧠 Từ đã dùng", usedWords.size, null],
+        ["⏱ Thời gian", `${mm}:${ss}`, null],
+        ["⭐ Rank streak", rankStreak === "none" ? "—" : rankStreak, null]
+    ];
+    resultScore.innerHTML = rows.map(([label, value, pct], i) => `
     <li class="result-row ${pct === 100 ? "is-perfect" : ""}" style="--i:${i}">
       <div class="result-row-head"><span>${label}</span><strong>${value}</strong></div>
       ${pct === null ? "" : `<div class="result-bar"><div class="result-bar-fill" data-width="${pct}"></div></div>`}
     </li>`).join("");
 
-  resultScreen.style.display = "flex";
-  animateResult(percent);
-  showHistory();
+    resultScreen.style.display = "flex";
+    animateResult(percent);
+    showHistory();
 }
 
 function animateResult(percent) {
-  const ring = document.getElementById("resultRingFill");
-  const label = document.getElementById("resultPercent");
-  const bars = resultScore.querySelectorAll(".result-bar-fill");
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ring = document.getElementById("resultRingFill");
+    const label = document.getElementById("resultPercent");
+    const bars = resultScore.querySelectorAll(".result-bar-fill");
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const setPercent = v => {
-    label.textContent = `${Math.round(v)}%`;
-    ring.style.strokeDashoffset = 100 - v;
-  };
-  const growBars = () => bars.forEach(b => (b.style.width = `${b.dataset.width}%`));
+    const setPercent = v => {
+        label.textContent = `${Math.round(v)}%`;
+        ring.style.strokeDashoffset = 100 - v;
+    };
+    const growBars = () => bars.forEach(b => (b.style.width = `${b.dataset.width}%`));
 
-  if (reduce) { setPercent(percent); growBars(); return; }
+    if (reduce) { setPercent(percent); growBars(); return; }
 
-  setPercent(0);
-  requestAnimationFrame(growBars);
-  const t0 = performance.now();
-  const tick = now => {
-    const t = Math.min((now - t0) / 1200, 1);
-    setPercent(percent * (1 - Math.pow(1 - t, 3)));          // easeOutCubic
-    if (t < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
+    setPercent(0);
+    requestAnimationFrame(growBars);
+    const t0 = performance.now();
+    const tick = now => {
+        const t = Math.min((now - t0) / 1200, 1);
+        setPercent(percent * (1 - Math.pow(1 - t, 3)));          // easeOutCubic
+        if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
 }
 
 

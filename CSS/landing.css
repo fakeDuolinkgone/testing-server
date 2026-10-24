@@ -90,7 +90,7 @@
 
 
 .intro-left{
-    width:420px;
+    width:500px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -99,7 +99,7 @@
 
 
 .intro-left p{
-    font-size:42px;
+    font-size:40px;
     text-align:center;
     line-height:1.35;
     margin-bottom:45px;

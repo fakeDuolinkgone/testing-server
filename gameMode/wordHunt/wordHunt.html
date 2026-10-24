@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="wordHunt.css">
+    <link rel="stylesheet" href="wordHuntMulti.css">
 
     <link rel="icon" type="image/png" href="../../pics/mascotPics/iconWebsite_main.png">
 </head>
@@ -19,7 +20,7 @@
 
     <main class="wh">
         <header class="wh-top">
-            <a class="wh-back" href="../../game.html" aria-label="Quay về">←</a>
+            <a class="wh-back" id="backBtn" href="../../game.html" aria-label="Quay về">←</a>
             <div class="wh-timer">
                 <div class="wh-timer-fill" id="timerFill"></div>
             </div>
@@ -53,7 +54,9 @@
             <h1>Chữ cái của bạn</h1>
             <div class="wh-letter" id="readyLetter">A</div>
             <p class="wh-rules">Bạn có 60 giây. Mỗi từ cần ít nhất 3 chữ cái. Từ càng dài, điểm càng cao.</p>
+            <!-- chơi đơn: nút Bắt đầu; nhiều người: dòng đếm ngược (cả phòng bắt đầu cùng lúc) -->
             <button class="wh-btn wh-btn-big" id="startBtn" type="button" disabled>Đang tải từ điển…</button>
+            <p class="wh-countdown" id="readyCount" role="status" hidden></p>
         </div>
     </div>
 
@@ -83,6 +86,13 @@
             </header>
 
             <div class="wh-result-body">
+                <!-- Chỉ hiện khi chơi nhiều người -->
+                <section class="wh-rank hidden" id="rankBox" aria-labelledby="rankTitle">
+                    <h2 id="rankTitle">Bảng xếp hạng</h2>
+                    <p class="wh-rank-wait" id="rankWait" role="status"></p>
+                    <ol class="wh-rank-list" id="rankList"></ol>
+                </section>
+
                 <section class="wh-chart" aria-labelledby="chartTitle">
                     <div class="wh-donut" role="img" id="donutImg">
                         <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -115,7 +125,7 @@
 
             <footer class="wh-actions">
                 <button class="wh-btn wh-btn-big" id="restartBtn" type="button">Chơi lại</button>
-                <a class="wh-btn wh-btn-big wh-btn-alt" href="../../game.html">Quay về</a>
+                <a class="wh-btn wh-btn-big wh-btn-alt" id="homeBtn" href="../../game.html">Quay về</a>
             </footer>
 
         </div>
@@ -125,8 +135,20 @@
     <audio id="sound-wrong" src="../../audio/wrong.mp3"></audio>
     <audio id="sound-finish" src="../../audio/finish.mp3"></audio>
 
+    <!-- Mạng (thứ tự quan trọng): SDK → cấu hình → luật → boss-net. Chơi đơn không dùng tới nhưng nạp cũng không sao. -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="../../JS/net/firebase-config.js"></script>
+    <script src="../../JS/net/boss-rules.js"></script>
+    <script src="../../JS/net/boss-net.js"></script>
+
     <script src="../../JS/common/audio.js"></script>
     <script src="../../data/wordChainData.js"></script>
+
+    <!-- Phần của Word Hunt: luật → chủ phòng → mạng → trang game -->
+    <script src="wordHuntCore.js"></script>
+    <script src="wordHuntHost.js"></script>
+    <script src="wordHuntNet.js"></script>
     <script src="wordHunt.js"></script>
 </body>
 

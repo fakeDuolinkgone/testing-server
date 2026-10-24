@@ -30,10 +30,14 @@
         {
             id: "wordHunt",
             icon: "🔍",
-            image: "pics/wordhunt.svg",          // ảnh hiện trên thẻ chế độ (không có thì dùng icon)
+            image: "pics/wordhunt.svg",
             name: "WordHunt",
-            desc: "Cả phòng cùng săn từ trong bảng chữ cái, ai tìm được nhiều từ nhất thắng.",
-            available: false
+            desc: "Người nào tìm được nhiều từ nhất trong 60 giây sẽ thắng.",
+            page: "gameMode/wordHunt/wordHunt.html",
+            available: true,
+            summary: function (n) { return n + " người  •  60 giây, cùng một chữ cái"; },
+            minPlayers: function () { return 2; },
+            maxPlayers: function () { return 80; }
         },
 
 
@@ -64,7 +68,15 @@
         },
 
 
-        { id: "wordChain", icon: "🔗", name: "Nối từ đối kháng", desc: "Thi nối từ với bạn bè theo từng lượt.", available: false }
+        {
+            id: "wordChain", icon: "🔗", name: "Nối từ đối kháng",
+            desc: "Thi nối từ với bạn bè theo từng lượt, hết mạng thì bị loại, người cuối cùng thắng.",
+            page: "gameMode/wordChain/wordChainMulti.html",
+            available: true,
+            summary: function (n) { return n + " người  •  nối từ theo lượt, 2 mạng mỗi người"; },
+            minPlayers: function () { return 2; },
+            maxPlayers: function () { return 12; }
+        },
     ];
 
     root.GameModes = {

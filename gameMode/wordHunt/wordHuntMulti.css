@@ -1,0 +1,47 @@
+/* wordHuntMulti.css — phần giao diện thêm cho chế độ nhiều người (đặt cạnh wordHunt.css, nạp sau nó). */
+
+/* wordHunt.css chưa có rule này, mà .wh-btn / .wh-countdown đặt display nên sẽ đè thuộc tính hidden */
+[hidden] { display: none !important; }
+
+/* Đếm ngược ở màn chờ */
+.wh-countdown {
+    margin: 0;
+    font: 800 28px var(--display);
+    color: var(--sun);
+}
+
+/* Bảng xếp hạng ở màn kết quả */
+.wh-rank { margin-top: 16px; padding: 16px 18px; background: #f6fbfd; border: 2px solid var(--line); border-radius: 18px; }
+.wh-rank.hidden { display: none; }
+.wh-result-body .wh-rank h2 { margin: 0 0 10px; }
+.wh-rank-wait { margin: 0; color: #4a6572; font-weight: bold; }
+
+.wh-rank-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.wh-rank-row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    animation: pop .3s both;
+}
+.wh-rank-row.me { background: #fff6e8; border-color: var(--sun); }
+.wh-rank-row.left { opacity: .6; }
+.wh-rank-pos { font: 800 20px var(--display); text-align: center; }
+.wh-rank-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: bold; }
+.wh-rank-score { font: 800 18px var(--display); color: var(--sun); }
+.wh-rank-count { min-width: 44px; color: #4a6572; text-align: right; }
+.wh-rank-gap { text-align: center; color: #4a6572; font-weight: bold; line-height: 1; }
+
+@media (max-width: 560px) {
+    .wh-rank { padding: 12px; }
+    .wh-rank-row { grid-template-columns: 36px minmax(0, 1fr) auto; }
+    .wh-rank-count { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wh-rank-row { animation: none; }
+}

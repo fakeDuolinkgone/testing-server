@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Chain - Nhiều người</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wordChain.css">
+    <link rel="stylesheet" href="wordChainMulti.css">
+
+    <link rel="icon" type="image/png" href="../../pics/mascotPics/iconWebsite_main.png">
+</head>
+
+<body spellcheck="false">
+
+    <!-- ================= BẢNG KẾT QUẢ ================= -->
+    <div class="result-screen" id="resultScreen" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="result-box">
+            <h1 id="resultTitle">KẾT THÚC</h1>
+            <p id="resultReason"></p>
+
+            <div class="rs-ring">
+                <svg viewBox="0 0 200 200" aria-hidden="true">
+                    <circle class="trk" cx="100" cy="100" r="82" pathLength="100"></circle>
+                    <circle id="resultRingFill" class="fil" cx="100" cy="100" r="82" pathLength="100"></circle>
+                </svg>
+                <div class="rs-ring-text">
+                    <div id="resultPercent" class="rs-percent">0%</div>
+                    <div id="resultTotal" class="rs-total"></div>
+                </div>
+            </div>
+
+            <p id="resultRank" class="rs-rank"></p>
+            <p id="resultMessage" class="rs-message"></p>
+
+            <!-- bảng xếp hạng cả phòng -->
+            <ul id="resultScore"></ul>
+
+            <div class="rs-actions">
+                <button type="button" id="resultRoomBtn" class="restartGame-btn">Về phòng</button>
+                <button type="button" id="resultHomeBtn" class="restartGame-btn">Trang chủ</button>
+            </div>
+        </div>
+
+        <div class="result-meaning">
+            <h2>Lịch Sử Từ Vựng</h2>
+            <p id="resultWord"></p>
+        </div>
+    </div>
+
+    <div class="bubble-container" id="bubbles" aria-hidden="true"></div>
+
+    <div class="game-wrapper">
+        <!-- ================= CÀI ĐẶT ================= -->
+        <div class="settings-overlay" id="settingsOverlay">
+            <div class="settings-box">
+                <h2>CÀI ĐẶT</h2>
+                <button type="button" class="settings-btn" id="continueBtn">▶ Tiếp tục</button>
+                <button type="button" class="settings-btn" id="exitSettingsBtn">🚪 Thoát phòng</button>
+                <p class="mp-note">Ván nhiều người không tạm dừng được: đồng hồ vẫn chạy.</p>
+            </div>
+        </div>
+
+        <!--=====================GAME===================-->
+        <div class="wc-container">
+
+            <!-- Thanh trên: mạng của bạn, đồng hồ lượt, cài đặt -->
+            <div class="wc-top">
+                <div class="player-life">
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Mạng" width="40" height="40"></span>
+                    <span class="life"><img src="../../pics/heart icon.png" alt="Mạng" width="40" height="40"></span>
+                </div>
+                <div class="timer-box">
+                    <div class="timer" id="timer">30s</div>
+                    <div class="mistake" id="mistake">❌ 0/5</div>
+                </div>
+                <div class="top-icon">
+                    <button type="button" id="settingBtn" title="Cài đặt" aria-label="Cài đặt"><img
+                            src="../../pics/setting icon.png" alt="" width="40" height="40"></button>
+                </div>
+            </div>
+
+            <!-- Danh sách người chơi: ai đang tới lượt, còn mấy mạng, bao nhiêu từ -->
+            <div class="mp-players" id="mpPlayers"></div>
+
+            <div class="chat-area" id="chatArea"></div>
+
+            <div class="input-area">
+                <input id="wordInput" type="text" placeholder="Đang chuẩn bị…" autocomplete="off" autocapitalize="off" disabled>
+                <button type="button" class="submit-button" id="submitBtn" disabled>Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Màn đếm ngược trước lượt đầu -->
+    <div class="mp-intro" id="mpIntro">
+        <b>WORD CHAIN</b>
+        <span id="mpIntroSub">Đang chờ chủ phòng…</span>
+    </div>
+
+    <audio id="sound-correct" src="../../audio/correct.mp3"></audio>
+    <audio id="sound-wrong" src="../../audio/wrong.mp3"></audio>
+    <audio id="sound-finish" src="../../audio/finish.mp3"></audio>
+
+    <!-- Mạng (thứ tự quan trọng): SDK → cấu hình → luật → boss-net → phần của Word Chain -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="../../JS/net/firebase-config.js"></script>
+    <script src="../../JS/net/boss-rules.js"></script>
+    <script src="../../JS/net/boss-net.js"></script>
+
+    <script src="../../JS/common/audio.js"></script>
+    <script src="../../data/wordChainData.js"></script>
+
+    <script src="wordChainCore.js"></script>
+    <script src="wordChainHost.js"></script>
+    <script src="wordChainNet.js"></script>
+    <script src="wordChainMulti.js"></script>
+</body>
+
+</html>

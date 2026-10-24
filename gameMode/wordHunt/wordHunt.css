@@ -392,10 +392,21 @@ body {
     border-radius: 999px;
 }
 
-.wh-pos[data-pos="n"] { background: #1d7fb0; }
-.wh-pos[data-pos="v"] { background: #2e9e5b; }
-.wh-pos[data-pos="adj"] { background: #8a55c9; }
-.wh-pos[data-pos="adv"] { background: #d6537a; }
+.wh-pos[data-pos="n"] {
+    background: #1d7fb0;
+}
+
+.wh-pos[data-pos="v"] {
+    background: #2e9e5b;
+}
+
+.wh-pos[data-pos="adj"] {
+    background: #8a55c9;
+}
+
+.wh-pos[data-pos="adv"] {
+    background: #d6537a;
+}
 
 .wh-word-meaning {
     grid-area: meaning;
