@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ - normaFix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/englishCSS.css">
+    <link rel="stylesheet" href="CSS/profile.css">
+    <script src="JS/common/user.js"></script>
+
+    <link rel="icon" type="image/png" href="pics/mascotPics/iconWebsite_main.png">
+</head>
+
+<body spellcheck="false">
+    <header class="navbar">
+        <div class="logo">normaFix</div>
+        <nav class="nav-menu">
+            <a href="index.html">Trang chủ</a>
+            <a href="game.html">Học</a>
+            <a href="room.html">Tạo phòng</a>
+            <a href="document.html">Tài liệu</a>
+            <a href="profile.html" class="active">Hồ sơ</a>
+        </nav>
+    </header>
+
+    <main class="pf">
+        <div class="pf-tabs" role="tablist" aria-label="Các phần của hồ sơ">
+            <button type="button" role="tab" id="tabBtn-profile" data-tab="profile" aria-selected="true" aria-controls="tab-profile">Hồ sơ</button>
+            <button type="button" role="tab" id="tabBtn-ach" data-tab="ach" aria-selected="false" aria-controls="tab-ach">Thành tựu</button>
+            <button type="button" role="tab" id="tabBtn-stats" data-tab="stats" aria-selected="false" aria-controls="tab-stats">Thống kê</button>
+            <button type="button" role="tab" id="tabBtn-acc" data-tab="acc" aria-selected="false" aria-controls="tab-acc">Tài khoản</button>
+        </div>
+
+        <section class="pf-panel" id="tab-profile" role="tabpanel" aria-labelledby="tabBtn-profile">
+            <div class="pf-card pf-head">
+                <div class="pf-ava" id="pfAva" aria-hidden="true"></div>
+                <div class="pf-head-text">
+                    <h2 id="pfName"></h2>
+                    <p class="pf-muted" id="pfJoined"></p>
+                    <div class="pf-lv"><strong id="pfLevel"></strong><span class="pf-muted" id="pfLevelTxt"></span></div>
+                    <div class="pf-xp"><i id="pfXp"></i></div>
+                </div>
+            </div>
+            <div class="pf-card">
+                <label for="pfNameIn">Tên hiển thị</label>
+                <input id="pfNameIn" type="text" maxlength="20" autocomplete="off">
+                <label for="pfBioIn">Giới thiệu ngắn</label>
+                <textarea id="pfBioIn" maxlength="200" rows="3"></textarea>
+                <button type="button" class="pf-btn" id="pfSave">Lưu hồ sơ</button>
+                <p class="pf-msg" id="pfSaveMsg" role="status"></p>
+            </div>
+        </section>
+
+        <section class="pf-panel" id="tab-ach" role="tabpanel" aria-labelledby="tabBtn-ach" hidden>
+            <p class="pf-muted" id="achSum"></p>
+            <div class="pf-card pf-ach" id="achList"></div>
+        </section>
+
+        <section class="pf-panel" id="tab-stats" role="tabpanel" aria-labelledby="tabBtn-stats" hidden>
+            <div class="pf-stats" id="statCards"></div>
+            <div class="pf-card">
+                <h3>Số ván học 7 ngày gần nhất</h3>
+                <div class="pf-bars" id="bars"></div>
+            </div>
+        </section>
+
+        <section class="pf-panel" id="tab-acc" role="tabpanel" aria-labelledby="tabBtn-acc" hidden>
+            <div class="pf-card" id="accOut" hidden>
+                <h3>Đã đăng nhập</h3>
+                <p>Tài khoản: <strong id="accEmail"></strong></p>
+                <p class="pf-muted">Hồ sơ, thành tựu và thống kê của bạn được đồng bộ lên tài khoản này. Đăng xuất sẽ xóa dữ liệu khỏi máy này, dữ liệu trên tài khoản vẫn còn.</p>
+                <button type="button" class="pf-btn" id="accLogout">Đăng xuất</button>
+                <button type="button" class="pf-btn ghost danger" id="accDelete">Xóa tài khoản</button>
+                <p class="pf-msg" id="accOutMsg" role="status"></p>
+            </div>
+            <div class="pf-card" id="accIn">
+                <div class="pf-seg" role="group" aria-label="Chọn thao tác">
+                    <button type="button" id="modeReg" aria-pressed="true">Đăng ký</button>
+                    <button type="button" id="modeLog" aria-pressed="false">Đăng nhập</button>
+                </div>
+                <label for="accMail">Email</label>
+                <input id="accMail" type="email" autocomplete="email">
+                <label for="accPass">Mật khẩu</label>
+                <input id="accPass" type="password" autocomplete="new-password">
+                <button type="button" class="pf-btn" id="accGo">Tạo tài khoản</button>
+                <p class="pf-msg" id="accMsg" role="alert"></p>
+                <p class="pf-muted" id="accNote">Tiến trình học trên máy này sẽ được giữ lại và gộp vào tài khoản.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="JS/net/firebase-config.js"></script>
+    <script src="JS/common/stats.js"></script>
+    <script src="JS/common/profile.js"></script>
+</body>
+
+</html>

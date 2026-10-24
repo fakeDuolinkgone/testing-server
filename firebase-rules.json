@@ -5,18 +5,57 @@
         ".read": true,
         ".write": true,
         ".validate": "$code.matches(/^[A-Z0-9]{6}$/)",
-        "mode": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_]{1,20}$/)" },
+        "mode": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_]{1,20}$/)"
+        },
         "players": {
           "$pid": {
-            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" }
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30"
+            }
           }
         },
         "scores": {
           "$pid": {
             "$stage": {
-              "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10" }
+              "score": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+              }
             }
           }
+        }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 30"
+        },
+        "bio": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "games": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "correct": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "total": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "perfect": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "best": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "seconds": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "joined": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
         }
       }
     }

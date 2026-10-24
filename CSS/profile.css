@@ -1,0 +1,114 @@
+/* ===========================================================
+   PROFILE - trang hồ sơ (profile.html). Dùng lại màu và font của theme.css.
+   Mọi selector nằm trong .pf để không đụng input/button chung của base.css.
+   =========================================================== */
+.pf {
+    max-width: 780px; margin: 0 auto;
+    padding: 118px 20px 64px;
+    color: var(--deep, #0E3850);
+    font-family: var(--display, "Baloo 2", "Trebuchet MS", Arial, sans-serif);
+}
+.pf [hidden] { display: none !important; }
+.pf h2, .pf h3 { margin: 0 0 8px; font-weight: 800; }
+.pf h3 { font-size: 22px; }
+.pf p { margin: 0 0 12px; font-size: 17px; line-height: 1.45; }
+.pf-muted { color: #4d6b7c; }
+
+/* tab */
+.pf-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 6px; }
+.pf-tabs button {
+    flex: none; margin: 0; padding: 10px 22px;
+    border: 0; border-radius: 999px;
+    background: rgba(14, 56, 80, .1); color: var(--deep, #0E3850);
+    font: 700 18px var(--display, "Baloo 2", Arial, sans-serif);
+    cursor: pointer; transition: background .2s;
+}
+.pf-tabs button:hover { background: rgba(14, 56, 80, .18); }
+.pf-tabs button[aria-selected="true"] { background: var(--deep, #0E3850); color: #fff; }
+.pf button:focus-visible, .pf input:focus-visible, .pf textarea:focus-visible {
+    outline: 3px solid var(--sun, #ff8b00); outline-offset: 2px;
+}
+
+/* thẻ */
+.pf-card {
+    padding: 24px; margin-bottom: 16px;
+    border-radius: 24px; background: #fff;
+    box-shadow: 0 6px 0 rgba(14, 56, 80, .16);
+}
+
+/* form */
+.pf label { display: block; margin: 14px 0 6px; font-weight: 700; font-size: 17px; }
+.pf label:first-child { margin-top: 0; }
+.pf input, .pf textarea {
+    display: block; width: 100%; margin: 0; padding: 12px 16px;
+    border: 3px solid #cfe5ee; border-radius: 16px;
+    background: #f7fcfe; color: var(--deep, #0E3850);
+    font: 600 18px var(--display, "Baloo 2", Arial, sans-serif);
+}
+.pf textarea { resize: vertical; min-height: 84px; }
+.pf input:focus, .pf textarea:focus { border-color: var(--sun, #ff8b00); background: #fff; outline: none; }
+.pf-btn {
+    margin: 18px 10px 0 0; padding: 12px 28px;
+    border: 0; border-radius: 40px;
+    background: var(--sun, #ff8b00); color: #fff;
+    font: 800 19px var(--display, "Baloo 2", Arial, sans-serif);
+    box-shadow: 0 6px 0 rgba(14, 56, 80, .28); cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+.pf-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(14, 56, 80, .28); }
+.pf-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(14, 56, 80, .28); }
+.pf-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.pf-btn.ghost { background: #eaf6fb; color: var(--deep, #0E3850); box-shadow: 0 6px 0 rgba(14, 56, 80, .14); }
+.pf-btn.danger { color: #c93636; }
+.pf-msg { min-height: 24px; margin: 12px 0 0; font-weight: 700; color: #c93636; }
+.pf-msg.ok { color: #1f7a54; }
+.pf-seg { display: inline-flex; margin-bottom: 18px; border-radius: 999px; background: #eaf6fb; padding: 4px; }
+.pf-seg button {
+    margin: 0; padding: 8px 22px; border: 0; border-radius: 999px; background: none;
+    color: var(--deep, #0E3850); font: 700 17px var(--display, "Baloo 2", Arial, sans-serif); cursor: pointer;
+}
+.pf-seg button[aria-pressed="true"] { background: var(--deep, #0E3850); color: #fff; }
+
+/* hồ sơ */
+.pf-head { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.pf-ava {
+    flex: none; width: 92px; height: 92px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--gold, #FDB515); color: var(--deep, #0E3850);
+    font-size: 46px; font-weight: 800;
+}
+.pf-head-text { flex: 1; min-width: 200px; }
+.pf-lv { font-size: 17px; }
+.pf-xp { height: 12px; margin-top: 6px; border-radius: 99px; background: #dcebf1; overflow: hidden; }
+.pf-xp i { display: block; height: 100%; background: var(--gold, #FDB515); border-radius: 99px; }
+
+/* thành tựu */
+.pf-ach { padding: 8px 24px; }
+.pf-ach-row { display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 2px solid #eaf6fb; }
+.pf-ach-row:last-child { border-bottom: 0; }
+.pf-badge {
+    flex: none; width: 52px; height: 52px; display: grid; place-items: center;
+    border-radius: 16px; background: var(--gold, #FDB515); font-size: 28px;
+}
+.pf-ach-row b { display: block; font-size: 19px; }
+.pf-ach-row small { color: #4d6b7c; font-size: 15px; font-family: Arial, Helvetica, sans-serif; }
+.pf-ach-row.locked { color: #6b8795; }
+.pf-ach-row.locked .pf-badge { background: #dcebf1; filter: grayscale(1); }
+
+/* thống kê */
+.pf-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.pf-stat { padding: 18px; border-radius: 20px; background: #fff; box-shadow: 0 6px 0 rgba(14, 56, 80, .16); }
+.pf-stat span { display: block; font-size: 32px; font-weight: 800; line-height: 1.1; }
+.pf-stat small { font-size: 15px; color: #4d6b7c; font-family: Arial, Helvetica, sans-serif; }
+.pf-bars { display: flex; align-items: flex-end; gap: 10px; height: 170px; margin-top: 14px; }
+.pf-bars div { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; font-size: 14px; }
+.pf-bars em { font-style: normal; font-weight: 800; margin-bottom: 4px; }
+.pf-bars i { display: block; width: 100%; min-height: 4px; margin-bottom: 6px; border-radius: 10px 10px 0 0; background: var(--sea, #31A7C9); }
+.pf-bars span { color: #4d6b7c; }
+
+@media (max-width: 700px) {
+    .pf { padding-top: 150px; }
+    .pf-card { padding: 18px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .pf-xp i, .pf-bars i { transition: width .4s, height .4s; }
+}

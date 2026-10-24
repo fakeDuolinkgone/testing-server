@@ -173,6 +173,9 @@ function showResult() {
   const max = keys.reduce((sum, key) => sum + RESULT_MAX[key], 0);
   const percent = max > 0 ? Math.round((total / max) * 100) : 0;
 
+  // Ghi vào hồ sơ (thống kê + thành tựu); bỏ qua nếu trang không nạp stats.js
+  if (window.normaStats) window.normaStats.recordGame({ total, max });
+
   const rank = RESULT_RANKS.find(r => percent >= r.min);
   if (resultRank) resultRank.textContent = rank.title;
   if (resultMessage) resultMessage.textContent = rank.message;

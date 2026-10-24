@@ -11,6 +11,7 @@
     var KEY = "normafix.playerName";
     var MAX_LEN = 20;
     var root = document.documentElement;
+    var SCRIPT_SRC = document.currentScript && document.currentScript.src;   // để tính đường dẫn tới profile.html từ mọi thư mục
 
     var memoryName = "";      // dự phòng khi trình duyệt chặn localStorage
     var player = null;        // ô tên ở góc trái trên
@@ -53,7 +54,8 @@
                 '<span class="player-caret" aria-hidden="true">▾</span>' +
             '</button>' +
             '<div class="player-menu" hidden>' +
-                '<button type="button" class="player-menu-item">Đổi tên</button>' +
+                '<a class="player-menu-item" data-profile href="#">Hồ sơ</a>' +
+                '<button type="button" class="player-menu-item" data-rename>Đổi tên</button>' +
             '</div>';
 
         // Có navbar (index.html) thì nằm trong navbar, bên trái logo.
@@ -77,7 +79,11 @@
 
         chip.addEventListener("click", function () { setMenu(menu.hidden); });
 
-        player.querySelector(".player-menu-item").addEventListener("click", function () {
+        var profileLink = player.querySelector("[data-profile]");
+        try { profileLink.href = new URL("../../profile.html", SCRIPT_SRC).href; }
+        catch (e) { profileLink.href = "profile.html"; }
+
+        player.querySelector("[data-rename]").addEventListener("click", function () {
             setMenu(false);
             openGate(true);
         });
@@ -191,7 +197,15 @@
     // Cho các trang khác dùng sau này (ví dụ ghi tên vào bảng kết quả)
     window.normaPlayer = {
         getName: readName,
-        changeName: function () { openGate(true); }
+        changeName: function () { openGate(true); },
+        // Đổi tên từ trang khác (trang hồ sơ); trả về tên đã lưu, rỗng nếu tên không hợp lệ
+        setName: function (raw) {
+            var name = cleanName(raw);
+            if (!name) return "";
+            saveName(name);
+            showName(name);
+            return name;
+        }
     };
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
