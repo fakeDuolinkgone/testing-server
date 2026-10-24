@@ -41,6 +41,7 @@
 
     var S = load();
     var cur = null, auth = null, db = null, pushT = 0, ticks = 0;
+    var firebaseStatus = "Đang kiểm tra kết nối Firebase...";
     var listeners = [];
 
 
@@ -152,14 +153,66 @@
         })["catch"](function (e) { console.error("Firebase:", e); emit(); });
     }
 
+    function loadFirebaseScript(src) {
+        return new Promise(function (resolve, reject) {
+            var existing = Array.from(document.scripts).find(function (s) {
+                return s.src === src && s.dataset.loaded === "true";
+            });
+            if (existing) { resolve(); return; }
+            // Tạo thẻ mới để thử tải lại nếu thẻ script trong HTML trước đó bị lỗi.
+            var script = document.createElement("script");
+            script.src = src;
+            script.async = false;
+            script.onload = function () { script.dataset.loaded = "true"; resolve(); };
+            script.onerror = function () { reject(new Error("Không tải được SDK: " + src)); };
+            document.head.appendChild(script);
+        });
+    }
+
     function initFirebase() {
-        var fb = window.firebase;
-        if (!fb || !fb.auth || !fb.database || !window.FIREBASE_CONFIG) return;
-        try {
-            if (!fb.apps.length) fb.initializeApp(window.FIREBASE_CONFIG);
-            auth = fb.auth(); db = fb.database();
-            auth.onAuthStateChanged(onUser);
-        } catch (e) { console.error("Firebase:", e); auth = null; db = null; }
+        var cfg = window.FIREBASE_CONFIG;
+        if (!cfg || !cfg.apiKey || !cfg.projectId) {
+            firebaseStatus = "Thiếu cấu hình Firebase. Kiểm tra JS/net/firebase-config.js.";
+            emit();
+            return;
+        }
+
+        var base = "https://www.gstatic.com/firebasejs/10.14.1/";
+        firebaseStatus = "Đang tải thư viện Firebase...";
+        Promise.resolve().then(function () {
+            if (!window.firebase || !window.firebase.initializeApp) {
+                return loadFirebaseScript(base + "firebase-app-compat.js");
+            }
+        }).then(function () {
+            if (!window.firebase || !window.firebase.auth) {
+                return loadFirebaseScript(base + "firebase-auth-compat.js");
+            }
+        }).then(function () {
+            if (!window.firebase || !window.firebase.database) {
+                return loadFirebaseScript(base + "firebase-database-compat.js");
+            }
+        }).then(function () {
+            var fb = window.firebase;
+            if (!fb || !fb.initializeApp || !fb.auth || !fb.database) {
+                throw new Error("Thiếu Firebase App, Authentication hoặc Realtime Database SDK.");
+            }
+            if (!fb.apps.length) fb.initializeApp(cfg);
+            auth = fb.auth();
+            db = fb.database();
+            if (!auth || !db) throw new Error("Không khởi tạo được Firebase Auth/Database.");
+            firebaseStatus = "Đã khởi tạo Firebase. Đang kiểm tra trạng thái tài khoản...";
+            auth.onAuthStateChanged(onUser, function (e) {
+                firebaseStatus = "Lỗi xác thực Firebase: " + (e && (e.message || e.code) || "không rõ");
+                console.error("Firebase Auth:", e);
+                emit();
+            });
+            emit();
+        }).catch(function (e) {
+            auth = null; db = null;
+            firebaseStatus = "Không tải/khởi tạo được Firebase SDK. Kiểm tra kết nối mạng hoặc chặn CDN (gstatic.com). Chi tiết: " + (e.message || e);
+            console.error("Firebase khởi tạo thất bại:", e);
+            emit();
+        });
     }
 
     function resetLocal() { S = blank(); saveLocal(); emit(); }
@@ -169,6 +222,7 @@
     window.normaStats = {
         ACH: ACH,
         available: function () { return !!auth; },
+        connectionStatus: function () { return firebaseStatus; },
         user: function () { return cur; },
         onChange: function (cb) { listeners.push(cb); },
         recordGame: recordGame,

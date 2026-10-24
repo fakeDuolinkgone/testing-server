@@ -82,8 +82,10 @@
         $("accIn").hidden = !!u;
         if (u) $("accEmail").textContent = u.email;
         if (!stats.available()) {
-            say("accMsg", "Trang này chưa kết nối được Firebase. Kiểm tra JS/net/firebase-config.js.", false);
+            say("accMsg", stats.connectionStatus ? stats.connectionStatus() : "Trang này chưa kết nối được Firebase. Kiểm tra JS/net/firebase-config.js.", false);
             $("accGo").disabled = true;
+        } else {
+            $("accGo").disabled = false;
         }
     }
     stats.onChange(render);
