@@ -19,7 +19,8 @@ const BOSSES = [
   { name: "Sú Shì Mắm Tôm", foot: [0.156, 0.141, 0.141], pic: n => `${BOSS_PIC_DIR}bossSushi_stage${n}.png` },
   { name: "Baguette Phép Lèm", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossBaguette_stage${n}.png` },
   { name: "Hoàng Kê Luộc", foot: [0.031, 0.016, 0.031], pic: n => `${BOSS_PIC_DIR}bossBoiledChicken_stage${n}.png` },
-  { name: "Hỏa Quái Chili Pepper", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossChiliPepper_stage${n}.png` }
+  { name: "Hỏa Quái Chili Pepper", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossChiliPepper_stage${n}.png` },
+  { name: "Em ơi lâu đài tình ái đó~", foot: [0.016, 0.016, 0.016], pic: n => `${BOSS_PIC_DIR}bossCastle_stage${n}.png` }
 ];
 const BOSS_PHASES = 3;
 

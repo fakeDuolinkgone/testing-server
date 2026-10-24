@@ -856,6 +856,34 @@
   }
 }
 
+/* ================= HOVER: HIỆN ẢNH CỦA CARD ================= */
+.game-card:is(.wordhunt, .hangman, .wordchain, .wordpuzzle)::after {
+  content: "";
+  inset: 0;                      /* phủ kín card */
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  transform: none;
+  border-radius: inherit;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;        /* ảnh lấp đầy card, có thể bị cắt mép */
+}
+
+/* khi hover thì giữ nguyên vị trí, chỉ hiện dần lên */
+.game-card:is(.wordhunt, .hangman, .wordchain, .wordpuzzle):hover::after {
+  transform: none;
+}
+
+/* ảnh của từng card */
+.wordhunt.game-card::after   { background-image: url("../pics/wordHunt_card.png"); }
+.hangman.game-card::after    { background-image: url("../pics/hangman_card.png"); }
+.wordchain.game-card::after  { background-image: url("../pics/wordChain_card.png"); }
+.wordpuzzle.game-card::after { background-image: url("../pics/wordPuzzle_card.png"); }
+
 
 
 /* CSS/resultScreen.css — bảng kết quả của chế độ PLAY (LEARN).

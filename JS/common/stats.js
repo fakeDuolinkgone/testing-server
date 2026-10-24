@@ -13,15 +13,15 @@
     var NUM = ["games", "correct", "total", "perfect", "best", "seconds"];
 
     var ACH = [
-        { id: "name",    icon: "👋", title: "Làm quen",         desc: "Đặt tên cho mình",               ok: function () { return !!playerName(); } },
+        { id: "name",    icon: "👋", title: "Chào mừng!",         desc: "Đặt tên cho mình",               ok: function () { return !!playerName(); } },
         { id: "bio",     icon: "✍️", title: "Có điều để kể",    desc: "Viết phần giới thiệu trong hồ sơ", ok: function (s) { return s.bio.trim().length > 0; } },
-        { id: "game1",   icon: "🎮", title: "Ván đầu tiên",     desc: "Hoàn thành 1 ván học",           ok: function (s) { return s.games >= 1; } },
-        { id: "game10",  icon: "📚", title: "Chăm chỉ",         desc: "Hoàn thành 10 ván",              ok: function (s) { return s.games >= 10; } },
+        { id: "game1",   icon: "🎮", title: "Lần đầu tiên.. trái thanh long!?",     desc: "Hoàn thành 1 ván học",           ok: function (s) { return s.games >= 1; } },
+        { id: "game10",  icon: "📚", title: "Hmm.. chưa hẳn là mê",         desc: "Hoàn thành 10 ván",              ok: function (s) { return s.games >= 10; } },
         { id: "perfect", icon: "🏆", title: "Hoàn hảo",         desc: "Trả lời đúng mọi câu trong một ván", ok: function (s) { return s.perfect >= 1; } },
-        { id: "best90",  icon: "🧠", title: "Trí nhớ tốt",      desc: "Đạt từ 90% trở lên trong một ván", ok: function (s) { return s.best >= 90; } },
-        { id: "ans100",  icon: "💯", title: "100 câu đúng",     desc: "Trả lời đúng tổng cộng 100 câu", ok: function (s) { return s.correct >= 100; } },
-        { id: "streak3", icon: "🔥", title: "Ba ngày liền",     desc: "Học 3 ngày liên tiếp",           ok: function () { return streak() >= 3; } },
-        { id: "time30",  icon: "⏱️", title: "Bền bỉ",           desc: "Ở lại học tổng cộng 30 phút",    ok: function (s) { return s.seconds >= 1800; } },
+        { id: "best90",  icon: "🧠", title: "Não to hơn vật",      desc: "Đạt từ 90% trở lên trong một ván", ok: function (s) { return s.best >= 90; } },
+        { id: "ans100",  icon: "💯", title: "Tên này khá đấy chứ!",     desc: "Trả lời đúng tổng cộng 100 câu", ok: function (s) { return s.correct >= 100; } },
+        { id: "streak3", icon: "🔥", title: "Lên chuỗi nè",     desc: "Học 3 ngày liên tiếp",           ok: function () { return streak() >= 3; } },
+        { id: "time30",  icon: "⏱️", title: "Afk hay chăm chỉ?",           desc: "Ở lại học tổng cộng 30 phút",    ok: function (s) { return s.seconds >= 1800; } },
         { id: "account", icon: "🔐", title: "Có chỗ đứng",      desc: "Đăng ký tài khoản",              ok: function () { return !!cur; } }
     ];
 
