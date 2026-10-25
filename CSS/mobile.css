@@ -8,8 +8,8 @@
    - Mọi selector trong @media đều có tiền tố "html " để luôn thắng các rule
      cùng cấp trong landing.css / login.css / room.css..., kể cả khi thứ tự
      nạp file bị sai. Vẫn nên nạp mobile.css SAU CÙNG.
-   - Trò chơi: <body class="game-page">. Khi điện thoại đang để dọc, lớp phủ
-     "xoay ngang" sẽ hiện ra.
+   - Trò chơi chơi được cả dọc lẫn ngang, KHÔNG bắt xoay màn hình.
+   - Trang game được nhận biết qua #settingsOverlay (hoặc <body class="game-page">).
    =========================================================== */
 
 
@@ -19,6 +19,18 @@
 html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+}
+
+body { -webkit-font-smoothing: antialiased; }
+
+/* chặn tràn ngang trên điện thoại: không phần tử nào được rộng hơn màn hình */
+@media (max-width: 700px) {
+    html,
+    html body { max-width: 100%; overflow-x: clip; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
 }
 
 button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item {
@@ -42,6 +54,13 @@ button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item 
         transform: none;
         box-shadow: 0 7px 0 rgba(14, 56, 80, .28);
     }
+    html .start-btn:active,
+    html .create-btn:active,
+    html .enter-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 3px 0 rgba(14, 56, 80, .28);
+    }
+    html .nav-menu a:not(.active):active { background: rgba(255, 255, 255, .22); }
 
     html .choice-btn:not(.correct):not(.wrong):hover {
         background: #ececec;
@@ -70,62 +89,16 @@ button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item 
 
 
 /* ===========================================================
-   1. LỚP PHỦ "XOAY NGANG ĐIỆN THOẠI" (chỉ điện thoại đang để dọc)
-   =========================================================== */
-@media (orientation: portrait) and (max-width: 600px) and (pointer: coarse) {
-
-    html :is(body.game-page, body:has(#learnScreen[style*="flex"]))::before {
-        content: "Xoay ngang điện thoại\A để chơi nhé!";
-        white-space: pre-line;
-        position: fixed;
-        inset: 0;
-        z-index: 100000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 80px 24px 0;
-        text-align: center;
-        font: 800 22px/1.3 "Baloo 2", system-ui, sans-serif;
-        color: #fff;
-        background: linear-gradient(160deg, #35b1d3 0%, #219ebc 50%, #0E3850 135%);
-    }
-
-    html :is(body.game-page, body:has(#learnScreen[style*="flex"]))::after {
-        content: "📱";
-        position: fixed;
-        left: 50%;
-        top: calc(50% - 100px);
-        z-index: 100001;
-        font-size: 56px;
-        line-height: 1;
-        transform: translateX(-50%);
-        animation: mbRotatePhone 2.4s ease-in-out infinite;
-    }
-}
-
-@keyframes mbRotatePhone {
-    0%, 15%    { transform: translateX(-50%) rotate(0deg); }
-    55%, 100%  { transform: translateX(-50%) rotate(-90deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    html :is(body.game-page, body:has(#learnScreen[style*="flex"]))::after {
-        animation: none;
-        transform: translateX(-50%) rotate(-90deg);
-    }
-}
-
-
-/* ===========================================================
    2. ĐIỆN THOẠI DỌC (max-width: 700px)
    =========================================================== */
 @media (max-width: 700px) {
 
     /* ---------- Thanh điều hướng: đủ 5 mục, không tràn ---------- */
     html .navbar {
-        top: 8px;
+        top: max(8px, env(safe-area-inset-top));
         left: 8px;
         width: calc(100% - 16px);
+        max-width: calc(100vw - 16px);
         height: 46px;
         padding: 0 6px;
         border-radius: 16px;
@@ -160,30 +133,72 @@ button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item 
 
     /* ---------- Trang chủ ---------- */
     html .hero {
-        padding: 116px 16px 88px;
-        gap: 12px;
+        min-height: 100vh;
+        min-height: 100svh;
+        height: auto;
+        padding: calc(112px + env(safe-area-inset-top)) 16px 84px;
+        gap: 8px;
+        justify-content: center;
+        overflow-x: clip;
+    }
+    html .hero > * { min-width: 0; max-width: 100%; }
+    html .hero-left,
+    html .hero-right {
+        flex: none;
+        width: 100%;
+        margin: 0;
     }
     html .hero-title {
         font-size: clamp(40px, 13vw, 54px);
-        margin-bottom: 6px;
+        line-height: 1.05;
+        margin-bottom: 4px;
+        text-align: center;
+        overflow-wrap: anywhere;
     }
     html .hero-subtitle {
+        max-width: 22em;
+        margin: 0 auto;
         font-size: clamp(15px, 4.2vw, 19px);
-        margin-bottom: 0;
+        line-height: 1.3;
+        text-align: center;
+        text-wrap: balance;
     }
-    html .hero .mascot-image { height: clamp(170px, 46vw, 240px); }
+    html .hero .mascot-image {
+        max-width: 100%;
+        height: clamp(140px, 28vh, 240px);
+        height: clamp(140px, 28svh, 240px);
+    }
     html .mascot-name { font-size: 16px; padding: 5px 18px; }
     html .mascot-desc { font-size: 13px; max-width: 280px; }
     html .scroll-down {
-        width: 68px;
-        height: 68px;
-        bottom: -34px;
-        font-size: 14px;
+        width: 64px;
+        height: 64px;
+        bottom: -32px;
+        font-size: 13px;
     }
 
     html .intro-section,
     html .room-section,
-    html .document-section { padding: 84px 6% 64px; gap: 28px; }
+    html .document-section {
+        padding: 72px 6% 60px;
+        gap: 24px;
+        max-width: 100%;
+        overflow-x: clip;
+    }
+    html .intro-left,
+    html .intro-right,
+    html .room-left,
+    html .room-right { min-width: 0; }
+    html .room-image {
+        width: 92%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: 24px;
+        transform: rotate(1.5deg);
+    }
+    html .intro-left p,
+    html .room-text,
+    html .document-text { text-wrap: balance; }
 
     html .intro-left p,
     html .room-text,
@@ -205,6 +220,19 @@ button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item 
     html .footer-logo { font-size: 28px; }
     html .footer-text { font-size: 16px; margin-bottom: 20px; }
     html .footer-copy { font-size: 13px; }
+
+    /* ẩn ô tên khi đang chơi LEARN để không đè lên nội dung */
+    html body:has(#learnScreen[style*="flex"]) .player.floating { display: none; }
+
+    /* ---------- Các trang trò chơi (chơi dọc) ---------- */
+    html :is(body.game-page, body:has(#settingsOverlay)) {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+    html :is(body.game-page, body:has(#settingsOverlay)) .submit-button { min-height: 44px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .bubble-chat { max-width: 80%; font-size: 15px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .avatar img { width: 30px; height: 30px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .meaning-toggle { min-height: 34px; }
 
     /* ---------- Cài đặt / popup ---------- */
     html .popup { width: min(280px, 86vw); padding: 20px; }
@@ -627,20 +655,20 @@ button, a, [role="button"], .game-card, .choice-btn, .sentence-btn, .match-item 
     html .result-actions { grid-row: 5; flex-direction: row; margin-top: 8px; }
     html .result-btn { padding: 7px 10px; font-size: 14px; }
 
-    /* ---------- Các trang trò chơi (body.game-page) ---------- */
-    html body.game-page {
+    /* ---------- Các trang trò chơi (chơi ngang) ---------- */
+    html :is(body.game-page, body:has(#settingsOverlay)) {
         min-height: 100vh;
         min-height: 100dvh;
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
     }
     /* ô nhập đủ lớn để chạm, chữ >= 16px để iOS không tự phóng to */
-    html body.game-page input { margin-top: 4px; padding: 7px 12px; font-size: 17px; }
-    html body.game-page .submit-button { min-height: 42px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) input { margin-top: 4px; padding: 7px 12px; font-size: 17px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .submit-button { min-height: 42px; }
 
     /* WORDCHAIN: thu nhỏ khung chat cho vừa chiều cao */
-    html body.game-page .bubble-chat { max-width: 72%; padding: 6px 10px; font-size: 13px; }
-    html body.game-page .avatar img { width: 26px; height: 26px; }
-    html body.game-page .meaning-toggle { min-height: 30px; }
-    html body.game-page .notice { padding: 7px 12px; font-size: 13px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .bubble-chat { max-width: 72%; padding: 6px 10px; font-size: 13px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .avatar img { width: 26px; height: 26px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .meaning-toggle { min-height: 30px; }
+    html :is(body.game-page, body:has(#settingsOverlay)) .notice { padding: 7px 12px; font-size: 13px; }
 }
