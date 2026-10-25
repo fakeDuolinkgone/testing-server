@@ -1,0 +1,1239 @@
+/* ===========================================================
+   MOBILE - giao diện điện thoại cho normaFix  (CSS/mobile.css)
+
+   QUAN TRỌNG: file này phải được nạp SAU CÙNG (sau hero, landing,
+   login, room, document, profile...), vì nó ghi đè các rule cùng độ ưu tiên.
+
+   Quy ước:
+   - Điện thoại dọc   : (max-width: 700px)
+   - Điện thoại ngang : (orientation: landscape) and (max-height: 500px)
+   - Các khối ngang nằm ở CUỐI file để thắng khối dọc khi màn hình ngang <= 700px
+     (ví dụ iPhone SE xoay ngang rộng 667px).
+   - Trò chơi: body của trang game thêm class="game-page". Khi điện thoại
+     đang để dọc, một lớp phủ yêu cầu xoay ngang sẽ hiện ra.
+   =========================================================== */
+
+
+/* ===========================================================
+   0. NỀN TẢNG
+   =========================================================== */
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* chạm hai lần không phóng to trang, bấm phản hồi nhanh hơn */
+button,
+a,
+[role="button"],
+.game-card,
+.choice-btn,
+.sentence-btn,
+.match-item {
+    touch-action: manipulation;
+}
+
+/* màn hình cảm ứng không có hover: bỏ các hiệu ứng hover bị "dính" sau khi chạm */
+@media (hover: none) {
+    .game-card::after {
+        display: none;
+    }
+
+    .game-card:hover {
+        transform: none;
+        box-shadow: 0 10px 0 rgba(14, 56, 80, .2);
+    }
+
+    .game-card:active {
+        transform: scale(.97);
+    }
+
+    .nav-menu a:not(.active):hover {
+        transform: none;
+        background: none;
+    }
+
+    .start-btn:hover,
+    .create-btn:hover,
+    .enter-btn:hover {
+        transform: none;
+        box-shadow: 0 7px 0 rgba(14, 56, 80, .28);
+    }
+
+    .choice-btn:not(.correct):not(.wrong):hover {
+        background: #ececec;
+        color: #222;
+    }
+
+    .sentence-btn:not(.correct):not(.wrong):hover {
+        background: #efefef;
+        color: #000;
+    }
+
+    #settingsBtn:hover,
+    #settingBtn:hover {
+        transform: none;
+        background: rgba(0, 0, 0, .6);
+    }
+
+    .c:not(.hd) .pill:hover {
+        transform: none;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    /* trang tài liệu: không có hover nên luôn hiện biểu tượng loa để biết bấm nghe được */
+    .c.w .pill[data-word]::after {
+        opacity: .45;
+    }
+}
+
+
+/* ===========================================================
+   1. LỚP PHỦ "XOAY NGANG ĐIỆN THOẠI" (chỉ điện thoại đang để dọc)
+   Áp dụng cho trang có <body class="game-page"> và cho màn LEARN
+   của game.html (nhận biết qua #learnScreen đang hiển thị).
+   =========================================================== */
+@media (orientation: portrait) and (max-width: 600px) and (pointer: coarse) {
+
+    :is(body.game-page, body:has(#learnScreen[style*="flex"]))::before {
+        content: "Xoay ngang điện thoại\A để chơi nhé!";
+        white-space: pre-line;
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 24px 0;
+        text-align: center;
+        font: 800 24px/1.3 "Baloo 2", system-ui, sans-serif;
+        color: #fff;
+        background: linear-gradient(160deg, #35b1d3 0%, #219ebc 50%, #0E3850 135%);
+    }
+
+    :is(body.game-page, body:has(#learnScreen[style*="flex"]))::after {
+        content: "📱";
+        position: fixed;
+        left: 50%;
+        top: calc(50% - 110px);
+        z-index: 100001;
+        font-size: 64px;
+        line-height: 1;
+        transform: translateX(-50%);
+        animation: mbRotatePhone 2.4s ease-in-out infinite;
+    }
+}
+
+@keyframes mbRotatePhone {
+
+    0%,
+    15% {
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    55%,
+    100% {
+        transform: translateX(-50%) rotate(-90deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :is(body.game-page, body:has(#learnScreen[style*="flex"]))::after {
+        animation: none;
+        transform: translateX(-50%) rotate(-90deg);
+    }
+}
+
+
+/* ===========================================================
+   2. ĐIỆN THOẠI DỌC (max-width: 700px)
+   =========================================================== */
+@media (max-width: 700px) {
+
+    /* ---------- Thanh điều hướng (index, profile...) ---------- */
+    .navbar {
+        top: 8px;
+        left: 8px;
+        width: calc(100% - 16px);
+        height: 52px;
+        padding: 0 8px;
+        border-radius: 18px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .nav-menu {
+        flex: 1;
+        min-width: 0;
+        margin-left: 8px;
+        gap: 2px;
+        justify-content: space-between;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .nav-menu::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-menu a {
+        flex: none;
+        min-height: 36px;
+        padding: 8px 9px;
+        font-size: 13px;
+        border-radius: 12px;
+        white-space: nowrap;
+    }
+
+    /* ---------- Trang chủ ---------- */
+    .hero {
+        padding: 128px 16px 96px;
+        gap: 18px;
+    }
+
+    .hero-title {
+        font-size: clamp(44px, 15vw, 64px);
+        margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(17px, 5vw, 22px);
+        margin-bottom: 0;
+    }
+
+    .hero .mascot-image {
+        height: clamp(200px, 52vw, 280px);
+    }
+
+    .mascot-name {
+        font-size: 18px;
+        padding: 6px 20px;
+    }
+
+    .mascot-desc {
+        font-size: 14px;
+        max-width: 300px;
+    }
+
+    .scroll-down {
+        width: 84px;
+        height: 84px;
+        bottom: -42px;
+        font-size: 16px;
+    }
+
+    .intro-section,
+    .room-section,
+    .document-section {
+        padding: 100px 5% 80px;
+    }
+
+    .intro-left p,
+    .room-text,
+    .document-text {
+        font-size: clamp(24px, 7vw, 32px);
+        margin-bottom: 28px;
+    }
+
+    .start-btn,
+    .create-btn,
+    .enter-btn {
+        width: min(220px, 70%);
+        height: 60px;
+        font-size: 22px;
+    }
+
+    .intro-right img {
+        max-height: 300px;
+    }
+
+    .document-box {
+        border-radius: 24px;
+    }
+
+    .document-left {
+        height: 200px;
+    }
+
+    .footer {
+        padding: 48px 16px;
+    }
+
+    .footer-logo {
+        font-size: 32px;
+    }
+
+    .footer-text {
+        font-size: 18px;
+    }
+
+    /* ---------- Cài đặt / popup ---------- */
+    .popup {
+        width: min(300px, 86vw);
+        padding: 22px;
+    }
+
+    .settings-popup {
+        width: min(300px, 86vw);
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+
+    .settings-popup button {
+        width: min(180px, 100%);
+    }
+
+    #settingsBtn,
+    #settingBtn {
+        width: 44px;
+        height: 44px;
+        top: max(10px, env(safe-area-inset-top));
+        left: max(10px, env(safe-area-inset-left));
+    }
+
+    /* ---------- Màn hình nhập tên ---------- */
+    .login-gate {
+        overflow-y: auto;
+    }
+
+    /* ---------- Trang tài liệu (document.html) ---------- */
+    body:has(.tabs) {
+        padding: 8px 8px 10px;
+    }
+
+    .tabs {
+        margin-left: 10px;
+        gap: 8px;
+    }
+
+    .tab {
+        flex: 1;
+        min-width: 0;
+        height: 40px;
+        padding-inline: 8px;
+        font-size: 16px;
+    }
+
+    .panel {
+        padding: 6px;
+        border-width: 3px;
+        border-radius: 24px;
+    }
+
+    .pill {
+        min-height: 44px;
+        padding: 4px 10px;
+        font-size: 15px;
+        border-width: 2px;
+    }
+
+    .c.k .pill {
+        font-size: 13px;
+    }
+
+    .hd .pill {
+        font-size: 15px;
+    }
+
+    #q {
+        font-size: 17px;
+    }
+
+    .az {
+        font-size: 18px;
+        padding: 0 12px;
+    }
+
+    /* ---------- Hồ sơ (profile.html) ---------- */
+    .pf {
+        padding: 128px 12px 40px;
+    }
+
+    .pf-tabs button {
+        padding: 8px 16px;
+        font-size: 16px;
+    }
+
+    .pf-head {
+        gap: 14px;
+    }
+
+    .pf-ava {
+        width: 72px;
+        height: 72px;
+        font-size: 36px;
+    }
+
+    .pf-stat span {
+        font-size: 26px;
+    }
+
+    .pf-bars {
+        height: 130px;
+        gap: 6px;
+    }
+
+    .pf-btn {
+        padding: 12px 22px;
+        font-size: 17px;
+    }
+
+    /* ---------- Phòng chơi (room.html) ---------- */
+    .room-page {
+        padding: 84px 12px 32px;
+    }
+
+    .room-card {
+        padding: 22px 14px;
+        border-radius: 24px;
+    }
+
+    .room-choice {
+        padding: 18px;
+    }
+
+    .room-page .room-btn {
+        min-height: 52px;
+        font-size: 20px;
+    }
+
+    .room-players {
+        grid-template-columns: 1fr;
+    }
+
+    .room-code {
+        font-size: clamp(36px, 13vw, 52px);
+        letter-spacing: 4px;
+    }
+
+    /* ---------- Màn LEARN: kích thước cơ bản ---------- */
+    .learn-screen {
+        height: 100vh;
+        height: 100dvh;
+        padding: 12px;
+        gap: 12px;
+        overflow-y: auto;
+        justify-content: center;
+        justify-content: safe center;
+    }
+
+    .learn-progress {
+        width: min(700px, 100%);
+    }
+
+    .learn-box {
+        width: min(850px, 100%);
+        padding: 22px 18px;
+        border-radius: 22px;
+    }
+
+    #typingWord {
+        font-size: 40px;
+    }
+
+    .typing-meaning {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    .choice-btn {
+        height: 90px;
+        font-size: 20px;
+    }
+
+    .sentence-example {
+        font-size: 26px;
+    }
+
+    .sentence-btn {
+        height: 80px;
+        font-size: 24px;
+    }
+
+    .match-item {
+        height: 56px;
+        font-size: 18px;
+    }
+
+    .loading-box h2 {
+        font-size: 26px;
+    }
+
+    .loading-success {
+        font-size: 26px;
+    }
+
+    .loading-subtitle {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* thanh điều hướng quá chật: ẩn logo, "Trang chủ" đã đủ để quay về */
+    .navbar>.logo {
+        display: none;
+    }
+
+    .nav-menu {
+        margin-left: 0;
+    }
+}
+
+
+/* ===========================================================
+   3. TRANG GAME.HTML (chọn trò chơi) - ĐIỆN THOẠI DỌC
+   Sidebar chuyển xuống thành thanh dưới đáy, lưới card 2 cột.
+   =========================================================== */
+@media (orientation: portrait) and (max-width: 700px) {
+
+    .container {
+        flex-direction: column-reverse;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+    }
+
+    .sidebar {
+        flex: none;
+        width: 100%;
+        height: calc(58px + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -6px 20px rgba(6, 40, 58, .25);
+    }
+
+    .sidebar:hover {
+        width: 100%;
+    }
+
+    .menu-list {
+        flex-direction: row;
+        height: 58px;
+    }
+
+    .menu-item-back,
+    .menu-item-room,
+    .menu-item-document {
+        flex: 1;
+        height: 58px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .letter {
+        width: auto;
+        font-size: 20px;
+    }
+
+    .text {
+        margin-left: 6px;
+        font-size: 14px;
+        opacity: 1;
+    }
+
+    .game-grid,
+    .has-player .game-grid {
+        flex: 1;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 12px;
+        gap: 12px;
+        overflow-y: auto;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: none;
+        grid-auto-rows: 128px;
+    }
+
+    .has-player .game-grid {
+        padding-top: 62px;
+    }
+
+    .player.floating {
+        top: 10px;
+        left: 10px;
+    }
+
+    .game-grid .game-card {
+        grid-column: auto;
+        grid-row: auto;
+        border-radius: 24px;
+        box-shadow: 0 6px 0 rgba(14, 56, 80, .2);
+    }
+
+    .game-grid .learn.game-card {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        gap: 14px;
+    }
+
+    .play-icon {
+        font-size: 48px;
+    }
+
+    .learn h2 {
+        font-size: 36px;
+        margin-top: 0;
+    }
+
+    .game-card::before {
+        font-size: 32px;
+    }
+
+    .game-card h2 {
+        font-size: clamp(17px, 5vw, 22px);
+    }
+}
+
+
+/* ===========================================================
+   4. ĐIỆN THOẠI NGANG (chiều cao <= 500px)
+   Khối này đặt cuối để thắng mọi rule dọc phía trên.
+   =========================================================== */
+@media (orientation: landscape) and (max-height: 500px) {
+
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* ---------- Thanh điều hướng ---------- */
+    .navbar {
+        top: 6px;
+        left: 8px;
+        width: calc(100% - 16px);
+        height: 48px;
+        padding: 0 12px;
+        border-radius: 16px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .navbar>.logo {
+        display: block;
+    }
+
+    .nav-menu {
+        margin-left: 16px;
+        gap: 4px;
+    }
+
+    .nav-menu a {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    /* ô tên người chơi nằm gọn trong thanh, không tụt xuống dưới */
+    .navbar>.player {
+        position: static;
+        margin: 0 8px 0 0;
+    }
+
+    .navbar .player .player-chip {
+        max-width: 150px;
+        font-size: 14px;
+    }
+
+    /* ---------- Trang chủ: giữ bố cục hai cột ---------- */
+    .hero {
+        flex-direction: row;
+        height: auto;
+        min-height: 100vh;
+        padding: 72px 24px 56px;
+        gap: 16px;
+    }
+
+    .hero-left {
+        width: auto;
+        flex: 1;
+    }
+
+    .hero-right {
+        flex: 1;
+        margin-right: 0;
+    }
+
+    .hero .mascot-image {
+        width: min(300px, 100%);
+        height: min(58vh, 230px);
+    }
+
+    .mascot-desc {
+        display: none;
+    }
+
+    .hero-title {
+        font-size: 44px;
+        margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+    }
+
+    .scroll-down {
+        width: 64px;
+        height: 64px;
+        bottom: -32px;
+        font-size: 13px;
+    }
+
+    .intro-section,
+    .room-section,
+    .document-section {
+        flex-direction: row;
+        gap: 24px;
+        min-height: 100vh;
+        padding: 72px 24px 40px;
+    }
+
+    .intro-left,
+    .room-left,
+    .room-right {
+        width: auto;
+        flex: 1;
+        max-width: none;
+    }
+
+    .intro-right {
+        flex: 1;
+        max-width: none;
+    }
+
+    .intro-right img {
+        max-height: 70vh;
+    }
+
+    .room-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        max-height: 70vh;
+    }
+
+    .intro-left p,
+    .room-text,
+    .document-text {
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+    .start-btn,
+    .create-btn,
+    .enter-btn {
+        width: 180px;
+        height: 52px;
+        font-size: 20px;
+    }
+
+    .document-box {
+        flex-direction: row;
+        height: auto;
+        max-height: 80vh;
+    }
+
+    .document-left {
+        width: 45%;
+        height: auto;
+    }
+
+    .document-right {
+        width: 55%;
+        padding: 16px;
+    }
+
+    .footer {
+        padding: 32px 16px;
+    }
+
+    /* ---------- Popup ---------- */
+    .settings-popup button {
+        margin: 6px auto;
+    }
+
+    /* ---------- Màn hình nhập tên ---------- */
+    .login-card {
+        width: min(400px, 100%);
+        padding: 18px 24px;
+        border-radius: 24px;
+    }
+
+    .login-card h2 {
+        font-size: 26px;
+    }
+
+    .login-card p {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .login-card .login-input {
+        padding: 8px 14px;
+        font-size: 20px;
+    }
+
+    .login-error {
+        min-height: 18px;
+        margin: 6px 0 8px;
+    }
+
+    .login-card .login-btn {
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .login-card .login-cancel {
+        margin-top: 6px;
+        padding: 4px 12px;
+    }
+
+    /* ---------- Trang tài liệu ---------- */
+    :root {
+        --col-class: 96px;
+    }
+
+    body:has(.tabs) {
+        padding: 6px 12px 8px;
+    }
+
+    .tabs {
+        margin-left: 16px;
+    }
+
+    .tab {
+        height: 36px;
+        min-width: 110px;
+        font-size: 16px;
+    }
+
+    .pill {
+        min-height: 38px;
+        font-size: 15px;
+    }
+
+    .c {
+        padding: 3px 6px;
+    }
+
+    .panel {
+        border-radius: 22px;
+        border-width: 3px;
+    }
+
+    /* ---------- Hồ sơ ---------- */
+    .pf {
+        max-width: 900px;
+        padding: 72px 24px 32px;
+    }
+
+    .pf-stats {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+
+    .pf-bars {
+        height: 120px;
+    }
+
+    /* ---------- Phòng chơi ---------- */
+    .room-page {
+        padding: 64px 16px 24px;
+    }
+
+    .room-wrap {
+        width: min(900px, 100%);
+    }
+
+    .room-card {
+        padding: 18px 20px;
+    }
+
+    .room-card h1 {
+        font-size: 30px;
+    }
+
+    .room-lead {
+        margin-bottom: 14px;
+    }
+
+    .room-choices {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .room-modes {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+
+    .room-players {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    /* ---------- Trang game.html: sidebar dọc hẹp bên trái ---------- */
+    .container {
+        flex-direction: row;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    .sidebar {
+        flex: none;
+        width: 56px;
+        height: auto;
+        padding-bottom: 0;
+        box-shadow: 6px 0 24px rgba(6, 40, 58, .25);
+    }
+
+    .sidebar:hover {
+        width: 56px;
+    }
+
+    .menu-list {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .menu-item-back,
+    .menu-item-room,
+    .menu-item-document {
+        flex: none;
+        height: 54px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .letter {
+        width: auto;
+        font-size: 24px;
+    }
+
+    .text {
+        display: none;
+    }
+
+    .game-grid,
+    .has-player .game-grid {
+        flex: 1;
+        width: auto;
+        height: 100%;
+        min-height: 0;
+        padding: 10px 12px;
+        gap: 10px;
+        overflow: hidden;
+        grid-template-columns: 1fr 1.7fr;
+        grid-template-rows: repeat(3, 1fr);
+        grid-auto-rows: auto;
+    }
+
+    .has-player .game-grid {
+        padding-top: 54px;
+    }
+
+    .player.floating {
+        top: 6px;
+        left: calc(66px + env(safe-area-inset-left));
+    }
+
+    /* trả các card về vị trí như trên máy tính (landing.css đã xếp lại thành 1 cột) */
+    .game-grid .game-card {
+        border-radius: 24px;
+        box-shadow: 0 6px 0 rgba(14, 56, 80, .2);
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .game-grid .learn.game-card {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    .game-grid .wordhunt.game-card {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .game-grid .hangman.game-card {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .game-grid .wordpuzzle.game-card {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .game-grid .wordchain.game-card {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .play-icon {
+        font-size: 48px;
+    }
+
+    .learn h2 {
+        font-size: clamp(28px, 5vw, 40px);
+        margin-top: 0;
+    }
+
+    .game-card::before {
+        font-size: 26px;
+    }
+
+    .game-card h2 {
+        font-size: clamp(18px, 3.4vw, 26px);
+    }
+
+    /* ẩn ô tên khi đang chơi LEARN để không đè lên thanh tiến trình */
+    body:has(#learnScreen[style*="flex"]) .player.floating {
+        display: none;
+    }
+
+    /* ---------- Màn LEARN: thu gọn để vừa chiều cao ~360-400px ---------- */
+    .learn-screen {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .progress-message {
+        height: 20px;
+        font-size: 14px;
+    }
+
+    .progress-bar {
+        height: 10px;
+    }
+
+    .learn-box {
+        padding: 12px 20px 14px;
+        border-radius: 20px;
+    }
+
+    .typing-header {
+        margin-bottom: 6px;
+        font-size: 18px;
+    }
+
+    .typing-word {
+        margin-bottom: 4px;
+    }
+
+    #typingWord {
+        font-size: 34px;
+    }
+
+    .typing-class {
+        font-size: 18px;
+    }
+
+    .typing-meaning {
+        margin: 0 0 8px;
+        font-size: 18px;
+    }
+
+    #typingInput {
+        height: 46px;
+        margin-top: 0;
+        font-size: 22px;
+        border-radius: 12px;
+    }
+
+    .choice-box {
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .choice-btn {
+        height: 54px;
+        font-size: 18px;
+        border-radius: 14px;
+    }
+
+    .match-box {
+        margin-top: 8px;
+        gap: 14px;
+    }
+
+    .match-column {
+        gap: 6px;
+    }
+
+    .match-item {
+        height: 38px;
+        font-size: 16px;
+        border-radius: 12px;
+    }
+
+    .sentence-example {
+        min-height: 56px;
+        margin-bottom: 8px;
+        font-size: clamp(20px, 3.4vw, 26px);
+    }
+
+    .sentence-hint {
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+
+    .sentence-choice {
+        gap: 12px;
+    }
+
+    .sentence-btn {
+        height: 56px;
+        font-size: 20px;
+        border-radius: 14px;
+    }
+
+    .loading-box {
+        gap: 12px;
+    }
+
+    .loading-spinner {
+        width: 44px;
+        height: 44px;
+        border-width: 6px;
+    }
+
+    .loading-box h2 {
+        font-size: 22px;
+    }
+
+    .loading-success {
+        font-size: 22px;
+    }
+
+    .loading-subtitle {
+        margin-top: 6px;
+        font-size: 16px;
+    }
+
+    /* ---------- Bảng kết quả: hai cột (vòng điểm | danh sách điểm) ---------- */
+    .result-screen {
+        padding: 8px;
+    }
+
+    .result-card {
+        width: min(780px, 100%);
+        padding: 12px 20px 14px;
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        column-gap: 22px;
+        align-items: center;
+        border-radius: 22px;
+        box-shadow: 0 6px 0 var(--rs-ink);
+    }
+
+    .result-card>* {
+        grid-column: 1 / -1;
+    }
+
+    .result-title {
+        margin: 0 0 4px;
+        font-size: 22px;
+    }
+
+    .result-ring {
+        grid-column: 1;
+        grid-row: 2;
+        width: 112px;
+        height: 112px;
+        margin: 0 auto 2px;
+    }
+
+    .ring-percent {
+        font-size: 28px;
+    }
+
+    .ring-total {
+        font-size: 12px;
+    }
+
+    .result-rank {
+        grid-column: 1;
+        grid-row: 3;
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .result-message {
+        grid-column: 1;
+        grid-row: 4;
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .result-list {
+        grid-column: 2;
+        grid-row: 2 / span 3;
+        margin: 0;
+    }
+
+    .result-row+.result-row {
+        margin-top: 6px;
+    }
+
+    .result-row-head {
+        font-size: 14px;
+    }
+
+    .result-bar {
+        height: 8px;
+    }
+
+    .result-actions {
+        grid-row: 5;
+        flex-direction: row;
+        margin-top: 10px;
+    }
+
+    .result-btn {
+        padding: 8px 10px;
+        font-size: 15px;
+    }
+
+    /* ---------- Các trang trò chơi (body.game-page) ---------- */
+    body.game-page {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    /* ô nhập đủ lớn để chạm, chữ >= 16px để iOS không tự phóng to */
+    body.game-page input {
+        margin-top: 6px;
+        padding: 8px 14px;
+        font-size: 18px;
+    }
+
+    body.game-page .submit-button {
+        min-height: 44px;
+    }
+
+    /* WORDCHAIN: thu nhỏ khung chat cho vừa chiều cao */
+    body.game-page .bubble-chat {
+        max-width: 72%;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    body.game-page .avatar img {
+        width: 28px;
+        height: 28px;
+    }
+
+    body.game-page .meaning-toggle {
+        min-height: 32px;
+    }
+
+    body.game-page .notice {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+}

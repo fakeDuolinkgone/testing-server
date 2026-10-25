@@ -186813,7 +186813,7 @@
     "word": "nigger",
     "pronounce": "/'nigə/",
     "type": "danh từ (thường), quổi người da đen",
-    "meaning": "màu nâu sẫm, màu sôcôla"
+    "meaning": "thằng da màu >:("
   },
   {
     "word": "niggle",

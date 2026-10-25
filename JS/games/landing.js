@@ -3,6 +3,7 @@
 const MASCOTS = [
     { src: "pics/mascotPics/mascotFish_main.png", name: "Fishy The Fish", desc: "Người hỗ trợ dữ liệu từ vựng."},
     { src: "pics/mascotPics/iconWebsite_onlyRaccoon.png", name: "Racc_kun", desc: "Mình là Khôi, 1 trong 2 dev của game" },
+    { src: "pics/mascotPics/mascotMrNam_main.gif", name: "Mr Nam", desc: "Học tiếng anh cùng Mr Nam"},
     { src: "pics/mascotPics/mascotEastDragon_main.gif", name: "Jn", desc: "Rồng họa sĩ biết nói."},
     { src: "pics/mascotPics/mascotCalicoCat_main.png", name: "Ether", desc: "Mèo méo meo mèo meo"},
     { src: "pics/mascotPics/mascotWukong_main.gif", name: "Tuấn", desc: "Cao thủ Liqi nè" },
