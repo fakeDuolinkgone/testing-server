@@ -153,7 +153,6 @@ html.login-pending body > :not(.login-gate) { visibility: hidden; }
     transition: background .15s;
 }
 .player .player-menu-item:hover { background: #eaf6fb; transform: none; }
-.player a.player-menu-item { text-decoration: none; box-sizing: border-box; }
 .player .player-menu-item:focus-visible { outline: 3px solid var(--sun, #ff8b00); outline-offset: -3px; }
 
 

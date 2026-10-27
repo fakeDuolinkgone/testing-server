@@ -983,3 +983,141 @@
   .result-screen, .result-card, .result-row { animation: none; }
   .result-bar-fill, .result-btn { transition: none; }
 }
+
+
+
+
+
+
+/* ===========================================================
+   LEARN co giãn theo chiều rộng màn hình
+   >>> DÁN VÀO CUỐI game.css (sau tất cả các rule LEARN cũ) <<<
+
+   Sửa lỗi "béo": trước đây hộp câu hỏi cố định 850px, thanh tiến trình 700px,
+   chữ 60px, nút cao 130px nên màn hình hẹp bị tràn và cắt hai bên.
+   Ở đây mọi kích thước đều co giãn bằng min() / clamp(), và các cột lưới dùng
+   minmax(0, 1fr) để chữ dài không thể làm cột phình ra.
+   Không đụng vào display: game.js vẫn điều khiển hiện/ẩn như cũ.
+   =========================================================== */
+
+/* ---------- Khung chung ---------- */
+.learn-screen {
+  box-sizing: border-box;
+  height: 100vh;
+  height: 100dvh;
+  padding: clamp(8px, 2vw, 20px);
+  overflow-y: auto;
+  justify-content: center;
+  justify-content: safe center;
+}
+
+.learn-progress { width: min(700px, 100%); }
+.progress-message { font-size: clamp(14px, 2.6vw, 18px); }
+
+.learn-box {
+  width: min(850px, 100%);
+  padding: clamp(16px, 4.5vw, 45px);
+  border-radius: clamp(18px, 3.4vw, 30px);
+}
+
+/* ---------- Gõ từ ---------- */
+.typing-header {
+  margin-bottom: clamp(14px, 4vw, 40px);
+  font-size: clamp(18px, 3.4vw, 26px);
+}
+
+.typing-word {
+  flex-wrap: wrap;
+  gap: clamp(8px, 1.8vw, 14px);
+  margin-bottom: clamp(8px, 2.4vw, 20px);
+}
+
+#typingWord {
+  font-size: clamp(30px, 8vw, 60px);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.typing-class { font-size: clamp(16px, 3.4vw, 28px); }
+
+.typing-meaning {
+  margin: 0 0 clamp(18px, 4.5vw, 45px);
+  font-size: clamp(16px, 3.4vw, 28px);
+}
+
+#typingInput {
+  box-sizing: border-box;
+  height: clamp(50px, 9vw, 70px);
+  font-size: clamp(20px, 4.6vw, 34px);
+  border-radius: clamp(12px, 2.4vw, 18px);
+}
+
+/* ---------- Trắc nghiệm ---------- */
+.choice-box {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2.6vw, 22px);
+  margin-top: clamp(18px, 4vw, 35px);
+}
+
+.choice-btn {
+  height: clamp(70px, 14vw, 130px);
+  padding: 8px 12px;
+  font-size: clamp(16px, 3.2vw, 28px);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  border-radius: clamp(12px, 2.4vw, 18px);
+}
+
+/* ---------- Nối cột ---------- */
+.match-box {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 3vw, 25px);
+  margin-top: clamp(16px, 4vw, 35px);
+}
+
+.match-column {
+  min-width: 0;
+  gap: clamp(8px, 2vw, 15px);
+}
+
+.match-item {
+  height: clamp(48px, 9vw, 70px);
+  padding: 0 10px;
+  font-size: clamp(15px, 3vw, 24px);
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+  border-radius: clamp(12px, 2.4vw, 18px);
+}
+
+/* ---------- Điền vào chỗ trống ---------- */
+.sentence-example {
+  min-height: clamp(70px, 16vw, 120px);
+  margin-bottom: clamp(14px, 3vw, 25px);
+  font-size: clamp(22px, 5.4vw, 42px);
+  overflow-wrap: anywhere;
+}
+
+.sentence-hint {
+  margin-bottom: clamp(20px, 5vw, 45px);
+  font-size: clamp(16px, 3.4vw, 28px);
+  text-align: center;
+}
+
+.sentence-choice {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 3vw, 25px);
+}
+
+.sentence-btn {
+  height: clamp(62px, 13vw, 120px);
+  padding: 8px 12px;
+  font-size: clamp(18px, 4vw, 34px);
+  overflow-wrap: anywhere;
+  border-radius: clamp(14px, 3vw, 22px);
+}
+
+/* ---------- Màn chuyển phần ---------- */
+.loading-box h2 { font-size: clamp(22px, 5vw, 36px); text-align: center; }
+.loading-success { font-size: clamp(22px, 5vw, 34px); }
+.loading-subtitle { font-size: clamp(16px, 3.6vw, 24px); }

@@ -13,15 +13,6 @@
    =========================================================== */
 
 
-/* ===========================================================
-   0. NỀN TẢNG
-   =========================================================== */
-html {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-}
-
-body { -webkit-font-smoothing: antialiased; }
 
 /* chặn tràn ngang trên điện thoại: không phần tử nào được rộng hơn màn hình */
 @media (max-width: 700px) {
