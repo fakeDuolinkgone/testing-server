@@ -56,6 +56,18 @@
         },
         "joined": {
           ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "placement": {
+          ".validate": "newData.hasChildren(['score', 'total', 'at'])",
+          "score": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+          },
+          "total": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+          },
+          "at": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
         }
       }
     }

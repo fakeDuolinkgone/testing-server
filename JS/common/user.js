@@ -1,6 +1,7 @@
 /* ===========================================================
    user.js - "Đăng nhập" bằng tên
-   - Chưa có tên  -> hiện màn hình nhập tên.
+   - Chưa có tên  -> hiện màn chào (onboarding.js): chọn Đăng ký / Khách, rồi làm
+                     bài kiểm tra nhỏ. (Không nạp được thì dùng màn nhập tên đơn giản.)
    - Đã có tên    -> hiện tên ở góc trái trên (bấm vào để đổi tên).
    Tên được lưu trong localStorage nên các trang khác và lần mở
    sau vẫn nhớ. Gắn file này vào <head> của trang cần dùng.
@@ -188,10 +189,28 @@
 
 
     /* ---------- khởi động ---------- */
+    // Người mới toàn tập: bảng chọn Đăng ký / Khách rồi làm bài kiểm tra nhỏ (JS/common/onboarding.js).
+    // Không nạp được file đó thì quay về màn nhập tên đơn giản như cũ.
+    function startOnboarding() {
+        root.classList.add("login-pending");
+        var src = "";
+        try { src = new URL("onboarding.js", SCRIPT_SRC).href; } catch (e) { /* dùng màn nhập tên cũ */ }
+        if (!src) { openGate(false); return; }
+
+        var s = document.createElement("script");
+        s.src = src;
+        s.onload = function () {
+            if (window.normaOnboarding) window.normaOnboarding.start();
+            else openGate(false);
+        };
+        s.onerror = function () { openGate(false); };
+        document.head.appendChild(s);
+    }
+
     function init() {
         var name = readName();
         if (name) showName(name);
-        else openGate(false);
+        else startOnboarding();
     }
 
     // Cho các trang khác dùng sau này (ví dụ ghi tên vào bảng kết quả)
