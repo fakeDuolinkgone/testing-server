@@ -46,23 +46,23 @@
             play: "WORDHUNT, WORDPUZZLE, WORDCHAIN hoặc HANGMAN"
         },
         wordhunt: {
-            icon: "🔍", name: "Liệt kê từ", maxPlay: 5000,
+            icon: "🔍", name: "WORDHUNT", maxPlay: 5000,
             metric: "Tổng điểm đã chơi ở WORDHUNT. Thời gian chỉ để xem."
         },
         wordpuzzle: {
-            icon: "🧩", name: "Dò ô chữ", maxPlay: 20000,
+            icon: "🧩", name: "WORDPUZZLE", maxPlay: 20000,
             metric: "Tổng điểm đã chơi ở WORDPUZZLE. Thời gian chỉ để xem."
         },
         hangman: {
-            icon: "❓", name: "Đoán từ", maxPlay: 10,
+            icon: "❓", name: "HANGMAN", maxPlay: 10,
             metric: "Tổng điểm (số từ đoán đúng) ở HANGMAN. Thời gian chỉ để xem."
         },
         wordchain: {
-            icon: "🔗", name: "Nối từ", maxPlay: 5000, hasBest: true,
+            icon: "🔗", name: "WORDCHAIN", maxPlay: 5000, hasBest: true,
             metric: "Tổng điểm đã chơi ở WORDCHAIN, kèm RANK cao nhất đã đạt. Thời gian chỉ để xem."
         },
         learn: {
-            icon: "🎓", name: "Learn", maxPlay: 40,
+            icon: "🎓", name: "LEARN", maxPlay: 40,
             metric: "Tổng số câu đúng ở LEARN. Thời gian chỉ để xem (không tính vào Bảng thi đua)."
         }
     };
@@ -134,8 +134,12 @@
     }
 
     function myUid() { var st = window.normaStats; return st && st.uid ? st.uid() : ""; }
+    // Tên người chơi: ưu tiên normaPlayer (user.js); trang game không nạp user.js thì đọc thẳng
+    // từ localStorage, cùng khóa mà user.js dùng để lưu tên.
     function playerName() {
-        var n = window.normaPlayer && window.normaPlayer.getName ? window.normaPlayer.getName() : "";
+        var n = "";
+        try { n = window.normaPlayer && window.normaPlayer.getName ? window.normaPlayer.getName() : ""; } catch (e) { /* bỏ qua */ }
+        if (!n) { try { n = localStorage.getItem("normafix.playerName") || ""; } catch (e) { /* bỏ qua */ } }
         return (n || "Ẩn danh").slice(0, 30);
     }
     function asArr(x) {
