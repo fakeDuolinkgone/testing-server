@@ -21,6 +21,9 @@ const RESULT_RANKS = [
 const input = $("wordInput"), submitBtn = $("submitBtn"), chatArea = $("chatArea");
 const timerBox = $("timer"), mistakeBox = $("mistake"), settingsOverlay = $("settingsOverlay");
 
+const params = new URLSearchParams(location.search);
+const SOLO = params.has("solo");                  // chơi đơn với bot: wordChainMulti.html?solo=1&bots=3
+
 let net = null, clock = Date.now, startAt = 0, intro = true;
 let S = null;                                   // trạng thái ván mới nhất từ máy chủ
 let seen = new Set();                           // các lượt đã vẽ vào chat
@@ -310,9 +313,13 @@ $("resultHomeBtn").addEventListener("click", () => leave(HOME));
 /* ================= KHỞI ĐỘNG ================= */
 (async () => {
   try {
-    const engine = BossNet.create();                         // cần Firebase đã cấu hình (JS/net/firebase-config.js)
-    if (!(await engine.resume())) { location.href = LOBBY; return; }
-    net = WordChainNet.connect(engine);
+    if (SOLO) {
+      net = WordChainNet.createSolo({ bots: +params.get("bots") || 3, speed: +params.get("speed") || 1, name: "Bạn" });
+    } else {
+      const engine = BossNet.create();                       // cần Firebase đã cấu hình (JS/net/firebase-config.js)
+      if (!(await engine.resume())) { location.href = LOBBY; return; }
+      net = WordChainNet.connect(engine);
+    }
   } catch (e) {
     console.error(e);
     $("mpIntroSub").textContent = "Không kết nối được: " + (e.message || e.code || "lỗi mạng");

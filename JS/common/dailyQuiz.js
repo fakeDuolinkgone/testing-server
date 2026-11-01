@@ -103,8 +103,8 @@
         overlay.className = "dq-overlay";
         overlay.innerHTML =
             '<div class="dq-card" role="dialog" aria-modal="true" aria-labelledby="dqTitle">' +
-              '<button type="button" class="dq-x" aria-label="Đóng">✕</button>' +
-              '<div class="dq-body"></div>' +
+            '<button type="button" class="dq-x" aria-label="Đóng">✕</button>' +
+            '<div class="dq-body"></div>' +
             '</div>';
         body = overlay.querySelector(".dq-body");
 
@@ -334,7 +334,7 @@
             var diff = score - prev.last;
             var text = diff > 0 ? "📈 Tăng " + diff + " điểm so với lần trước"
                 : diff < 0 ? "📉 Giảm " + (-diff) + " điểm so với lần trước"
-                : "➡️ Bằng lần trước";
+                    : "➡️ Bằng lần trước";
             delta = el("p", "dq-delta " + (diff > 0 ? "up" : diff < 0 ? "down" : ""), text);
             if (score > prev.best) delta.textContent += " · Kỷ lục hôm nay! 🏅";
         }

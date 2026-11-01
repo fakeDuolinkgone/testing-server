@@ -351,6 +351,8 @@
 }
 
 .footer-text {
+    justify-content: center;
+    align-items: center;
     color: white;
     font-size: 22px;
 
@@ -362,7 +364,18 @@
     font-size: 16px;
 }
 
-
+.feedback-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 12px;
+    background: #faf9f9;
+    color: #0E3850;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .25s;
+}
 
 /* ===========================================================
    THEME - background + look for index.html and game.html
@@ -925,8 +938,12 @@ body {
     /* không có background, chỉ có chữ */
 }
 
-.mascot-desc.is-fading { opacity: 0; }
+.mascot-desc.is-fading {
+    opacity: 0;
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .mascot-desc { transition: none; }
+    .mascot-desc {
+        transition: none;
+    }
 }

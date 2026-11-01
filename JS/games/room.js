@@ -82,18 +82,42 @@
         return net.getPlayers().filter(function (p) { return p.online; }).length;
     }
 
+    /* Nút "Chơi đơn": tự tạo ngay sau nút Bắt đầu (không cần sửa room.html) */
+    function ensureSoloBtn() {
+        var btn = $("soloBtn");
+        if (btn) return btn;
+        btn = document.createElement("button");
+        btn.id = "soloBtn";
+        btn.type = "button";
+        btn.className = $("startBtn").className + " room-solo";
+        btn.addEventListener("click", startSolo);
+        $("startBtn").insertAdjacentElement("afterend", btn);
+        return btn;
+    }
+
+    /* Chơi đơn với bot: rời phòng này rồi mở trang game ở chế độ ?solo=1 */
+    async function startSolo() {
+        var url = selectedMode && GameModes.soloOf(selectedMode);
+        if (!url) return;
+        if (onlineCount() > 1 && !confirm("Chơi đơn sẽ đưa bạn ra khỏi phòng này (những người khác vẫn ở lại). Tiếp tục?")) return;
+        $("soloBtn").disabled = true;
+        try { await net.leaveRoom(); } catch (e) { /* vẫn cho chơi đơn */ }
+        location.href = url;
+    }
+
     /* Lưới chế độ chơi + dòng thông tin + nút Bắt đầu. Gọi lại mỗi khi danh sách người hoặc chế độ đổi. */
     function renderLobby() {
         var host = net.isHost();
         var n = onlineCount();
         var mode = selectedMode ? GameModes.get(selectedMode) : null;
-        if (mode && !mode.available) mode = null;          // phòng đang trỏ vào chế độ chưa có thì coi như chưa chọn
+        if (mode && !mode.available && !mode.soloOnly) mode = null;   // phòng đang trỏ vào chế độ chưa có thì coi như chưa chọn
+        var multi = !!mode && mode.available;                         // chế độ chơi nhiều người được
 
         renderModes(host);
 
-        var enough = !!mode && n >= mode.minPlayers();
+        var enough = multi && n >= mode.minPlayers();
         $("roomInfo").textContent = mode
-            ? n + " người chơi  •  " + mode.name + "  •  " + mode.summary(n)
+            ? n + " người chơi  •  " + mode.name + "  •  " + (multi ? mode.summary(n) : "chỉ có chơi đơn")
             : n + " người chơi  •  chưa chọn chế độ chơi";
         $("modeHint").textContent = host
             ? "Bấm vào một chế độ để chọn. Các chế độ khác sẽ sớm có mặt."
@@ -102,8 +126,15 @@
         $("startBtn").hidden = !host;
         $("startBtn").disabled = !enough;
         $("startBtn").textContent = !mode ? "Hãy chọn chế độ chơi"
+            : !multi ? "Chế độ này chỉ có chơi đơn"
             : enough ? "Bắt đầu " + mode.name
             : "Cần ít nhất " + mode.minPlayers() + " người";
+        var solo = mode && GameModes.soloOf(mode.id), sb = ensureSoloBtn();
+        sb.disabled = !solo;
+        sb.textContent = !mode ? "Chọn chế độ để chơi đơn"
+            : solo ? "🤖 Chơi đơn với máy"
+            : "Chế độ này chưa có chơi đơn";
+
         $("waitText").hidden = host;
         $("waitText").textContent = mode
             ? "Đang chờ chủ phòng bắt đầu " + mode.name + "…"
@@ -118,10 +149,11 @@
             btn.type = "button";
             btn.className = "room-mode";
             btn.setAttribute("role", "radio");
-            var picked = m.id === selectedMode && m.available;
+            var pickable = m.available || m.soloOnly;
+            var picked = m.id === selectedMode && pickable;
             btn.setAttribute("aria-checked", picked ? "true" : "false");
             if (picked) btn.classList.add("is-selected");
-            if (!m.available) { btn.classList.add("is-soon"); btn.disabled = true; }
+            if (!pickable) { btn.classList.add("is-soon"); btn.disabled = true; }
             else if (!isHost) btn.disabled = true;          // khách chỉ xem, không bấm chọn được
 
             var ic;
@@ -143,13 +175,13 @@
             ds.textContent = m.desc;
             btn.appendChild(ic); btn.appendChild(nm); btn.appendChild(ds);
 
-            if (!m.available) {
+            if (!pickable || m.soloOnly) {
                 var tag = document.createElement("span");
                 tag.className = "room-mode-tag";
-                tag.textContent = "Sắp ra mắt";
+                tag.textContent = m.soloOnly ? "Chỉ chơi đơn" : "Sắp ra mắt";
                 btn.appendChild(tag);
             }
-            if (m.available) btn.addEventListener("click", function () { chooseMode(m.id); });
+            if (pickable) btn.addEventListener("click", function () { chooseMode(m.id); });
             grid.appendChild(btn);
         });
     }
@@ -160,6 +192,7 @@
         var before = selectedMode;
         selectedMode = id;                                  // hiện ngay, mạng báo lỗi thì trả lại
         renderLobby();
+        if (!GameModes.get(id).available) return;            // chế độ chỉ chơi đơn: chọn trên máy này thôi, không ghi lên phòng
         try { await net.setMode(id); }
         catch (e) { selectedMode = before; renderLobby(); $("lobbyError").textContent = message(e); }
     }
@@ -207,6 +240,7 @@
     async function start() {
         $("lobbyError").textContent = "";
         if (!selectedMode) { $("lobbyError").textContent = "Hãy chọn chế độ chơi trước."; return; }
+        if (!GameModes.get(selectedMode).available) { $("lobbyError").textContent = "Chế độ này chỉ có chơi đơn."; return; }
         $("startBtn").disabled = true;
         try { await net.startGame(); }
         catch (e) { $("lobbyError").textContent = message(e); $("startBtn").disabled = false; }

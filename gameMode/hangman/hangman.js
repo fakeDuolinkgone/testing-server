@@ -170,7 +170,7 @@ function guess(btn) {
 function endRound(win) {
   locked = true;
   clearInterval(timer);
-  results.push({ word, ok: win, wrong, cls: words[idx].cls, meaning: words[idx].meaning });
+  results.push({ word, ok: win, wrong, cls: words[idx].cls, meaning: words[idx].meaning, secs: TIME - left });
 
   if (win) {
     say(word);
@@ -193,6 +193,10 @@ function endRound(win) {
 /* ================= BẢNG KẾT QUẢ ================= */
 function showResult() {
   const score = results.filter(r => r.ok).length;
+
+  const secs = results.reduce((s, r) => s + (r.secs || 0), 0);
+  if (window.normaBoard) normaBoard.submit("hangman", { score: score, secs: secs });
+  
   const pct = Math.round(score / results.length * 100);
   const rank = pct >= 90 ? "Xuất sắc! 🏆" : pct >= 70 ? "Rất tốt! 🎉" : pct >= 50 ? "Khá ổn 👍" : "Cố lên! 💪";
 

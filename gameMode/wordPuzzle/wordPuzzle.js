@@ -257,7 +257,9 @@ async function runGame(info) {
     net.submitLevel(level + 1, score, totalMs, level === N - 1);   // ghi 1 lần sau mỗi level
     await reveal();
   }
-  if (SINGLE) showFinal(net.result());          // chơi đơn: không phải chờ ai, có kết quả ngay
+  if (!FAST && window.normaBoard) normaBoard.submit("wordpuzzle", { score: score, secs: totalMs / 1000 });   // THÊM
+
+  if (SINGLE) showFinal(net.result());
   else showWaiting();
 }
 

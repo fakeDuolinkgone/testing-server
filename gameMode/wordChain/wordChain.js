@@ -1335,6 +1335,8 @@ function endGame(title, reason) {
     settingsOverlay.classList.remove("show");
     input.disabled = true;
     if (submitBtn) submitBtn.disabled = true;
+    if (window.normaBoard) normaBoard.submit("wordchain", { score: score, sub: maxStreak });
+    if (window.normaBoard) normaBoard.submit("wordchain", { score: score, secs: Math.floor((Date.now() - startTime) / 1000), streak: maxStreak });
     showResult(title, reason);
 }
 

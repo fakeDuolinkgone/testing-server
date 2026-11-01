@@ -1,0 +1,132 @@
+/* ===========================================================
+   leaderboard.css  (đặt ở CSS/leaderboard.css, link trong <head> của index.html)
+   Bảng xếp hạng ở phần intro (JS/common/leaderboard.js tự dựng bên trong #leaderboard)
+   Dùng màu và font của landing.css (--deep, --sun, --gold, --display).
+   =========================================================== */
+.lb {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 18px 18px 16px;
+    border-radius: 28px;
+    background: #FDB515;
+    color: var(--deep, #0E3850);
+    font-family: var(--display, "Baloo 2", "Trebuchet MS", Arial, sans-serif);
+    text-align: left;
+    box-shadow: 0 10px 0 rgba(14, 56, 80, .18), 0 24px 48px rgba(6, 40, 58, .16);
+}
+
+.lb-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.lb-head h3 { margin: 0; font-size: clamp(22px, 5vw, 28px); font-weight: 800; line-height: 1.1; }
+
+.lb-refresh {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: #eaf6fb;
+    color: var(--deep, #0E3850);
+    font: 800 20px/1 var(--display, "Baloo 2", Arial, sans-serif);
+    cursor: pointer;
+    transition: transform .3s, background .2s;
+}
+.lb-refresh:hover { background: #d6eef5; transform: rotate(90deg); }
+
+/* thanh chọn bảng: tự xuống dòng nên luôn thấy đủ mọi tab, không phải kéo ngang */
+.lb-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 8px;
+    padding: 2px 0;
+}
+.lb-tab {
+    flex: none;
+    margin: 0;
+    padding: 7px 13px;
+    border: 0;
+    border-radius: 999px;
+    background: #eaf6fb;
+    color: inherit;
+    font: 700 14px var(--display, "Baloo 2", Arial, sans-serif);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .15s;
+}
+.lb-tab:hover { background: #d6eef5; }
+.lb-tab:active { transform: scale(.96); }
+.lb-tab[aria-selected="true"] { background: var(--deep, #0E3850); color: #fff; }
+.lb button:focus-visible { outline: 3px solid var(--sun, #ff8b00); outline-offset: 2px; }
+
+.lb-metric { margin: 2px 0 10px; min-height: 2.7em; font-size: 14px; line-height: 1.35; color: #4d6b7c; }
+
+/* danh sách */
+.lb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-height: 150px;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+}
+.lb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    background: #f1f9fc;
+}
+.lb-row.top1 { background: #fff2c2; }
+.lb-row.top2 { background: #eef2f5; }
+.lb-row.top3 { background: #fde6d2; }
+.lb-row.me { outline: 3px solid var(--sun, #ff8b00); outline-offset: -3px; }
+
+.lb-rank { flex: none; width: 34px; text-align: center; font-size: 20px; font-weight: 800; }
+.lb-who { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+.lb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; font-weight: 700; }
+.lb-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: #4d6b7c; }
+.lb-val { flex: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15; }
+.lb-score { font-size: 18px; font-weight: 800; color: #e07600; }
+.lb-sub { font-size: 12px; font-weight: 600; color: #4d6b7c; }
+
+.lb-dots { text-align: center; font-weight: 800; color: #93b0bf; letter-spacing: 4px; }
+.lb-empty { padding: 28px 12px; text-align: center; font-size: 16px; font-weight: 700; color: #4d6b7c; }
+.lb-me { margin: 10px 0 0; min-height: 20px; font-size: 15px; font-weight: 700; text-align: center; }
+
+/* khung chờ tải */
+.lb-row.skel { height: 44px; background: linear-gradient(90deg, #eef6f9 25%, #e0eef3 50%, #eef6f9 75%); background-size: 200% 100%; }
+@media (prefers-reduced-motion: no-preference) {
+    .lb-row.skel { animation: lbShimmer 1.2s linear infinite; }
+}
+@keyframes lbShimmer { to { background-position: -200% 0; } }
+
+/* trong phần intro */
+.intro-right .lb { margin: 0 auto; }
+
+@media (max-width: 700px) {
+    .lb { padding: 14px 12px 12px; border-radius: 22px; }
+    .lb-tab { padding: 6px 10px; font-size: 13px; }
+    .lb-metric { min-height: 0; font-size: 13px; }
+    .lb-row { padding: 7px 10px; gap: 8px; }
+    .lb-name { font-size: 15px; }
+    .lb-score { font-size: 15px; }
+    .lb-list { min-height: 130px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+    .lb { padding: 10px 14px; }
+    .lb-head h3 { font-size: 20px; }
+    .lb-list { max-height: 44vh; min-height: 0; overflow-y: auto; }
+    .lb-row { padding: 5px 10px; }
+    .lb-tab { padding: 4px 10px; font-size: 12px; }
+    .lb-metric { margin-bottom: 6px; min-height: 0; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lb-refresh, .lb-tab { transition: none; }
+}

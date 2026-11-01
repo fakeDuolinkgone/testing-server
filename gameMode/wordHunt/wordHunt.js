@@ -141,11 +141,15 @@ function tick() {
 
 // resumed: { score, count } khi vào lại sau lúc đã nộp bài (không nộp lần nữa)
 function endRound(resumed) {
+    const wasPlaying = running;
     clearInterval(timerID);
     running = false;
     input.disabled = true;
     $("readyScreen").classList.add("hidden");
     playFinish();
+    if (wasPlaying && !resumed && MODE !== "bots" && window.normaBoard) {   // THÊM
+        normaBoard.submit("wordhunt", { score: score, secs: GAME_SECONDS });
+    }
 
     if (resumed) { score = resumed.score; carry = resumed.count; }
     const count = found.length || carry;

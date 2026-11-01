@@ -8,6 +8,8 @@ let gameResult = {
   sentence: 0
 };
 
+let learnStartedAt = Date.now();
+
 const progressFill = document.getElementById("progressFill");
 const progressMessage = document.getElementById("progressMessage");
 const loadingScreen = document.getElementById("loadingScreen");
@@ -69,14 +71,16 @@ settingsOverlay?.addEventListener("click", e => {
 });
 
 function startLearn() {
+
   if (typeof vocabData === 'undefined') return; // Tránh lỗi nếu chưa nạp vocabData
   currentWords = [...vocabData]
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
 
+  learnStartedAt = Date.now();
   gameResult = { typing: 0, choice: 0, match: 0, sentence: 0 };
   currentMiniGame = 0;
-  
+
   if (gameGrid) gameGrid.style.display = "none";
   if (learnScreen) {
     learnScreen.style.display = "flex";
@@ -89,13 +93,13 @@ function nextMiniGame() {
   currentMiniGame++;
   switch (currentMiniGame) {
     case 1:
-      showLoading("✔ Speed Typing Completed!", "Preparing Choice...", typeof startChoice === 'function' ? startChoice : () => {});
+      showLoading("✔ Speed Typing Completed!", "Preparing Choice...", typeof startChoice === 'function' ? startChoice : () => { });
       break;
     case 2:
-      showLoading("✔ Choice Completed!", "Preparing Match...", typeof startMatch === 'function' ? startMatch : () => {});
+      showLoading("✔ Choice Completed!", "Preparing Match...", typeof startMatch === 'function' ? startMatch : () => { });
       break;
     case 3:
-      showLoading("✔ Match Completed!", "Preparing Sentence Fill...", typeof startSentenceFill === 'function' ? startSentenceFill : () => {});
+      showLoading("✔ Match Completed!", "Preparing Sentence Fill...", typeof startSentenceFill === 'function' ? startSentenceFill : () => { });
       break;
     default:
       showLoading("✔ Sentence Fill Completed!", "Calculating Result...", showResult);
@@ -165,7 +169,7 @@ function hideResult() {
 
 function showResult() {
   if (!resultScreen) return;
-  resultScreen.style.display = "flex";   
+  resultScreen.style.display = "flex";
   const keys = Object.keys(RESULT_MAX);
 
   const scores = keys.map(key => Math.max(0, Math.min(gameResult[key] || 0, RESULT_MAX[key])));
@@ -175,6 +179,7 @@ function showResult() {
 
   // Ghi vào hồ sơ (thống kê + thành tựu); bỏ qua nếu trang không nạp stats.js
   if (window.normaStats) window.normaStats.recordGame({ total, max });
+  if (window.normaBoard) window.normaBoard.submit("learn", { score: total, secs: Math.round((Date.now() - learnStartedAt) / 1000) });
 
   const rank = RESULT_RANKS.find(r => percent >= r.min);
   if (resultRank) resultRank.textContent = rank.title;
@@ -232,7 +237,7 @@ function animateResult(percent) {
 
   function tick(now) {
     const t = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3); 
+    const eased = 1 - Math.pow(1 - t, 3);
     setPercent(percent * eased);
     if (t < 1) requestAnimationFrame(tick);
   }
