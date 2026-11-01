@@ -4,10 +4,12 @@
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// speechSynthesis có thể không có trong trình duyệt nhúng (Zalo...): lỗi ở đây không được làm hỏng phần còn lại
+const say = w => { try { if (typeof speak === "function") speak(w); } catch (e) { /* bỏ qua */ } };
 const sfx = n => { try { if (typeof window[n] === "function") window[n](); } catch (e) { /* bỏ qua */ } };
 
 const Core = WordChainCore, WC = Core.WC, DATA = wordChainData;
-const LOBBY = "../../room.html", HOME = "../../index.html";
+const LOBBY = "../../room.html", HOME = "../../game.html";
 
 const RESULT_RANKS = [
   { min: 90, title: "Xuất sắc! 🏆", message: "Gần như không sai chữ nào." },
@@ -165,6 +167,10 @@ function submitWord() {
 }
 input.addEventListener("keydown", e => { if (e.key === "Enter") submitWord(); });
 submitBtn.addEventListener("click", submitWord);
+// Trình duyệt nhúng trên điện thoại (Zalo...): chạm nút làm ô nhập mất focus → bàn phím đóng → bố cục nhảy → cú chạm không thành "click".
+// Giữ focus ở ô nhập khi bấm chuột, và với cảm ứng thì gửi ngay lúc chạm (touchstart chặn click nên không bị gửi hai lần).
+submitBtn.addEventListener("mousedown", e => e.preventDefault());
+submitBtn.addEventListener("touchstart", e => { e.preventDefault(); submitWord(); }, { passive: false });
 
 /* ================= ĐỒNG HỒ ================= */
 function updateClock() {
@@ -189,7 +195,7 @@ function onState(v) {
 
   let last = null;
   v.history.forEach(h => { if (!seen.has(h.n)) { seen.add(h.n); addMessage(h); last = h; if (h.p === net.id) myWords++; } });
-  if (last && prev) { if (last.p === net.id) sfx("playCorrect"); if (typeof speak === "function") speak(last.w); }
+  if (last && prev) { if (last.p === net.id) sfx("playCorrect"); say(last.w); }
 
   if (prev) v.order.forEach(id => {                                        // ai vừa mất mạng / bị loại
     if (v.lives[id] < prev.lives[id]) {
@@ -249,7 +255,7 @@ function showHistory(history) {
           <div class="meaning-list history-meaning-list">${list}</div>` : ""}
       </div>`;
     box.appendChild(div);
-    div.querySelector(".history-speak").addEventListener("click", () => { if (typeof speak === "function") speak(data.word); });
+    div.querySelector(".history-speak").addEventListener("click", () => say(data.word));
     const tg = div.querySelector(".history-toggle"), ml = div.querySelector(".history-meaning-list"), fm = div.querySelector(".history-meaning");
     if (tg) tg.addEventListener("click", e => {
       e.stopPropagation();

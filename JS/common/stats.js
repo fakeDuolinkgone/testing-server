@@ -63,7 +63,7 @@
 
     /* ---------- lưu / đọc cục bộ ---------- */
     function blank() {
-        return { bio: "", joined: Date.now(), games: 0, correct: 0, total: 0, perfect: 0, best: 0, seconds: 0, days: {}, unlocked: {}, placement: null };
+        return { bio: "", joined: Date.now(), games: 0, correct: 0, total: 0, perfect: 0, best: 0, seconds: 0, days: {}, unlocked: {}, placement: null, quiz: {} };
     }
     function load() {
         try {
@@ -134,6 +134,92 @@
         persist();
     }
 
+    /* ---------- bài kiểm tra mỗi ngày ----------
+       Mỗi lượt làm = 1 bản ghi riêng ở quizAttempts/<id> (chỉ ghi, người chơi không đọc được của người khác)
+       để thống kê sau này; đồng thời tóm tắt theo ngày ở users/<uid>/quiz cho chính người chơi.
+       Bản ghi được xếp hàng trong localStorage nên mất mạng vẫn không mất số liệu. */
+    var PENDING_KEY = "normafix.quizPending";
+    var flushing = false;
+
+    function loadPending() {
+        try { var r = JSON.parse(localStorage.getItem(PENDING_KEY)); return Array.isArray(r) ? r : []; }
+        catch (e) { return []; }
+    }
+    function savePending(list) { try { localStorage.setItem(PENDING_KEY, JSON.stringify(list)); } catch (e) { /* bỏ qua */ } }
+    function numArr(a, fallback) {
+        return Array.isArray(a) ? a.map(function (x) { return isFinite(+x) ? +x : fallback; }) : [];
+    }
+
+    // a = { date, set, ver, score, total, secs, answers[], ok[], times[] }
+    function recordQuiz(a) {
+        var total = Math.max(0, Math.round(+a.total || 0));
+        var setId = Math.round(+a.set || 0);
+        if (!total || setId < 1 || setId > 7) return null;
+        var score = Math.max(0, Math.min(total, Math.round(+a.score || 0)));
+        var date = /^\d{4}-\d{2}-\d{2}$/.test(a.date) ? a.date : dayKey();
+
+        var prev = S.quiz[date];
+        var tries = prev ? (+prev.tries || 0) + 1 : 1;
+        S.quiz[date] = {
+            set: setId, tries: tries,
+            first: prev && prev.first != null ? prev.first : score,
+            best: prev ? Math.max(+prev.best || 0, score) : score,
+            last: score, at: Date.now()
+        };
+
+        var rec = {
+            cid: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+            fails: 0,
+            date: date, set: setId, ver: Math.max(1, Math.round(+a.ver || 1)),
+            n: tries, score: score, total: total,
+            secs: Math.max(0, Math.round(+a.secs || 0)), at: Date.now(),
+            answers: numArr(a.answers, -1), ok: numArr(a.ok, 0), times: numArr(a.times, 0),
+            ctx: {
+                games: S.games, correct: S.correct, total: S.total, streak: streak(),
+                pl: S.placement && S.placement.total ? Math.round(S.placement.score / S.placement.total * 100) : -1
+            }
+        };
+        var list = loadPending();
+        list.push(rec);
+        savePending(list);
+
+        persist();
+        flushAttempts();
+        return S.quiz[date];
+    }
+
+    function flushAttempts() {
+        if (flushing || !cur || !db) return;
+        var list = loadPending();
+        if (!list.length) return;
+        flushing = true;
+        var uid = cur.uid, guest = cur.isAnonymous ? 1 : 0;
+        var done = {}, failed = {};
+
+        list.reduce(function (chain, rec) {
+            return chain.then(function () {
+                var out = {
+                    uid: uid, guest: guest, date: rec.date, set: rec.set, ver: rec.ver, n: rec.n,
+                    score: rec.score, total: rec.total, secs: rec.secs, at: rec.at,
+                    answers: rec.answers, ok: rec.ok, times: rec.times, ctx: rec.ctx
+                };
+                // dùng chính cid làm khóa nên gửi lại cũng không bị trùng bản ghi
+                return db.ref("quizAttempts/" + rec.cid).set(out).then(
+                    function () { done[rec.cid] = 1; },
+                    function (e) { failed[rec.cid] = 1; console.error("Firebase (bài kiểm tra):", e); }
+                );
+            });
+        }, Promise.resolve()).then(function () {
+            var rest = loadPending().filter(function (r) {
+                if (done[r.cid]) return false;
+                if (failed[r.cid]) { r.fails = (r.fails || 0) + 1; return r.fails < 5; }
+                return true;
+            });
+            savePending(rest);
+            flushing = false;
+        });
+    }
+
     // Đếm thời gian khi tab đang mở
     setInterval(function () {
         if (document.hidden) return;
@@ -147,6 +233,7 @@
         var p = { name: playerName(), bio: S.bio, joined: S.joined, days: S.days, unlocked: S.unlocked };
         NUM.forEach(function (k) { p[k] = S[k]; });
         if (S.placement) p.placement = S.placement;
+        if (S.quiz && Object.keys(S.quiz).length) p.quiz = S.quiz;
         return p;
     }
 
@@ -170,6 +257,18 @@
         if (!S.bio && c.bio) S.bio = c.bio;
         if (c.joined) S.joined = Math.min(S.joined, c.joined);
         if (c.placement && (!S.placement || (c.placement.at || 0) > (S.placement.at || 0))) S.placement = c.placement;
+        Object.keys(c.quiz || {}).forEach(function (d) {
+            var a = S.quiz[d], b = c.quiz[d];
+            if (!a) { S.quiz[d] = b; return; }
+            S.quiz[d] = {
+                set: a.set || b.set,
+                tries: Math.max(+a.tries || 0, +b.tries || 0),
+                first: a.first != null ? a.first : b.first,
+                best: Math.max(+a.best || 0, +b.best || 0),
+                last: (a.at || 0) >= (b.at || 0) ? a.last : b.last,
+                at: Math.max(a.at || 0, b.at || 0)
+            };
+        });
         if (c.name && window.normaPlayer && window.normaPlayer.setName) window.normaPlayer.setName(c.name);
     }
 
@@ -200,7 +299,7 @@
             merge(snap.val() || {});
             checkAch(); saveLocal(); push(true);
         })["catch"](function (e) { console.error("Firebase:", e); })
-        .then(function () { synced[uid] = true; settle(); emit(); });
+        .then(function () { synced[uid] = true; settle(); emit(); flushAttempts(); });
     }
 
     function loadFirebaseScript(src) {
@@ -317,6 +416,7 @@
         recordGame: recordGame,
         setBio: setBio,
         setPlacement: setPlacement,
+        recordQuiz: recordQuiz,
         sync: persist,
         whenSynced: whenSynced,
 
@@ -370,7 +470,7 @@
                 accuracy: S.total ? Math.round(S.correct / S.total * 100) : 0,
                 streak: streak(), bio: S.bio, joined: S.joined, unlocked: S.unlocked, days7: days7,
                 level: Math.floor(S.correct / 50) + 1, levelProgress: (S.correct % 50) / 50,
-                placement: S.placement
+                placement: S.placement, quiz: S.quiz
             };
         }
     };

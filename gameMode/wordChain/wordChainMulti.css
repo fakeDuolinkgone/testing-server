@@ -104,3 +104,6 @@
   .mp-players { padding: 6px 14px; }
   .mp-col { max-width: 78%; }
 }
+
+/* nút gửi: bỏ độ trễ chạm và hiệu ứng chọn chữ trên điện thoại */
+.submit-button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }

@@ -51,6 +51,9 @@ const streakText = document.getElementById("streakText");
 const input = document.getElementById("wordInput");
 const submitBtn = document.querySelector(".submit-button");
 
+submitBtn.addEventListener("mousedown", e => e.preventDefault());
+submitBtn.addEventListener("touchstart", e => { e.preventDefault(); submitWord(); }, { passive: false });
+
 const chatArea = document.getElementById("chatArea");
 const timerBox = document.getElementById("timer");
 
@@ -158,7 +161,7 @@ function startGame() {
         "ai",
         data.meanings
     );
-    speak(data.word);
+    try { speak(data.word); } catch (e) { }
     startTimer();
 }
 
@@ -985,7 +988,7 @@ function showHistory() {
                 "click",
                 () => {
 
-                    speak(item.word);
+                    try { speak(item.word); } catch (e) { }
 
                 }
             );
@@ -1260,7 +1263,7 @@ function submitWord() {
     usedWords.add(word);
     addHistory(word, data, "player");
     addMessage(data.word, null, data.type, "player", data.meanings);
-    speak(data.word);
+    try { speak(data.word); } catch (e) { }
     resetTimer();
 
     aiTurn = true;                                    // khóa ô nhập cho tới khi AI đi xong
@@ -1308,7 +1311,7 @@ function AIPlay() {
         usedWords.add(aiWord);
         addHistory(aiWord, data, "ai");
         addMessage(data.word, null, data.type, "ai", data.meanings);
-        speak(data.word);
+        try { speak(data.word); } catch (e) { }
         resetTimer();
 
         aiTurn = false;

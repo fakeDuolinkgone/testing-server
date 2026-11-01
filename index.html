@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>HOME - normaFix</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -14,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="CSS/englishCSS.css">
+    <link rel="stylesheet" href="CSS/dailyQuiz.css">
     <script src="JS/common/user.js"></script>
 
     <link rel="icon" type="image/png" href="pics/mascotPics/iconWebsite_main.png">
@@ -68,6 +70,12 @@
             <p class="hero-subtitle">
                 Nơi học thông qua các trò chơi.<br>Bạn chưa chơi nên bạn chơi biết đâu!
             </p>
+
+            <button type="button" id="dailyQuizBtn" class="quiz-btn" aria-haspopup="dialog">
+                <span class="quiz-btn-ico" aria-hidden="true">📝</span>
+                <span><b>Kiểm tra thử?</b><small id="dailyQuizHint"></small></span>
+            </button>
+
         </div>
 
         <div class="scroll-down">
@@ -199,6 +207,7 @@
 
 
     <script src="JS/common/stats.js"></script>
+    <script src="JS/common/dailyQuiz.js"></script>
     <script src="JS/common/guide.js"></script>
     <script src="JS/games/landing.js"></script>
 

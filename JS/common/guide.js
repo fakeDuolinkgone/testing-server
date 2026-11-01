@@ -24,14 +24,14 @@
     const STYLE_ID = "ng-style";
 
     // Nội dung: sửa chữ ở đây
-    const TITLE = "Chào mừng đến normaFix! 👋";
+    const TITLE = "Chào mừng đến normaFix!";
     const SUBTITLE = "Học từ vựng qua trò chơi. Chọn một chế độ trong mục Chơi:";
     const ITEMS = [
-        { icon: "🎓", name: "LEARN", desc: "10 từ, 4 phần: gõ lại từ, trắc nghiệm, nối cột, điền vào chỗ trống." },
-        { icon: "🔗", name: "WORDCHAIN", desc: "Nối từ bằng chữ cái cuối của từ trước, không lặp từ. Mỗi lượt 30 giây, sai 5 lần mất 1 mạng (có 2 mạng)." },
-        { icon: "🔍", name: "WORDHUNT", desc: "Liệt kê các từ bắt đầu bằng chữ cái ngẫu nhiên." },
-        { icon: "❓", name: "HANGMAN", desc: "Đoán từ bí ẩn từng chữ cái, đừng để sai quá nhiều lần." },
-        { icon: "🧩", name: "WORDPUZZLE", desc: "Tìm các từ ẩn trong bảng chữ cái." }
+        { icon: "🎓", name: "LEARN - HỌC", desc: "10 từ, 4 phần: gõ lại từ, trắc nghiệm, nối cột, điền vào chỗ trống." },
+        { icon: "🔗", name: "WORDCHAIN - NỐI TỪ", desc: "Nối từ bằng chữ cái cuối của từ trước, không lặp từ. Mỗi lượt 30 giây, sai 5 lần mất 1 mạng (có 2 mạng)." },
+        { icon: "🔍", name: "WORDHUNT - LIỆT KÊ TỪ", desc: "Liệt kê các từ bắt đầu bằng chữ cái ngẫu nhiên." },
+        { icon: "❓", name: "HANGMAN - ĐOÁN TỪ", desc: "Đoán từ bí ẩn từng chữ cái, đừng để sai quá nhiều lần." },
+        { icon: "🧩", name: "WORDPUZZLE - DÒ Ô CHỮ", desc: "Tìm các từ ẩn trong bảng chữ cái." }
     ];
     const TIP = "💡 Muốn chơi cùng bạn bè? Vào <b>Tạo phòng</b>. Muốn xem từ vựng? Vào <b>Tài liệu</b> rồi bấm vào từ để nghe đọc.";
     const BUTTON_TEXT = "Bắt đầu thôi!";
@@ -194,7 +194,7 @@
                 <p class="ng-sub">${SUBTITLE}</p>
                 <ul class="ng-list">${items}</ul>
                 <p class="ng-tip">${TIP}</p>
-                <button type="button" class="ng-start">${BUTTON_TEXT}</button>
+                <button type="button" class="ng-start" onclick="location.href='game.html'">${BUTTON_TEXT}</button>
             </div>`;
         document.body.appendChild(overlay);
 

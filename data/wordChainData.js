@@ -327385,31 +327385,6 @@ const wordChainData = {
       ],
       "meanings": [
         {
-          "type": "n",
-          "text": "con súc sắc",
-          "examples": []
-        },
-        {
-          "type": "n",
-          "text": "(kiến trúc) chân cột",
-          "examples": []
-        },
-        {
-          "type": "n",
-          "text": "khuôn rập (tiền, huy chương...)",
-          "examples": []
-        },
-        {
-          "type": "n",
-          "text": "(kỹ thuật) khuôn kéo sợi",
-          "examples": []
-        },
-        {
-          "type": "n",
-          "text": "(kỹ thuật) bàn ren (đinh ốc...)",
-          "examples": []
-        },
-        {
           "type": "v",
           "text": "chết, mất, từ trần; băng hà (vua); tịch; hy sinh",
           "examples": [
@@ -327463,6 +327438,32 @@ const wordChainData = {
             }
           ]
         },
+        {
+          "type": "n",
+          "text": "con súc sắc",
+          "examples": []
+        },
+        {
+          "type": "n",
+          "text": "(kiến trúc) chân cột",
+          "examples": []
+        },
+        {
+          "type": "n",
+          "text": "khuôn rập (tiền, huy chương...)",
+          "examples": []
+        },
+        {
+          "type": "n",
+          "text": "(kỹ thuật) khuôn kéo sợi",
+          "examples": []
+        },
+        {
+          "type": "n",
+          "text": "(kỹ thuật) bàn ren (đinh ốc...)",
+          "examples": []
+        },
+        
         {
           "type": "v",
           "text": "mất đi, tắt đi, tàn lụi, không còn nữa; bị quên đi",
@@ -584366,7 +584367,7 @@ const wordChainData = {
       "meanings": [
         {
           "type": "n",
-          "text": "(viết tắt) của hippotamus",
+          "text": "viết tắt của hippotamus, con hà mã",
           "examples": []
         }
       ],

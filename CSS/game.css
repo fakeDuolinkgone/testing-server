@@ -76,15 +76,25 @@
 
 
 
-.letter {
+.letter-game {
   width: 35px;
   font-size: 30px;
   font-weight: bold;
   color: #ff9800;
   flex-shrink: 0;
+  padding-left: 6px;
 }
 
-
+.letter-container {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #134867;
+  border-radius: 10%;
+  margin-right: 10px;
+}
 
 
 
