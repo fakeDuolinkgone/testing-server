@@ -259,6 +259,48 @@
     }
 
 
+    /* ---------- đồng bộ tên ----------
+       Trang game không phải lúc nào cũng biết tên người chơi nên có thể ghi "Ẩn danh".
+       Trang chủ (có tên) sẽ sửa lại tên trong mọi bảng mà người này đã có điểm,
+       không tạo bảng mới và không đụng tới điểm. */
+    var syncing = false, lastSyncedName = "";
+    function syncName() {
+        var name = playerName();
+        if (name === "Ẩn danh" || name === lastSyncedName || syncing) return Promise.resolve(false);
+        syncing = true;
+        var changed = false;
+        return getDb().then(function (db) {
+            var uid = myUid();
+            if (!db || !uid) return;
+            return Promise.all(ORDER.map(function (g) {
+                var ref = db.ref("leaderboard/" + g + "/" + uid + "/name");
+                return ref.once("value").then(function (snap) {
+                    var cur = snap.val();
+                    if (typeof cur === "string" && cur !== name) { changed = true; return ref.set(name); }
+                });
+            })).then(function () { lastSyncedName = name; });
+        })["catch"](function (e) { console.error("Bảng xếp hạng (đồng bộ tên):", e); })
+          .then(function () { syncing = false; if (changed) refreshMounted(); return changed; });
+    }
+
+    // Gõ normaBoard.debug() trong Console để xem trang này đang gửi tên gì và vì sao
+    function debug() {
+        var viaPlayer = "";
+        try { viaPlayer = window.normaPlayer && window.normaPlayer.getName ? window.normaPlayer.getName() : ""; } catch (e) { /* bỏ qua */ }
+        var viaStorage = "";
+        try { viaStorage = localStorage.getItem("normafix.playerName") || ""; } catch (e) { /* bỏ qua */ }
+        var info = {
+            tenSeGui: playerName(),
+            normaPlayer: window.normaPlayer ? "có (tên: " + (viaPlayer || "trống") + ")" : "KHÔNG có (trang này không nạp user.js)",
+            localStorage: viaStorage || "trống",
+            uid: myUid() || "chưa đăng nhập Firebase",
+            diemDangCho: loadPending().length
+        };
+        console.table(info);
+        return info;
+    }
+
+
     /* ---------- giao diện ---------- */
     var mounted = null;
     function refreshMounted() { if (mounted) mounted.refresh(); }
@@ -370,7 +412,7 @@
             top(g).then(function (res) { if (mine === token) render(g, res); });
         }
 
-        rf.addEventListener("click", load);
+        rf.addEventListener("click", function () { lastSyncedName = ""; syncName(); load(); });
 
         mounted = { refresh: load };
         lastUid = myUid();
@@ -383,7 +425,7 @@
             st.onChange(function () {
                 if (loadPending().length) flush();
                 var u = myUid();
-                if (u !== lastUid) { lastUid = u; load(); }
+                if (u !== lastUid) { lastUid = u; load(); syncName(); }
             });
         });
     }
@@ -393,9 +435,10 @@
     function init() {
         mount(document.getElementById("leaderboard"));
         if (loadPending().length) flush();           // gửi nốt điểm còn kẹt từ lần trước
+        syncName();                                  // sửa tên "Ẩn danh" cũ nếu trang này biết tên
     }
 
-    window.normaBoard = { submit: submit, top: top, mount: mount, games: GAMES, streakRank: streakRank };
+    window.normaBoard = { submit: submit, top: top, mount: mount, games: GAMES, streakRank: streakRank, syncName: syncName, debug: debug };
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
     else init();
