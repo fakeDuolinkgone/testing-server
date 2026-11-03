@@ -329,7 +329,7 @@
         overlay.querySelector(".ng-start").addEventListener("click", () => {
             if (page < last()) { render(page + 1); return; }
             closeGuide();
-            location.href = START_URL;
+            ;
         });
         overlay.querySelectorAll(".ng-dot").forEach((d, k) => d.addEventListener("click", () => render(k)));
         overlay.addEventListener("click", e => { if (e.target === overlay) closeGuide(); });
